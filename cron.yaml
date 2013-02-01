@@ -1,0 +1,10 @@
+cron:
+- description: clear documents
+  target: backend-dynamic
+  url: /cron_jobs/document
+  schedule: every 12 hours
+
+- description: clear sessions
+  target: backend-dynamic
+  url: /cron_jobs/session
+  schedule: every 12 hours

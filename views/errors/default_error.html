@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Server Error - {{ status }} {{ exception }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="NOINDEX, NOFOLLOW">
+    <meta name="description" content="default error {{ exception }}">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/error.css"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var zoom = 1.0;
+            if (innerHeight < 600) {
+                zoom = innerHeight / 600.0;
+            }
+            if (innerWidth < 420) {
+                zoom = innerHeight / 1000.0;
+            }
+
+            if (zoom < 1) {
+                $('.status_background').css('margin-bottom', parseInt($('.status_background').css('margin-bottom')) * zoom + 'px');
+                $('.status_background').css('margin-right', '0');
+                $('.status').css('font-size', parseInt($('.status').css('font-size')) * zoom + 'px');
+                $('.status').css('line-height', parseInt($('.status').css('line-height')) * zoom + 'px');
+                $('.exception').css('font-size', '16px');
+            }
+        });
+    </script>
+</head>
+<!--
+                                    ,'.
+                                   ;+++`
+                                  '+   +`
+                                 +      +
+                                ;        ,
+                                         .
+                               ,
+                               ,    .'+', +';::.`           .
+                               .  ,++++++++++++++++'`       :,';`
+                               ,++++++++++##+++++++++++'   `,,,,, ;`
+                              ++++++++++++++++++++++++++++`;,,,+,,,:
+                            '+++++++''''+;;;;;;';;;+++++'+++,,+',,;'
+                           ;';;;;'++++++++++++++++++#+++++++++++:
+                         .'+++++++++#++++++++##+#+#+##++++'+#++++.
+                        '+++#++++++++++++++++##+#++#++++++++#+#++:
+                       +`++#+++++++#+++++++++##+'#+###++++####+#+;
+                   `,.  '++#++++++#+++:+++++###,,##;##++++####++#'
+                        ++##+#++++#++':'+'++##+:::#+;##+++###+;+++
+                       `++####+++##++::.+`++##;'+:'#:+#++++###;,++
+                       + +####+++#++',` #::+#+:`;++++++++++#+#: #+
+                         .####++++;::,  .``++:,`;,###+++++++##, ++,'
+                     `   `+####++    . ; ;```:``++#+# ++++++##` ,#+
+                         :++###++   '.   ',.`````',:`:+++++#+#  `#+.;
+                         '++####++`.;'.``````.:;::,`,'++#++# '   #+'
+                          ;++####```````````````````:+++#++      ##+
+                            ++####`````````````````.,++##+       ##:
+                            '++##:#+:`````````````:#+++##;      `#.,
+                             ';+#, ',###',````;'#+' `+##+       .' .
+                             ,  '#      ::::::::`   `+#`'       '
+                                  ':#;::::+;:+::::' `+
+                                `++++.:++++:+;+++:#+'
+                        ,++++++++,++++;'++++++++++++,`
+-->
+<body>
+
+    <div class="warning">!</div>
+
+    <div class="status_background">
+        <div class="status">{{ status }}</div>
+        <div class="exception">{{ exception }}</div>
+    </div>
+
+</body>
+</html>

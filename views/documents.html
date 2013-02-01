@@ -1,0 +1,82 @@
+{% extends '_container.html' %}
+
+{% block content %}
+    <div>
+        <!-- switch applications -->
+        <div class="pull-left">
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{ selected_application|default('No Application') }}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    {% for item in applications %}
+                        <li><a tabindex="-1" href="/{{ document_model }}_groups/{{ item.id }}" onclick="takanashi.change_nav('{{ item.id }}');">{{ item.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <ul class="breadcrumb pull-left" style="background-color: #fff; margin-bottom: 0">
+            {% if document_model == 'exception' %}<li><a href="/{{ document_model }}_groups/{{ application_id }}">Handled Exceptions</a> <span class="divider">/</span></li>
+            {% elif document_model == 'log' %}<li><a href="/{{ document_model }}_groups/{{ application_id }}">Logs</a> <span class="divider">/</span></li>{% endif %}
+            <li class="active">{{ result[0].name }} - {{ result[0].title }}</li>
+        </ul>
+
+        <div class="clear" style="margin-bottom: 16px;"></div>
+
+        <!-- content table -->
+        <table class="table table-bordered table-hover content-table">
+            <thead>
+            <tr><td class="span1">Status</td><td>Description</td><td style="width: 150px;">Datetime</td></tr>
+            </thead>
+            <tbody>
+                {% set index = 0 %}
+                {% for item in result %}
+                    <tr data-toggle="modal" href="#document{{ index }}"><td>{{ ''|default(item.status, item.status) }}</td><td>{{ ''|default(item.description, item.description) }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td></tr>
+                    {% set index = index + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- modal -->
+        {% set index = 0 %}
+        {% for item in result %}
+            <div id="document{{ index }}" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    {% if document_model == 'exception' %}<h3>Handled Exception</h3>{% endif %}
+                    {% if document_model == 'log' %}<h3>Log</h3>{% endif %}
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr><td class="span2">Application</td><td>{{ selected_application|default('No Application') }}</td></tr>
+                        {% if item.version %}<tr><td>Version</td><td>{{ item.version }}</td></tr>{% endif %}
+                        <tr><td>Title</td><td>{{ ''|default(item.title, item.title) }}</td></tr>
+                        {% if item.description %}<tr><td>Description</td><td><pre>{{ item.description }}</pre></td></tr>{% endif %}
+                        <tr><td>Datetime</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td></tr>
+                        {% if item.status %}<tr><td>Status</td><td>{{ item.status }}</td></tr>{% endif %}
+                        {% if item.method %}<tr><td>Method</td><td>{{ item.method }}</td></tr>{% endif %}
+                        {% if item.url %}<tr><td>URL</td><td>{{ item.url }}</td></tr>{% endif %}
+                        {% if item.timeout %}<tr><td>Timeout</td><td>{{ item.timeout }}</td></tr>{% endif %}
+                        {% if item.parameters %}<tr><td>Parameters</td><td>{{ item.parameters }}</td></tr>{% endif %}
+                        {% if item.device %}<tr><td>Device</td><td>{{ item.device }}</td></tr>{% endif %}
+                        {% if item.os_version %}<tr><td>OS Version</td><td>{{ item.os_version }}</td></tr>{% endif %}
+                        {% if item.name %}<tr><td>Name</td><td>{{ item.name }}</td></tr>{% endif %}
+                        {% if item.email %}<tr><td>Email</td><td>{{ item.email }}</td></tr>{% endif %}
+                        {% if item.access_token %}<tr><td>Access Token</td><td>{{ item.access_token }}</td></tr>{% endif %}
+                        <tr><td>IP Address</td><td>{{ item.ip }}</td></tr>
+                        <tr><td>User-Agent</td><td>{{ item.user_agent }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn" data-dismiss="modal">Close</a>
+                </div>
+            </div>
+            {% set index = index + 1 %}
+        {% endfor %}
+    </div>
+{% endblock %}

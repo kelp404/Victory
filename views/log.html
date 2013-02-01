@@ -1,0 +1,89 @@
+{% extends '_container.html' %}
+
+{% block content %}
+    <div id="logs_content">
+        <!-- search -->
+        <form class="input-append pull-right" method="get" action="/log/{{ application_id }}">
+            <input class="span3 focus" type="text" id="keyword" name="q" placeholder="search" value="{{ keyword }}"/>
+            <input type="submit" class="btn" value="Search" />
+            {% if page.index == 0 %}{# previous page #}
+                <a href="#disabled" class="btn disabled" onclick="return false;">«</a>
+            {% else %}
+                <a href="?index={{ page.index - 1 }}&q={{ keyword }}" class="btn">«</a>
+            {% endif %}
+            {% if (page.index + 1) * page.size >= page.total %}{# next page #}
+                <a href="#disabled" class="btn disabled" onclick="return false;">»</a>
+            {% else %}
+                <a href="?index={{ page.index + 1 }}&q={{ keyword }}" class="btn">»</a>
+            {% endif %}
+        </form>
+
+        <!-- switch applications -->
+        <div style="margin-bottom: 16px;">
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{ selected_application|default('No Application') }}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    {% for item in applications %}
+                        <li><a tabindex="-1" href="/log/{{ item.id }}" onclick="takanashi.change_nav('{{ item.id }}');">{{ item.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- content table -->
+        <table class="table table-bordered table-hover content-table">
+            <thead>
+            <tr><td class="span2">User Name</td><td class="span2">Title</td><td class="span6">Description</td><td class="span2">Datetime</td></tr>
+            </thead>
+            <tbody>
+            {% for item in page['items'] %}
+                <tr data-toggle="modal" href="#log{{ item.id }}"><td>{{ ''|default(item.name, item.name) }}</td><td>{{ ''|default(item.title, item.title) }}</td><td>{{ ''|default(item.description, item.description) }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- modal -->
+        {% for item in page['items'] %}
+            <div id="log{{ item.id }}" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3>Log</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr><td class="span2">Application</td><td>{{ selected_application|default('No Application') }}</td></tr>
+                        {% if item.version %}<tr><td>Version</td><td>{{ item.version }}</td></tr>{% endif %}
+                        <tr><td>Title</td><td>{{ ''|default(item.title, item.title) }}</td></tr>
+                        {% if item.description %}<tr><td>Description</td><td><pre>{{ item.description }}</pre></td></tr>{% endif %}
+                        <tr><td>Datetime</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td></tr>
+                        {% if item.status %}<tr><td>Status</td><td>{{ item.status }}</td></tr>{% endif %}
+                        {% if item.method %}<tr><td>Method</td><td>{{ item.method }}</td></tr>{% endif %}
+                        {% if item.url %}<tr><td>URL</td><td>{{ item.url }}</td></tr>{% endif %}
+                        {% if item.timeout %}<tr><td>Timeout</td><td>{{ item.timeout }}</td></tr>{% endif %}
+                        {% if item.parameters %}<tr><td>Parameters</td><td>{{ item.parameters }}</td></tr>{% endif %}
+                        {% if item.device %}<tr><td>Device</td><td>{{ item.device }}</td></tr>{% endif %}
+                        {% if item.os_version %}<tr><td>OS Version</td><td>{{ item.os_version }}</td></tr>{% endif %}
+                        {% if item.name %}<tr><td>Name</td><td>{{ item.name }}</td></tr>{% endif %}
+                        {% if item.email %}<tr><td>Email</td><td>{{ item.email }}</td></tr>{% endif %}
+                        {% if item.access_token %}<tr><td>Access Token</td><td>{{ item.access_token }}</td></tr>{% endif %}
+                        <tr><td>IP Address</td><td>{{ item.ip }}</td></tr>
+                        <tr><td>User-Agent</td><td>{{ item.user_agent }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    {% if is_application_owner %}
+                        <a class="btn btn-danger delete_document" style="color: #ffffff" href="/log#" document_id="{{ item.id }}">Delete</a>
+                    {% endif %}
+                    <a class="btn" data-dismiss="modal">Close</a>
+                </div>
+            </div>
+        {% endfor %}
+
+        {{ render_page(page, 'pull-right', 'q=' + keyword) }}
+    </div>
+{% endblock %}

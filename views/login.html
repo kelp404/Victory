@@ -1,0 +1,31 @@
+{% extends '_container.html' %}
+
+
+{% block content %}
+    <div class="row-fluid">
+        <form id="form_login" class="span8 offset2 well form-horizontal" action="/login#">
+            <legend>Sign In</legend>
+
+            <div class="control-group">
+                <label class="control-label" for="account">Account</label>
+                <div class="controls">
+                    <input validation="^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$" msg="Please enter a valid email address." type="text" class="input-xlarge focus" name="account" id="account" placeholder="email@gmail.com"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="password">Password</label>
+                <div class="controls">
+                    <input validation=".+" msg="This field is required." type="password" class="input-xlarge" name="password" id="password"/>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
+                    <input type="submit" class="btn" value="Login"/>
+                    <a href="/forgot_password#" id="forgot_password" style="margin-left: 10px;">forgot password</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends '_container.html' %}
+
+{% block content %}
+    <div class="row-fluid">
+
+        <div class="span3 menu">
+            {% set menu = 'sessions' %}
+            {% include 'menu_settings.html' %}
+        </div>
+
+        <div class="span9">
+            <legend>Sessions</legend>
+
+            {# sessions content #}
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr><td class="span2">IP Address</td><td class="span2">Create Time</td><td>User-Agent</td><td class="span2"></td></tr>
+                </thead>
+                <tbody>
+                {% for item in result %}
+                    <tr>
+                        <td>
+                            <span>{{ item.ip }}</span>
+                        </td>
+                        <td>{{ render_datetime(item.create_time, 'yyyy-MM-dd') }}</td>
+                        <td>
+                            {% if item.user_agent %}<span>{{ item.user_agent }}</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if item.is_current %}
+                                <span class="label label-info">current</span>
+                            {% else %}
+                                <a href="/settings/sessions/{{ item.id }}#" class="btn btn-mini delete_session">sign out</a>
+                            {% endif %}
+                        </td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

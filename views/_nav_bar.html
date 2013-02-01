@@ -1,0 +1,25 @@
+<div id="nav_bar" class="shadow">
+    <div>
+        <div class="logo"><a href="/">Takanashi</a></div>
+
+        {% if user %}
+            <div class="profile">
+                <p rel="tooltip" title="{{ user.email }}" data-placement="bottom">{{ user.name }}</p>
+                <p><a href="/settings/sessions/0#" class="logout">Sign Out</a></p>
+            </div>
+        {% endif %}
+
+        <ul>
+            {% if user %}
+                <li class="select"><a href="/exception_groups">Handled Exceptions</a></li>
+                <li><a href="/log_groups">Logs</a></li>
+            {% endif %}
+
+            {% if user %}
+                <li><a href="/settings/applications">Settings</a></li>
+            {% else %}
+                <li class="select"><a href="/login">Sign In</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

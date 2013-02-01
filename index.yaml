@@ -1,0 +1,31 @@
+indexes:
+# for application service .get_applications()
+- kind: ApplicationModel
+  properties:
+  - name: owner
+  - name: create_time
+- kind: ApplicationModel
+  properties:
+  - name: viewer
+  - name: create_time
+
+# for document service .get_documents()
+- kind: ExceptionModel
+  properties:
+  - name: app_id
+  - name: group_tag
+  - name: create_time
+    direction: desc
+- kind: LogModel
+  properties:
+  - name: app_id
+  - name: group_tag
+  - name: create_time
+    direction: desc
+
+# for account service .get_sessions()
+- kind: SessionModel
+  properties:
+  - name: user_id
+  - name: create_time
+    direction: desc

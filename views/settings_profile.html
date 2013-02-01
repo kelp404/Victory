@@ -1,0 +1,33 @@
+{% extends '_container.html' %}
+
+{% block content %}
+    <div class="row-fluid">
+
+        <div class="span3 menu">
+            {% set menu = 'profile' %}
+            {% include 'menu_settings.html' %}
+        </div>
+
+        <div class="span9">
+            <form id="form_profile" action="/settings/profile#">
+                <fieldset>
+                    <legend>Profile</legend>
+
+                    <div class="control-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="input-xlarge focus" name="name" id="name" value="{{ user.name }}" validation=".+" msg="This field is required." placeholder="Your Name"/>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="account">Account</label>
+                        <input type="text" class="input-xlarge" name="account" id="account" disabled value="{{ user.email }}" placeholder="email@gmail.com"/>
+                    </div>
+
+                    <div>
+                        <input type="submit" class="btn" value="Update Profile"/>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock %}
