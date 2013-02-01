@@ -11,12 +11,23 @@ import os, re, datetime, hashlib
 import logging
 
 class DocumentService(BaseService):
-    # get document groups by application id, search keyword and index
-    #   success: return [document_group], total
-    #   failed: return [], 0
     def get_document_groups(self, application_id, keyword, index, document_model):
-        if index is None: index = 0
+        """
+        Get document groups by application id, search keyword and index
 
+        @param application_id application id
+        @param keyword search keywords
+        @param index pager index
+        @param document_model document type
+        @returns [document_group], total / [], 0
+        """
+        if index is None: index = 0
+        try:
+            application_id = long(application_id)
+            index = int(index)
+        except: return [], 0
+
+        # check auth
         aps = ApplicationService(self.context)
         if not aps.is_my_application(application_id):
             return [], 0
@@ -86,14 +97,22 @@ class DocumentService(BaseService):
 
         return result, count
 
-    # get documents by application id and group tag
-    #   success: return [document]
-    #   failed: return []
     def get_documents(self, application_id, group_tag, document_model):
+        """
+        Get documents with application id and group tag
+
+        @param application_id application id
+        @param group_tag group tag md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
+        @param document_model document type (ExceptionModel / LogModel)
+        @returns [document] / []
+        """
+        try: application_id = long(application_id)
+        except: return []
+        if group_tag is None: return []
+        # check auth
         aps = ApplicationService(self.context)
         if not aps.is_my_application(application_id):
             return []
-        if group_tag is None: return []
 
         if document_model == DocumentModel.exception:
             documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
@@ -106,10 +125,20 @@ class DocumentService(BaseService):
 
         return result
 
-    # get document by application id and group tag
-    #   success: return document
-    #   failed: return None
     def get_last_document(self, application_id, group_tag, document_model):
+        """
+        Get the last document with application id and group tag
+
+        @param application_id application id
+        @param group_tag group tag md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
+        @param document_model document type
+        @returns document / None
+        """
+        try: application_id = long(application_id)
+        except: return None
+        if group_tag is None: return None
+
+        # check auth
         aps = ApplicationService(self.context)
         if not aps.is_my_application(application_id):
             return None
@@ -122,11 +151,15 @@ class DocumentService(BaseService):
         for document in documents.fetch(1): return document.dict()
         return None
 
-
-    # add a document for web service
-    #   success: return True, None
-    #   failed: return False, error message
     def add_document(self, key, document, document_model):
+        """
+        Add a document for web service
+
+        @param key application key
+        @param document log content
+        @param document_model document type
+        @returns True, None / False, error message
+        """
         if key is None: return False, 'key is required'
         if 'title' not in document or document['title'] is None: return False, 'title is required'
         if 'name' not in document or document['name'] is None: return False, 'name is required'

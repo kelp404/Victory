@@ -181,10 +181,11 @@ class AccountService(BaseService):
         @param user_id target user id
         @returns True / False
         """
-        # check auth
-        if self.context.user is None: return False
         try: user_id = long(user_id)
         except: return False
+
+        # check auth
+        if self.context.user is None: return False
 
         user = UserModel.get_by_id(user_id)
         if user and user.level == UserLevel.pending:
@@ -237,6 +238,7 @@ class AccountService(BaseService):
 
         returns [session{ id, is_current, user_agent, create_time }] / []
         """
+        # check auth
         if self.context.user is None: return []
 
         sessions = db.GqlQuery('select * from SessionModel where user_id = :1 order by create_time DESC', self.context.user.key().id())
@@ -257,9 +259,11 @@ class AccountService(BaseService):
         @param session_id sign out target session, none will sign out current session.
         @returns True / False
         """
-        if self.context.user is None: return False
         try: session_id = long(session_id)
         except: return False
+
+        # check auth
+        if self.context.user is None: return False
 
         cookie = str(self.context.request.cookies.get(config.cookie_auth))
         if session_id == 0:

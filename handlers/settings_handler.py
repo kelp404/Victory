@@ -100,21 +100,19 @@ class ApplicationsHandler(BaseHandler):
         aps = ApplicationService(self.context)
         self.json({ 'success': aps.update_application(application_id, name, description) })
 
-    # delete a application
     def delete(self, application_id):
-        try: application_id = long(application_id)
-        except:
-            self.json({ 'success': False })
-            return
-
+        """
+        delete an application with application id
+        """
         aps = ApplicationService(self.context)
         self.json({ 'success': aps.delete_application(application_id) })
 
 
-# the application invite handler
 class ApplicationInviteHandler(BaseHandler):
-    # invite user to join application
     def post(self, application_id):
+        """
+        invite user to join application
+        """
         email = self.request.get('email')
         try: application_id = long(application_id)
         except:
@@ -136,10 +134,11 @@ class ApplicationInviteHandler(BaseHandler):
         self.json({ 'success': success })
 
 
-# the member of an application handler
 class ApplicationMemberHandler(BaseHandler):
-    # remove the viewer in the application
     def delete(self, application_id, member_id):
+        """
+        remove the viewer in the application
+        """
         try: application_id = long(application_id)
         except:
             self.json({ 'success': False })

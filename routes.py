@@ -26,12 +26,12 @@ _routes = [
     RedirectRoute('/settings/sessions/<session_id>', SessionsHandler, name='settings_sessions', strict_slash=True),
 
     # Data Viewer
-    RedirectRoute('/exception_groups',  DocumentHandler, name='exception_group', strict_slash=True),
-    RedirectRoute('/exception_groups/<application_id>',  DocumentHandler, name='exception_group', strict_slash=True),
     RedirectRoute('/exception_groups/<application_id>/<group_tag>', DocumentHandler, name='exception_list', strict_slash=True),
-    RedirectRoute('/log_groups', DocumentHandler, name='log_group', strict_slash=True),
-    RedirectRoute('/log_groups/<application_id>', DocumentHandler, name='log_group', strict_slash=True),
+    RedirectRoute('/exception_groups/<application_id>',  DocumentHandler, name='exception_group', strict_slash=True),
+    RedirectRoute('/exception_groups',  DocumentHandler, name='exception_group', strict_slash=True),
     RedirectRoute('/log_groups/<application_id>/<group_tag>', DocumentHandler, name='log_list', strict_slash=True),
+    RedirectRoute('/log_groups/<application_id>', DocumentHandler, name='log_group', strict_slash=True),
+    RedirectRoute('/log_groups', DocumentHandler, name='log_group', strict_slash=True),
 
     # API
     RedirectRoute('/api/v1/exception/<key>', ExceptionDocumentHandler, name='api_exception_with_key', strict_slash=True),

@@ -17,29 +17,7 @@ class DocumentHandler(BaseHandler):
         keyword = self.request.get('q')
         self.view_model['keyword'] = keyword
 
-        # get applications
-        aps = ApplicationService(self.context)
-        applications = aps.get_applications()
-        self.view_model['applications'] = applications
-
-        if application_id == 0 and len(applications) > 0:
-            # set a default application
-            application_id = applications[0]['id']
-            self.view_model['selected_application'] = applications[0]['name']
-            self.view_model['application_id'] = application_id
-        else:
-            for application in applications:
-                if application['id'] == application_id:
-                    # set the selected application name
-                    self.view_model['selected_application'] = application['name']
-                    self.view_model['application_id'] = application_id
-                    break
-            if 'selected_application' not in self.view_model and len(applications) > 0:
-                # set a default application
-                application_id = applications[0]['id']
-                self.view_model['selected_application'] = applications[0]['name']
-                self.view_model['application_id'] = application_id
-
+        # document type
         if self.request.route.name[:10] == 'exception_':
             document_model = DocumentModel.exception
             self.view_model['document_model'] = 'exception'
@@ -48,6 +26,33 @@ class DocumentHandler(BaseHandler):
             document_model = DocumentModel.log
             self.view_model['document_model'] = 'log'
             self.view_model['title'] = 'Logs - '
+
+        # get applications
+        aps = ApplicationService(self.context)
+        applications = aps.get_applications()
+        self.view_model['applications'] = applications
+
+        if application_id == 0:
+            # input value has no application id
+            if len(applications) > 0:
+                # result a default application
+                application_id = applications[0]['id']
+                self.view_model['selected_application'] = applications[0]['name']
+                self.view_model['application_id'] = application_id
+            else:
+                # no input value and no applications
+                self.view_model['page'] = { 'items': [], 'total': 0, 'index': index, 'size': config.page_size, 'max': 0 }
+                self.view_model['documents'] = []
+                return self.render_template('document_groups.html', **self.view_model)
+        else:
+            select_application = [x for x in applications if x['id'] == application_id]
+            if select_application:
+                # input value in application list
+                self.view_model['selected_application'] = select_application[0]['name']
+                self.view_model['application_id'] = application_id
+            else:
+                # selected id is not in owner applications
+                self.abort(404)
 
         ds = DocumentService(self.context)
         if group_tag is None:
