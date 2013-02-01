@@ -10,7 +10,7 @@ You could download this project and then deploy to GAE with free plan.
 Your app could send error information to Takanashi with RESTful API.
 
 
-<img src='https://raw.github.com/Kelp404/Takanashi/_images/screenshot00.png' height='378px' width='850px' />
+<img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot00.png' height='378px' width='850px' />
 
 
 ##RESTful API
