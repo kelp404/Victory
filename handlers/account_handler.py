@@ -15,6 +15,9 @@ class LoginHandler(BaseHandler):
         return self.render_template('login.html', **self.view_model)
 
     def post(self):
+        """
+        login
+        """
         if self.user is not None:
             self.redirect('/')
             return
@@ -24,20 +27,13 @@ class LoginHandler(BaseHandler):
 
         acs = AccountService(self.context)
         success, cookie = acs.login(account, password)
-
         return self.json({ 'success': success, 'cookie': cookie })
 
 
 class ReInviteHandler(BaseHandler):
     def post(self, user_id):
-        try: user_id = long(user_id)
-        except:
-            self.json({ 'success': False })
-            return
-
         acs = AccountService(self.context)
         self.json({ 'success': acs.resend_email_to_pending_user(user_id) })
-
 
 
 class ForgotPasswordHandler(BaseHandler):

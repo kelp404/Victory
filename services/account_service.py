@@ -12,10 +12,17 @@ import logging
 
 
 class AccountService(BaseService):
-    # auth user by cookie
-    # success: return UserModel
-    # fail: return None
+    """
+    Account Service
+    """
     def authorization(self, cookie):
+        """
+        User Authorization.
+        * Do not use return object to update user entity.
+
+        @param cookie user's token (cookie
+        @returns UserModel / None
+        """
         if cookie is None: return None
 
         sessions = db.GqlQuery('select * from SessionModel where cookie = :1 limit 1', cookie)
@@ -24,13 +31,18 @@ class AccountService(BaseService):
         else:
             user = UserModel().get_by_id(sessions[0].user_id)
             if user:
+                # clear password
                 user.password = None
             return user
 
-    # login with account and password
-    # success: return True, cookie value
-    # fail: return False, None
     def login(self, account, password):
+        """
+        User login with account and password
+
+        @param account user's account
+        @param password user's password
+        @returns True, cookie / False, None
+        """
         total_user = db.GqlQuery('select * from UserModel')
         if total_user.count(1) == 0:
             # set up default user
@@ -45,26 +57,26 @@ class AccountService(BaseService):
         if account is None or password is None: return False, None
         account = account.strip().lower()
 
-        users = db.GqlQuery('select * from UserModel where email = :1 limit 1', account)
-        if users.count(1) == 0:
+        users = db.GqlQuery('select * from UserModel where email = :1 limit 1', account).fetch(1)
+        if len(users) == 0:
             return False, None
         else:
             password_hash = hashlib.sha256(password).hexdigest()
-            user = UserModel().get_by_id(users[0].key().id())
-            if user.password == password_hash:
+            if users[0].password == password_hash:
                 login_success = True
-                if user.level == UserLevel.pending:
+                if users[0].level == UserLevel.pending:
                     # first login
+                    user = UserModel().get_by_id(users[0].key().id())
                     user.level = UserLevel.normal
                     user.put()
             else:
                 # search password from cache (for reset password
-                cache_value = memcache.get(key=MemcacheKey.forgot_password + str(user.key().id()))
+                cache_value = memcache.get(key=MemcacheKey.forgot_password + str(users[0].key().id()))
                 login_success = password_hash == cache_value
 
             if login_success:
                 session = SessionModel()
-                session.user_id = user.key().id()
+                session.user_id = users[0].key().id()
                 session.ip = os.environ["REMOTE_ADDR"]
                 session.cookie = hashlib.sha224(str(uuid.uuid4()) + str(random.random())).hexdigest()
                 session.user_agent = self.context.request.headers['User-Agent']
@@ -73,10 +85,13 @@ class AccountService(BaseService):
 
             return False, None
 
-    # update profile
-    # success: return True, user_name
-    # fail: return False, None
     def update_profile(self, name):
+        """
+        Update user's profile
+
+        @param name user's name
+        @returns True, user name / False, None
+        """
         # clear up input value
         if name is None: return False, None
         name = name.strip()
@@ -85,20 +100,21 @@ class AccountService(BaseService):
         if self.context.user is None: return False, None
 
         if len(name) > 0:
-            try:
-                user = UserModel().get_by_id(self.context.user.key().id())
-                user.name = name
-                user.put()
-                return True, name
-            except:
-                return False, None
+            user = UserModel().get_by_id(self.context.user.key().id())
+            user.name = name
+            user.put()
+            return True, name
 
         return False, None
 
-    # update password
-    # success: return True
-    # fail: return False
     def update_password(self, old_password, new_password):
+        """
+        Update user's password
+
+        @param old_password user's password now
+        @param new_password user's new password
+        @returns True / False
+        """
         # check auth
         if self.context.user is None: return False
 
@@ -113,7 +129,7 @@ class AccountService(BaseService):
                 return True
             else:
                 # search password from cache (for reset password
-                cache_key = MemcacheKey.forgot_password % str(user.key().id())
+                cache_key = MemcacheKey.forgot_password + str(user.key().id())
                 cache_value = memcache.get(key=cache_key)
                 if old_password_hash == cache_value:
                     memcache.delete(cache_key)
@@ -123,10 +139,13 @@ class AccountService(BaseService):
 
         return False
 
-    # invite user with email
-    # success: return UserModel
-    # fail: return None
     def invite_user(self, email):
+        """
+        Invite user to join Takanash with email
+
+        @param email invited user's email
+        @returns UserModel(new user) / None
+        """
         # clear up input value
         if email is None: return None
         email = email.strip().lower()
@@ -155,12 +174,17 @@ class AccountService(BaseService):
 
         return user
 
-    # resend invite email to pending user
-    # success: return True
-    # fail: return False
     def resend_email_to_pending_user(self, user_id):
+        """
+        Resend invite email to pending user
+
+        @param user_id target user id
+        @returns True / False
+        """
         # check auth
-        if self.context.user is None: return None
+        if self.context.user is None: return False
+        try: user_id = long(user_id)
+        except: return False
 
         user = UserModel.get_by_id(user_id)
         if user and user.level == UserLevel.pending:
@@ -178,10 +202,14 @@ class AccountService(BaseService):
 
         return False
 
-    # generate a temporary password
-    # success: return True
-    # fail: return False
     def forgot_password(self, email):
+        """
+        Generate a temporary password for user.
+        this password will be send in email, and it is stored in memory cache.
+
+        @param email user' email
+        @returns True / False
+        """
         # clear up input value
         if email is None: return False
         email = email.strip().lower()
@@ -203,10 +231,12 @@ class AccountService(BaseService):
 
         return True
 
-    # get all my sessions
-    #   success: return [session]
-    #   failed: return []
     def get_sessions(self):
+        """
+        Get all my sessions
+
+        returns [session{ id, is_current, user_agent, create_time }] / []
+        """
         if self.context.user is None: return []
 
         sessions = db.GqlQuery('select * from SessionModel where user_id = :1 order by create_time DESC', self.context.user.key().id())
@@ -220,12 +250,16 @@ class AccountService(BaseService):
 
         return result
 
-    # logout
-    #   success: return True
-    #   failed: return False
     def logout(self, session_id=None):
+        """
+        Logout with session_id or current session
+
+        @param session_id sign out target session, none will sign out current session.
+        @returns True / False
+        """
         if self.context.user is None: return False
-        session_id = long(session_id)
+        try: session_id = long(session_id)
+        except: return False
 
         cookie = str(self.context.request.cookies.get(config.cookie_auth))
         if session_id == 0:
