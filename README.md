@@ -30,7 +30,7 @@ application: takanashi-demo
 domain = 'takanashi-demo.appspot.com'
 
 # this account is for send email. it should be your gae account.
-gae_account = 'kelp.phate@gmail.com'
+gae_account = 'your-name@gmail.com'
 
 # root user. it will be create while no account in the application.
 default_account_email = 'kelp@phate.org'
