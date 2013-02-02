@@ -7,10 +7,10 @@ cookie_auth = 'takanashi_auth'
 domain = 'takanashi-demo.appspot.com'
 
 # this account is for send email. it should be your gae account.
-gae_account = 'your-name@gmail.com'
+gae_account = 'kelp.phate@gmail.com'
 
 # root user. it will be create while no account in the application.
-default_account_email = 'kelp@phate.org'
+default_account_email = 'demo@phate.org'
 default_account_name = 'Kelp'
 # takanashi use sha256 to hash password
 #   import hashlib

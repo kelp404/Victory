@@ -13,6 +13,41 @@ Your app could send error information to Takanashi with RESTful API.
 <img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot00.png' height='378px' width='850px' />
 
 
+##Demo
+url: https://takanashi-demo.appspot.com  
+account: demo@phate.org  
+password: password  
+  
+**post handled exception**
+get application key  
+https://takanashi-demo.appspot.com/settings/applications  
+```JavaScript
+// post test data with jQuery.
+$.ajax({
+    type: 'post',
+    url:'/api/v1/exception/714457c7-5222-48da-b445-e7d97ee174a9',
+    contentType: "application/json; charset=utf-8",
+    data: JSON.stringify({
+        title:'load data error',
+        name:'Kelp',
+        email:'demo@phate.org',
+        description: "web service error",
+        version: "1.0",
+        device: "iPhone3,1",
+        os_version: "6.1",
+        access_token: "0123120592",
+        timeout: "30",
+        method: "POST",
+        url: "http://webservice.com/api/members",
+        parameters: "user_id=10",
+        status: "500",
+    })
+})
+```
+<img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot02.png' height='599px' width='850px' />
+
+
+
 ##Deploy
 You should create a GAE account.  
 https://appengine.google.com  
@@ -29,7 +64,7 @@ application: takanashi-demo
 # web site domain. your gae application domain.
 domain = 'takanashi-demo.appspot.com'
 
-# this account is for send email. it should be your gae account.
+# this account is for sending email. it should be your gae account.
 gae_account = 'your-name@gmail.com'
 
 # root user. it will be create while no account in the application.
@@ -46,7 +81,7 @@ You could use SDK to upload files.
 And last you should use terminal to deploy backends (SDK does not deploy backends).  
 ```
 appcfg.py backends takanashi/ update
-* takanashi is the folder name of project
+* takanashi is the folder name of the project
 ```
 
 ref:  
@@ -89,8 +124,7 @@ https://developers.google.com/appengine/downloads
 
 
 ##Send Email on Google App Engine SDK (localhost
-If you would to send email on localhost with GAE SDK, you should change application settings.  
-Or you will get some message.  
+If you would to send email on localhost with GAE SDK, you should change application settings, else you will get some message.  
 ```
 INFO     2013-01-30 03:28:17,547 mail_stub.py:138] MailService.Send
   From: kelp[at]phate.org

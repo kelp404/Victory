@@ -118,6 +118,9 @@ class AccountService(BaseService):
         # check auth
         if self.context.user is None: return False
 
+        # for demo web site, lock root password on takanashi-demo.appspot.com
+        if config.domain == 'takanashi-demo.appspot.com' and self.context.user.level == UserLevel.root: return False
+
         if self.context.user and old_password is not None and len(old_password) > 0 \
             and new_password is not None and len(new_password) > 0:
             old_password_hash = hashlib.sha256(old_password).hexdigest()
