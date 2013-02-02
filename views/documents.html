@@ -34,7 +34,15 @@
             <tbody>
                 {% set index = 0 %}
                 {% for item in result %}
-                    <tr data-toggle="modal" href="#document{{ index }}"><td>{{ ''|default(item.status, item.status) }}</td><td>{{ ''|default(item.description, item.description) }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td></tr>
+                    <tr data-toggle="modal" href="#document{{ index }}">
+                        <td>{{ ''|default(item.status, item.status) }}</td>
+                        {% if item.description %}
+                            <td>{{ item.description }}</td>{% elif item.parameters %}
+                            <td>Parameters: {{ item.parameters }}</td>{% else %}
+                            <td>URL: {{ item.url }}</td>
+                        {% endif %}
+                        <td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td>
+                    </tr>
                     {% set index = index + 1 %}
                 {% endfor %}
             </tbody>
