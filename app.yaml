@@ -21,7 +21,7 @@ skip_files:
 - \.gitignore
 - ^\.git/.*
 - \.*\.lint$
-
+- ^_images/.*
 
 handlers:
 - url: /favicon\.ico

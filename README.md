@@ -18,8 +18,8 @@ url: https://takanashi-demo.appspot.com
 account: demo@phate.org  
 password: password  
   
-**post handled exception**
-get application key  
+**post handled exception**  
+go to application page then get application key:  
 https://takanashi-demo.appspot.com/settings/applications  
 ```JavaScript
 // post test data with jQuery.
