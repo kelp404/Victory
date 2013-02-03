@@ -123,7 +123,7 @@ https://developers.google.com/appengine/downloads
 ```
 
 
-##close mini profiler  
+##Close mini profiler  
 update `/gae_mini_profiler/config.py`  
 ```Python
 # Default, mini profiler will work when user is admin
