@@ -8,25 +8,18 @@ from handlers.web_service_handler import *
 _routes = [
     RedirectRoute('/', DocumentHandler, name='exception_group', strict_slash=True),
 
-    # Login, Reset password
+    # Login
     RedirectRoute('/login', LoginHandler, name='login', strict_slash=True),
-    RedirectRoute('/forgot_password', ForgotPasswordHandler, name='forgot_password', strict_slash=True),
-    RedirectRoute('/users/<user_id>/reinvite', ReInviteHandler, name='re_invite', strict_slash=True),
 
     # Settings
     RedirectRoute('/settings', RedirectToApplicationHandler, name='settings_apps', strict_slash=True),
     RedirectRoute('/settings/profile', ProfileHandler, name='settings_profile', strict_slash=True),
-    RedirectRoute('/settings/password', PasswordHandler, name='settings_password', strict_slash=True),
 
     # Applications
     RedirectRoute('/settings/applications', ApplicationsHandler, name='settings_apps', strict_slash=True),
     RedirectRoute('/settings/applications/<application_id>', ApplicationsHandler, name='settings_app', strict_slash=True),
     RedirectRoute('/settings/applications/<application_id>/invite', ApplicationInviteHandler, name='settings_app_invite', strict_slash=True),
     RedirectRoute('/settings/applications/<application_id>/members/<member_id>', ApplicationMemberHandler, name='settings_app_member', strict_slash=True),
-
-    # Sessions
-    RedirectRoute('/settings/sessions', SessionsHandler, name='settings_sessions', strict_slash=True),
-    RedirectRoute('/settings/sessions/<session_id>', SessionsHandler, name='settings_sessions', strict_slash=True),
 
     # Users
     RedirectRoute('/settings/users', UsersHandler, name='settings_users', strict_slash=True),

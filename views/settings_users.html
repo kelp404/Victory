@@ -18,16 +18,15 @@
             </form>
 
             {# users content #}
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover table-content">
                 <thead>
-                    <tr><td class="span2">Name</td><td>Email</td><td class="span3">Create Time</td><td class="span2"></td></tr>
+                    <tr><td style="width: 140px;">Name</td><td>Email</td><td style="width: 140px;">Create Time</td><td class="span2"></td></tr>
                 </thead>
                 <tbody>
                     {% for item in result %}
                         <tr>
                             <td>{{ item.name }}</td><td>{{ item.email }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td>
                             <td>
-                                {% if item.is_pending %}<a href="/users/{{ item.user_id }}/reinvite#" class="reinvite" rel="tooltip" title="This account is pending.">send-email</a>{% endif %}
                                 {% if item.is_deletable %}<a href="/settings/users/{{ item.user_id }}#" class="delete_user">Delete</a>{% endif %}
                             </td>
                         </tr>

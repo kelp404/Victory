@@ -30,41 +30,6 @@ class ProfileHandler(BaseHandler):
         return self.json({ 'success': success, 'name': name })
 
 
-# get change password page, update password
-class PasswordHandler(BaseHandler):
-    def get(self):
-        self.view_model['title'] = 'Change Password - '
-        return self.render_template('settings_password.html', **self.view_model)
-
-    # update password
-    def put(self):
-        rq = copy.copy(self.request)
-        rq.method = 'POST'
-        old_password = rq.get('old_password')
-        new_password = rq.get('new_password')
-        confirm_password = rq.get('confirm_password')
-
-        if new_password == confirm_password:
-            acs = AccountService(self.context)
-            success = acs.update_password(old_password, new_password)
-        else:
-            success = False
-
-        self.json({ 'success': success })
-
-
-class SessionsHandler(BaseHandler):
-    def get(self):
-        self.view_model['title'] = 'Sessions - '
-        acs = AccountService(self.context)
-        self.view_model['result'] = acs.get_sessions()
-        return self.render_template('settings_sessions.html', **self.view_model)
-
-    def delete(self, session_id):
-        acs = AccountService(self.context)
-        self.json({ 'success': acs.logout(session_id) })
-
-
 class UsersHandler(BaseHandler):
     """
     Users management

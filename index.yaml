@@ -22,10 +22,3 @@ indexes:
   - name: group_tag
   - name: create_time
     direction: desc
-
-# for account service .get_sessions()
-- kind: SessionModel
-  properties:
-  - name: user_id
-  - name: create_time
-    direction: desc

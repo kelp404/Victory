@@ -41,7 +41,7 @@
 
 
             {# applications content #}
-            <table class="table table-bordered table-hover content-table">
+            <table class="table table-bordered table-hover table-content table-pointer">
                 <thead>
                     <tr><td class="span2">Name</td><td>Description</td><td class="span3">Create Time</td></tr>
                 </thead>
@@ -86,9 +86,6 @@
                                 {% for member in item.members %}
                                     <div>
                                         <span rel="tooltip" title="{{ member.name }}">{{ member.email }}</span>
-                                        {% if member.is_pending %}
-                                            <a href="/users/{{ member.id }}/reinvite#" class="reinvite" rel="tooltip" title="This account is pending.">send-email</a>
-                                        {% endif %}
                                         {% if item.is_owner and not member.is_owner %}
                                             {# if i am owner and the member(in loop) is not owner #}
                                             <a href="/settings/applications/{{ item.id }}/members/{{ member.id }}#" class="delete_viewer" rel="tooltip" title="Remove from this application.">delete</a>

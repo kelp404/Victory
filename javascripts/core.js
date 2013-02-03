@@ -73,7 +73,6 @@ var noop = function () { };
 var takanashi = takanashi || {
     text_loading: 'Loading...',
     is_ie: false,
-    cookie_auth: 'takanashi_auth',
     get_url_vars: function (key) {
         var result;
         var parts = location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,skey,value) {
@@ -279,78 +278,6 @@ var takanashi = takanashi || {
 
     // events of views ←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙
     register_event_account: {
-        login: function () {
-            // login
-            //  url = $(this).attr('action')
-            //  data = $(this).serialize()
-            $(document).on('submit', 'form#form_login', function () {
-                if (!takanashi.validation($(this))) { return false; }
-
-                $.ajax({ type: 'post', url: $(this).attr('action'), dataType: 'json', cache: false,
-                    data: $(this).serialize(),
-                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
-                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
-                    success: function (result) {
-                        takanashi.loading_off();
-                        if (result.success) {
-                            $.cookie(takanashi.cookie_auth, result.cookie, { expires: 365, path: '/' });
-                            location.reload();
-                        }
-                        else {
-                            KNotification.pop({ 'title': 'Sign In Failed !!', 'message': 'Please check again.' });
-                            $('#account').closest('.control-group').addClass('error');
-                            $('#password').closest('.control-group').addClass('error');
-                            $('#account').focus();
-                        }
-                    }
-                });
-
-                return false;
-            });
-        },
-        logout: function () {
-            // logout
-            //  url = $(this).attr('href')
-            $(document).on('click', 'a.logout', function () {
-                $.ajax({ type: 'delete', url: $(this).attr('href'), dataType: 'json', cache: false,
-                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
-                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
-                    success: function (result) {
-                        takanashi.loading_off();
-                        if (result.success) {
-                            $.removeCookie(takanashi.cookie_auth, { 'path': '/' });
-                            location.reload();
-                        }
-                        else {
-                            KNotification.pop({ 'title': 'Sign Out Failed !!', 'message': 'Please check again.' });
-                        }
-                    }
-                });
-
-                return false;
-            });
-        },
-        delete_session: function () {
-            // delete session
-            //  url = $(this).attr('href')
-            $(document).on('click', 'a.delete_session', function () {
-                $.ajax({ type: 'delete', url: $(this).attr('href'), dataType: 'json', cache: false,
-                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
-                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
-                    success: function (result) {
-                        takanashi.loading_off();
-                        if (result.success) {
-                            takanashi.miko({ href: location.href }, false);
-                        }
-                        else {
-                            KNotification.pop({ 'title': 'Sign Out Failed !!', 'message': 'Please check again.' });
-                        }
-                    }
-                });
-
-                return false;
-            });
-        },
         update_profile: function () {
             // update profile
             //  url = $(this).attr('action')
@@ -368,89 +295,6 @@ var takanashi = takanashi || {
                             KNotification.pop({ 'title': 'Success!', 'message': 'Data had be Saved.' });
                             $('#name').val(result.name);
                             $($('.profile p')[0]).text(result.name);
-                        }
-                        else {
-                            KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });
-                        }
-                    }
-                });
-
-                return false;
-            });
-        },
-        update_password: function () {
-            // update password
-            //  url = $(this).attr('action')
-            //  data = $(this).serialize()
-            $(document).on('submit', 'form#form_password', function () {
-                if (!takanashi.validation($(this))) { return false; }
-
-                if ($('#new_password').val().length == 0 || $('#new_password').val() != $('#confirm_password').val()) {
-                    $('#new_password').parent().addClass('error');
-                    $('#confirm_password').parent().addClass('error');
-                    return false;
-                }
-
-                $.ajax({ type: 'put', url: $(this).attr('action'), dataType: 'json', cache: false,
-                    data: $(this).serialize(),
-                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
-                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
-                    success: function (result) {
-                        takanashi.loading_off();
-                        if (result.success) {
-                            KNotification.pop({ 'title': 'Success!', 'message': 'Data had be Saved.' });
-                            var $old_password = $('#old_password');
-                            $old_password.parent().removeClass('error');
-                            $old_password.val('');
-                            $('#new_password').val('');
-                            $('#confirm_password').val('');
-                        }
-                        else {
-                            $('#old_password').parent().addClass('error');
-                            KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });
-                        }
-                    }
-                });
-
-                return false;
-            });
-        },
-        forgot_password: function () {
-            // forgot password
-            //  url = $(this).attr('href')
-            $(document).on('click', 'a#forgot_password', function () {
-                if (!takanashi.validation($('#account').closest('.control-group'))) { $('#account').select(); return false; }
-
-                $.ajax({ type: 'post', url: $(this).attr('href'), dataType: 'json', cache: false,
-                    data: { account: $('#account').val() },
-                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
-                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
-                    success: function (result) {
-                        takanashi.loading_off();
-                        if (result.success) {
-                            KNotification.pop({ 'title': 'Success!', 'message': 'Please check your email.' });
-                        }
-                        else {
-                            $('#account').closest('.control-group').addClass('error');
-                            KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });
-                        }
-                    }
-                });
-
-                return false;
-            });
-        },
-        resend_email_to_pending_user: function () {
-            // resend email to pending user
-            //  url = $(this).attr('href')
-            $(document).on('click', 'a.reinvite', function () {
-                $.ajax({ type: 'post', url: $(this).attr('href'), dataType: 'json', cache: false,
-                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
-                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
-                    success: function (result) {
-                        takanashi.loading_off();
-                        if (result.success) {
-                            KNotification.pop({ 'title': 'Success!', 'message': 'The email has been sent.' });
                         }
                         else {
                             KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });

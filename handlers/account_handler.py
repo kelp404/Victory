@@ -1,7 +1,7 @@
 
 
 from handlers.base_handler import BaseHandler
-from services.account_service import AccountService
+from google.appengine.api import users
 import logging
 
 
@@ -12,33 +12,6 @@ class LoginHandler(BaseHandler):
             return
 
         self.view_model['title'] = 'Sign in - '
+        self.view_model['login_url'] = users.create_login_url()
         return self.render_template('login.html', **self.view_model)
 
-    def post(self):
-        """
-        login
-        """
-        if self.user is not None:
-            self.redirect('/')
-            return
-
-        account = self.request.get('account')
-        password = self.request.get('password')
-
-        acs = AccountService(self.context)
-        success, cookie = acs.login(account, password)
-        return self.json({ 'success': success, 'cookie': cookie })
-
-
-class ReInviteHandler(BaseHandler):
-    def post(self, user_id):
-        acs = AccountService(self.context)
-        self.json({ 'success': acs.resend_email_to_pending_user(user_id) })
-
-
-class ForgotPasswordHandler(BaseHandler):
-    def post(self):
-        email = self.request.get('account')
-
-        acs = AccountService(self.context)
-        return self.json({ 'success': acs.forgot_password(email) })

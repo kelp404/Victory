@@ -33,7 +33,7 @@ class ApplicationService(BaseService):
                 members = [self.__get_member_for_application(self.context.user, True)]
                 if self.context.user.key().id() != item.owner:
                     members.append(self.__get_member_for_application(UserModel().get_by_id(item.owner), True))
-                for user_id in item.viewer:
+                for user_id in [x for x in item.viewer if x != self.context.user.key().id()]:
                     user = UserModel().get_by_id(user_id)
                     if user:
                         members.append(self.__get_member_for_application(user, False))
@@ -48,7 +48,7 @@ class ApplicationService(BaseService):
                 members = [self.__get_member_for_application(owner, False)]
                 for user_id in item.viewer:
                     user = UserModel().get_by_id(user_id)
-                    if user:
+                    if user and user.level != UserLevel.root:
                         members.append(self.__get_member_for_application(user, user.key().id() == self.context.user.key().id()))
                 app['members'] = members
             result.append(app)
@@ -57,8 +57,7 @@ class ApplicationService(BaseService):
         result = {'name': user.name,
                   'email': user.email,
                   'id': user.key().id(),
-                  'is_owner': is_owner,
-                  'is_pending': user.level == UserLevel.pending}
+                  'is_owner': is_owner}
         return result
 
     def is_my_application(self, application_id, check_is_owner=False):

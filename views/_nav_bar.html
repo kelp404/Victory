@@ -5,7 +5,8 @@
         {% if user %}
             <div class="profile">
                 <p rel="tooltip" title="{{ user.email }}" data-placement="bottom">{{ user.name }}</p>
-                <p><a href="/settings/sessions/0#" class="logout">Sign Out</a></p>
+                {% if google_logout_url %}<p><a href="{{ google_logout_url }}#">Sign Out</a></p>{% else %}
+                <p><a href="/settings/sessions/0#" class="logout">Sign Out</a></p>{% endif %}
             </div>
         {% endif %}
 

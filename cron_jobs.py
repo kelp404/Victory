@@ -1,21 +1,11 @@
 
 import webapp2
-from data_models.session_model import *
-from data_models.log_model import *
-from data_models.exception_model import *
 from google.appengine.ext import db
 from google.appengine.api import search
 import datetime
 import config
 import logging
 
-# clear session data
-class ClearSessionsHandler(webapp2.RequestHandler):
-    def get(self):
-        date_tag = datetime.datetime.now() - datetime.timedelta(days=config.session_expiration)
-        sessions = db.GqlQuery('select * from SessionModel where create_time < :1', date_tag)
-        for session in sessions:
-            session.delete()
 
 # clear document data
 class ClearDocumentsHandler(webapp2.RequestHandler):
@@ -48,6 +38,5 @@ class ClearDocumentsHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/cron_jobs/session', ClearSessionsHandler),
     ('/cron_jobs/document', ClearDocumentsHandler)
 ])

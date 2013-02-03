@@ -1,26 +1,18 @@
 app_name = 'Takanashi'
 
-# login cookie name
-cookie_auth = 'takanashi_auth'
-
 # web site domain. your gae application domain.
 domain = 'takanashi-demo.appspot.com'
+
+# Takanashi use Google Account API
+# The first signing in user is root.
+# if allow_register is true, every one could use Google Account to sign in Takanashi.
+allow_register = True
 
 # this account is for send email. it should be your gae account.
 gae_account = 'kelp.phate@gmail.com'
 
-# root user. it will be create while no account in the application.
-default_account_email = 'demo@phate.org'
-default_account_name = 'Kelp'
-# takanashi use sha256 to hash password
-#   import hashlib
-#   hashlib.sha256('password').hexdigest()
-default_account_password = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
-
 # delete documents after x days
 document_expiration = 30
-# delete session after x days
-session_expiration = 30
 
 # data result pager size
 page_size = 20

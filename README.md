@@ -15,8 +15,6 @@ Your app could send error information to Takanashi with RESTful API.
 
 ##Demo
 url: https://takanashi-demo.appspot.com  
-account: demo@phate.org  
-password: password  
   
 **post handled exception**  
 go to application page then get application key:  
@@ -67,14 +65,13 @@ domain = 'takanashi-demo.appspot.com'
 # this account is for sending email. it should be your gae account.
 gae_account = 'your-name@gmail.com'
 
-# root user. it will be create while no account in the application.
-default_account_email = 'kelp@phate.org'
-default_account_name = 'Kelp'
-default_account_password = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'
-# takanashi use sha256 to hash password
-#   import hashlib
-#   hashlib.sha256('password').hexdigest()
+
+# Takanashi use Google Account API
+# The first signing in user is root.
+# if allow_register is true, every one could use Google Account to sign in Takanashi.
+allow_register = True
 ```
+
 
 ###deploy project
 Upload files with SDK.  
@@ -126,6 +123,18 @@ https://developers.google.com/appengine/downloads
 ```
 
 
+##close mini profiler  
+update `/gae_mini_profiler/config.py`  
+```Python
+# Default, mini profiler will work when user is admin
+# close mini profiler:
+
+def _should_profile_production_default():
+    return False
+```
+ref: https://github.com/kamens/gae_mini_profiler
+
+
 
 ##Send Email on Google App Engine SDK (localhost
 If you would to send email on localhost with GAE SDK, you should change application settings, else you will get some message.  
@@ -148,5 +157,4 @@ Then open terminal.
 ```
 sudo ln -s /usr/sbin/sendmail /usr/bin/sendmail
 ```
-ref: 
-http://stackoverflow.com/questions/1900029/google-app-engine-sendmail-command-not-found
+ref: http://stackoverflow.com/questions/1900029/google-app-engine-sendmail-command-not-found

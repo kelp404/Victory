@@ -8,6 +8,7 @@ from services.account_service import AccountService
 import logging
 import gae_mini_profiler
 from gae_mini_profiler.templatetags import profiler_includes
+from google.appengine.api import users
 
 
 def generate_csrf_token():
@@ -62,12 +63,13 @@ class BaseHandler(webapp2.RequestHandler):
         self.context = context()
         self.context.request = request
         self.context.response = response
-        
+
         # Authorization
         acs = AccountService(self.context)
-        self.user = acs.authorization(str(request.cookies.get(config.cookie_auth)))
+        self.user = acs.authorization()
         self.context.user = self.user
         self.view_model['user'] = self.user
+        self.view_model['google_logout_url'] = users.create_logout_url('/')
 
         # miko framework
         self.miko = 'X-Miko' in request.headers
@@ -79,7 +81,6 @@ class BaseHandler(webapp2.RequestHandler):
         # do not redirect without login
         if self.user is None \
             and request.route.name != 'login' \
-            and request.route.name != 'forgot_password' \
             and request.route.name[:4] != 'api_' \
             and request.route.name[:10] != 'task_queue':
             self.abort(302, location='/login')

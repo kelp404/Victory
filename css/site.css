@@ -186,8 +186,8 @@ a:hover { text-decoration: underline; color: #3d85c6; }
 }
 /* table */
 .table { table-layout:fixed; }
-.content-table tbody td { white-space: nowrap; overflow: hidden; text-overflow:ellipsis; }
-.content-table tbody tr { cursor: pointer; }
+.table-content tbody td { white-space: nowrap; overflow: hidden; text-overflow:ellipsis; }
+.table-pointer tbody tr { cursor: pointer; }
 .table>tbody>tr>td { vertical-align: middle; }
 .table pre { margin: 0; }
 .table td .control-group { margin-bottom: 0 }
