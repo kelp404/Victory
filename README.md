@@ -78,15 +78,14 @@ default_account_password = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11
 
 ###deploy project
 Upload files with SDK.  
-1. deploy  
-```
+**deploy**
+```Python
 appcfg.py update Takanashi/
-* takanashi is the folder name of the project
+* Takanashi is the folder name of the project
 ```
-2. deploy backends  
+**deploy backends**
 ```
 appcfg.py backends Takanashi/ update
-* takanashi is the folder name of the project
 ```
 
 ref:  
