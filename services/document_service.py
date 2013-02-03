@@ -144,11 +144,22 @@ class DocumentService(BaseService):
             return None
 
         if document_model == DocumentModel.exception:
+            cache_key = MemcacheKey.document + 'exception' + str(application_id) + group_tag
+            cache_value = memcache.get(key=cache_key)
+            if cache_value: return cache_value
             documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
         else:
+            cache_key = MemcacheKey.document + 'log' + str(application_id) + group_tag
+            cache_value = memcache.get(key=cache_key)
+            if cache_value: return cache_value
             documents = db.GqlQuery('select * from LogModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
 
-        for document in documents.fetch(1): return document.dict()
+        for document in documents.fetch(1):
+            cache_value = document.dict()
+            # 18000 = 5 hours
+            memcache.set(key=cache_key, value=document.dict(), time=18000)
+            return cache_value
+
         return None
 
     def add_document(self, key, document, document_model):

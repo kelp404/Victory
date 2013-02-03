@@ -6,9 +6,6 @@ from services.base_service import BaseService
 from google.appengine.ext import db
 from google.appengine.api import mail
 from google.appengine.api import users
-from models.memcache_key import *
-from google.appengine.api import memcache
-import hashlib, os, uuid, string, random
 import config
 import logging
 
