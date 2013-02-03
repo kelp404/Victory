@@ -134,11 +134,12 @@ var takanashi = takanashi || {
     },
     setup_link: function() {
         // link
-        $(document).on('click', 'a:not([href*="#"])', function () {
-            if ($(this).parent().hasClass('active')) {
-                // menu
-                return false;
-            }
+        $(document).on('click', 'a:not([href*="#"])', function (e) {
+            // menu
+            if ($(this).parent().hasClass('active')) { return false; }
+
+            // open in a new tab
+            if (e.metaKey) { return; }
 
             var href = $(this).attr('href');
             if (href && !$(this).attr('target')) {
