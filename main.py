@@ -1,8 +1,7 @@
 
-import os
-import webapp2
+import webapp2, os, routes
 import config
-import routes
+import gae_mini_profiler.profiler
 
 from handlers.base_handler import handle_error
 
@@ -14,3 +13,4 @@ if not app.debug:
     app.error_handlers[500] = handle_error
 routes.add_routes(app)
 
+app = gae_mini_profiler.profiler.ProfilerWSGIMiddleware(app)

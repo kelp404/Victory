@@ -1,14 +1,13 @@
 
-import logging
-import webapp2
-import json
+import webapp2, json
 from webapp2_extras import jinja2
 from webapp2_extras import sessions
 import config
 from models.context import *
-from data_models.session_model import  SessionModel
-from data_models.user_model import UserModel
 from services.account_service import AccountService
+import logging
+import gae_mini_profiler
+from gae_mini_profiler.templatetags import profiler_includes
 
 
 def generate_csrf_token():
@@ -55,11 +54,15 @@ def handle_error(request, response, exception):
 class BaseHandler(webapp2.RequestHandler):
     def __init__(self, request, response):
         self.initialize(request, response)
-        self.view_model = { 'title': '', 'title_prefix': config.app_name }
+        self.view_model = {
+            'title': '',
+            'title_prefix': config.app_name,
+            "profiler_includes": gae_mini_profiler.templatetags.profiler_includes()
+        }
         self.context = context()
         self.context.request = request
         self.context.response = response
-
+        
         # Authorization
         acs = AccountService(self.context)
         self.user = acs.authorization(str(request.cookies.get(config.cookie_auth)))

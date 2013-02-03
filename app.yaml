@@ -39,6 +39,11 @@ handlers:
 - url: /imgs/
   static_dir: static/imgs
 
+- url: /gae_mini_profiler/static
+  static_dir: gae_mini_profiler/static
+- url: /gae_mini_profiler/.*
+  script: gae_mini_profiler.main.application
+
 - url: /cron_jobs/.*
   script: cron_jobs.app
   login: admin
