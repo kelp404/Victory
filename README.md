@@ -86,6 +86,7 @@ appcfg.py update Takanashi/
 2. deploy backends  
 ```
 appcfg.py backends Takanashi/ update
+* takanashi is the folder name of the project
 ```
 
 ref:  
