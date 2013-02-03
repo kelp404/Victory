@@ -1,6 +1,8 @@
 
 from data_models.user_model import *
 from data_models.session_model import *
+from models.session_view_model import *
+from models.user_view_model import *
 from services.base_service import BaseService
 from google.appengine.ext import db
 from google.appengine.api import mail
@@ -84,6 +86,32 @@ class AccountService(BaseService):
                 return True, session.cookie
 
             return False, None
+
+    def logout(self, session_id=None):
+        """
+        Logout with session_id or current session
+
+        @param session_id sign out target session, none will sign out current session.
+        @returns True / False
+        """
+        try: session_id = long(session_id)
+        except: return False
+
+        # check auth
+        if self.context.user is None: return False
+
+        cookie = str(self.context.request.cookies.get(config.cookie_auth))
+        if session_id == 0:
+            # logout current session
+            sessions = db.GqlQuery('select * from SessionModel where cookie = :1 limit 1', cookie)
+            sessions[0].delete()
+        else:
+            # logout the other session
+            session = SessionModel().get_by_id(session_id)
+            if session is None or session.user_id != self.context.user.key().id(): return False
+            session.delete()
+
+        return True
 
     def update_profile(self, name):
         """
@@ -239,7 +267,7 @@ class AccountService(BaseService):
         """
         Get all my sessions
 
-        returns [session{ id, is_current, user_agent, create_time }] / []
+        returns [SessionViewModel] / []
         """
         # check auth
         if self.context.user is None: return []
@@ -247,36 +275,70 @@ class AccountService(BaseService):
         sessions = db.GqlQuery('select * from SessionModel where user_id = :1 order by create_time DESC', self.context.user.key().id())
         result = []
         for session in sessions:
-            result.append({ 'id': session.key().id(),
-                            'is_current': session.cookie == str(self.context.request.cookies.get(config.cookie_auth)),
-                            'ip': session.ip,
-                            'user_agent': session.user_agent,
-                            'create_time': session.create_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')})
+            result.append(SessionViewModel(
+                session_id= session.key().id(),
+                is_current= session.cookie == str(self.context.request.cookies.get(config.cookie_auth)),
+                ip= session.ip,
+                user_agent= session.user_agent,
+                create_time= session.create_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                ))
 
         return result
 
-    def logout(self, session_id=None):
+    def get_users(self):
         """
-        Logout with session_id or current session
+        Get all users (for root)
 
-        @param session_id sign out target session, none will sign out current session.
+        @returns [UserViewModel] / []
+        """
+        # check auth
+        if self.context.user is None: return []
+        if self.context.user.level != UserLevel.root: return []
+
+        result = []
+        users = db.GqlQuery('select * from UserModel order by create_time')
+        for user in users:
+            result.append(UserViewModel(
+                user_id= user.key().id(),
+                is_root= user.level == UserLevel.root,
+                is_deletable= user.level != UserLevel.root,
+                is_pending= user.level == UserLevel.pending,
+                name= user.name,
+                email= user.email,
+                create_time= user.create_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            ))
+        return result
+
+    def delete_user(self, user_id):
+        """
+        Delete user with id (for root)
+
+        @param user_id user id
         @returns True / False
         """
-        try: session_id = long(session_id)
+        # clear input value
+        try: user_id = long(user_id)
         except: return False
 
         # check auth
         if self.context.user is None: return False
+        if self.context.user.level != UserLevel.root: return False
 
-        cookie = str(self.context.request.cookies.get(config.cookie_auth))
-        if session_id == 0:
-            # logout current session
-            sessions = db.GqlQuery('select * from SessionModel where cookie = :1 limit 1', cookie)
-            sessions[0].delete()
-        else:
-            # logout the other session
-            session = SessionModel().get_by_id(session_id)
-            if session is None or session.user_id != self.context.user.key().id(): return False
-            session.delete()
+        # delete self
+        if user_id == self.context.user.key().id(): return False
 
+        user = UserModel.get_by_id(user_id)
+        if user is None : return False
+
+        # delete relational from application
+        applications = db.GqlQuery('select * from ApplicationModel where viewer in :1', [user_id])
+        for application in applications:
+            application.viewer.remove(user_id)
+            application.put()
+        applications = db.GqlQuery('select * from ApplicationModel where owner = :1', user_id)
+        for application in applications:
+            application.delete()
+
+        # delete user
+        user.delete()
         return True

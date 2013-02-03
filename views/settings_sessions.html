@@ -8,7 +8,7 @@
             {% include 'menu_settings.html' %}
         </div>
 
-        <div class="span9">
+        <div class="span9" style="min-height: 200px;">
             <legend>Sessions</legend>
 
             {# sessions content #}
@@ -30,7 +30,7 @@
                             {% if item.is_current %}
                                 <span class="label label-info">current</span>
                             {% else %}
-                                <a href="/settings/sessions/{{ item.id }}#" class="btn btn-mini delete_session">sign out</a>
+                                <a href="/settings/sessions/{{ item.session_id }}#" class="btn btn-mini delete_session">sign out</a>
                             {% endif %}
                         </td></tr>
                 {% endfor %}

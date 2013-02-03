@@ -77,11 +77,15 @@ default_account_password = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11
 ```
 
 ###deploy project
-You could use SDK to upload files.  
-And last you should use terminal to deploy backends (SDK does not deploy backends).  
+Upload files with SDK.  
+1. deploy  
 ```
-appcfg.py backends takanashi/ update
+appcfg.py update Takanashi/
 * takanashi is the folder name of the project
+```
+2. deploy backends  
+```
+appcfg.py backends Takanashi/ update
 ```
 
 ref:  

@@ -1,0 +1,39 @@
+{% extends '_container.html' %}
+
+{% block content %}
+    <div class="row-fluid">
+
+        <div class="span3 menu">
+            {% set menu = 'users' %}
+            {% include 'menu_settings.html' %}
+        </div>
+
+        <div class="span9" style="min-height: 200px;">
+            <legend>Users</legend>
+
+            {# invite user button #}
+            <form id="form_add_user" action="/settings/users#" div class="input-append pull-right control-group" style="margin: -5px 0 10px 0">
+                <input type="text" name="email" validation="^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$" placeholder="email@gmail.com" />
+                <input type="submit" class="btn" value="Invite"/>
+            </form>
+
+            {# users content #}
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr><td class="span2">Name</td><td>Email</td><td class="span3">Create Time</td><td class="span2"></td></tr>
+                </thead>
+                <tbody>
+                    {% for item in result %}
+                        <tr>
+                            <td>{{ item.name }}</td><td>{{ item.email }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td>
+                            <td>
+                                {% if item.is_pending %}<a href="/users/{{ item.user_id }}/reinvite#" class="reinvite" rel="tooltip" title="This account is pending.">send-email</a>{% endif %}
+                                {% if item.is_deletable %}<a href="/settings/users/{{ item.user_id }}#" class="delete_user">Delete</a>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

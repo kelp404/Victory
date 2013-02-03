@@ -65,27 +65,60 @@ class SessionsHandler(BaseHandler):
         self.json({ 'success': acs.logout(session_id) })
 
 
-# applications handler
-class ApplicationsHandler(BaseHandler):
-    # list applications
+class UsersHandler(BaseHandler):
+    """
+    Users management
+    """
     def get(self):
+        """
+        List users
+        """
+        acs = AccountService(self.context)
+        self.view_model['result'] = acs.get_users()
+        return self.render_template('settings_users.html', **self.view_model)
+
+    def post(self):
+        """
+        Invite user
+        """
+        email = self.request.get('email')
+        acs = AccountService(self.context)
+        self.json({ 'success': acs.invite_user(email) is not None })
+
+    def delete(self, user_id):
+        """
+        Delete user
+        """
+        acs = AccountService(self.context)
+        self.json({ 'success': acs.delete_user(user_id) })
+
+
+class ApplicationsHandler(BaseHandler):
+    def get(self):
+        """
+        List applications
+        """
         self.view_model['title'] = 'Applications - '
 
         aps = ApplicationService(self.context)
         self.view_model['result'] = aps.get_applications(True)
 
-        return self.render_template('settings_application.html', **self.view_model)
+        return self.render_template('settings_applications.html', **self.view_model)
 
     def post(self):
-    # add a new application
+        """
+        Add a new application
+        """
         name = self.request.get('name')
         description = self.request.get('description')
 
         aps = ApplicationService(self.context)
         self.json({ 'success': aps.add_application(name, description) })
 
-    # update a application
     def put(self, application_id):
+        """
+        Update the application (name, description)
+        """
         try: application_id = long(application_id)
         except:
             self.json({ 'success': False })
@@ -111,7 +144,7 @@ class ApplicationsHandler(BaseHandler):
 class ApplicationInviteHandler(BaseHandler):
     def post(self, application_id):
         """
-        invite user to join application
+        invite user to join the application
         """
         email = self.request.get('email')
         try: application_id = long(application_id)
@@ -121,6 +154,11 @@ class ApplicationInviteHandler(BaseHandler):
 
         acs = AccountService(self.context)
         aps = ApplicationService(self.context)
+
+        # am I owner?
+        if not aps.is_my_application(application_id, True):
+            self.json({ 'success': False })
+            return
 
         # invite user
         user = acs.invite_user(email)

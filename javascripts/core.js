@@ -546,10 +546,10 @@ var takanashi = takanashi || {
                     success: function (result) {
                         takanashi.loading_off();
                         if (result.success) {
-                            takanashi.miko({ 'href': '/settings/applications' }, false);
+                            takanashi.miko({ href: location.href }, false);
                         }
                         else {
-                            KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });
+                            KNotification.pop({ title: 'Failed!', message: 'Please check again.' });
                         }
                     }
                 });
@@ -572,7 +572,7 @@ var takanashi = takanashi || {
                     success: function (result) {
                         takanashi.loading_off();
                         if (result.success) {
-                            takanashi.miko({ 'href': '/settings/applications' }, false);
+                            takanashi.miko({ href: location.href }, false);
                         }
                         else {
                             KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });
@@ -597,14 +597,64 @@ var takanashi = takanashi || {
                     success: function (result) {
                         takanashi.loading_off();
                         if (result.success) {
-                            takanashi.miko({ 'href': '/settings/applications' }, false);
+                            takanashi.miko({ href: location.href }, false);
                         }
                         else {
-                            KNotification.pop({ 'title': 'Failed!', 'message': 'Please check again.' });
+                            KNotification.pop({ title: 'Failed!', message: 'Please check again.' });
                         }
                     }
                 });
                 $($(this).closest('.modal')).modal('hide');
+
+                return false;
+            });
+        }
+    },
+    register_event_user: {
+        add_user: function () {
+            // add a new user to Takanashi
+            //  url = $(this).attr('action')
+            //  data = $(this).serialize()
+            $(document).on('submit', 'form#form_add_user', function () {
+                if (!takanashi.validation($(this))) { return false; }
+
+                $.ajax({ type: 'post', url: $(this).attr('action'), dataType: 'json', cache: false,
+                    data: $(this).serialize(),
+                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
+                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
+                    success: function (result) {
+                        takanashi.loading_off();
+                        if (result.success) {
+                            takanashi.miko({ href: location.href }, false);
+                        }
+                        else {
+                            KNotification.pop({ title: 'Failed!', message: 'Please check again.' });
+                        }
+                    }
+                });
+
+                return false;
+            });
+        },
+        delete_user: function () {
+            // delete the user
+            //  url = $(this).attr('href')
+            $(document).on('click', 'a.delete_user', function () {
+                if (!takanashi.validation($(this))) { return false; }
+
+                $.ajax({ type: 'delete', url: $(this).attr('href'), dataType: 'json', cache: false,
+                    beforeSend: function () { takanashi.loading_on(takanashi.text_loading); },
+                    error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
+                    success: function (result) {
+                        takanashi.loading_off();
+                        if (result.success) {
+                            takanashi.miko({ href: location.href }, false);
+                        }
+                        else {
+                            KNotification.pop({ title: 'Failed!', message: 'Please check again.' });
+                        }
+                    }
+                });
 
                 return false;
             });

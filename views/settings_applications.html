@@ -1,20 +1,20 @@
 {% extends '_container.html' %}
 
 {% block content %}
-    <div class="row-fluid" xmlns="http://www.w3.org/1999/html">
+    <div class="row-fluid">
 
         <div class="span3 menu">
             {% set menu = 'applications' %}
             {% include 'menu_settings.html' %}
         </div>
 
-        <div class="span9">
+        <div class="span9" style="min-height: 200px;">
             <legend>Applications</legend>
 
             {# add button #}
             <div class="input-append pull-right" style="margin: -5px 0 10px 0">
                 <input class="appended_input_application" type="text" />
-                <a href="#form_add_application" data-toggle="modal" class="btn" placeholder=".span3">Add</a>
+                <a href="#form_add_application" data-toggle="modal" class="btn">Add</a>
             </div>
 
             {# add an application form #}
@@ -47,8 +47,7 @@
                 </thead>
                 <tbody>
                     {% for item in result %}
-                        {% set description = item.description|default('', item.description == None) %}
-                        <tr data-toggle="modal" href="#application{{ item.id }}"><td>{{ item.name }}</td><td>{{ description }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td></tr>
+                        <tr data-toggle="modal" href="#application{{ item.id }}"><td>{{ item.name }}</td><td>{{ ''|default(item.description, item.description) }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -111,9 +110,10 @@
                             </div>
 
                             <a class="btn btn-danger delete_application" application_name="{{ item.name }}" style="color: #ffffff" href="/settings/applications/{{ item.id }}#" application_id="{{ item.id }}">Delete</a>
+                            <input type="submit" class="btn" value="Save"/>
+                        {% else %}
+                            <a class="btn" data-dismiss="modal">Close</a>
                         {% endif %}
-
-                        <input type="submit" class="btn" value="Save"/>
                     </div>
                 </form>
             {% endfor %}
