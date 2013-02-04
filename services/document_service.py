@@ -46,7 +46,7 @@ class DocumentService(BaseService):
                 if len(minus) > 0:
                     keyword = ' '.join(minus)
                     query_string = query_string + ' AND NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
-            cache_key = MemcacheKey.document_search + str(document_model) + str(application_id)
+            cache_key = MemcacheKey.document_search(application_id, document_model)
             cache_value = memcache.get(key=cache_key)
             if cache_value and keyword + str(index) in cache_value:
                 # return from cache
@@ -128,6 +128,7 @@ class DocumentService(BaseService):
     def get_last_document(self, application_id, group_tag, document_model):
         """
         Get the last document with application id and group tag
+        (result maybe from cache
 
         @param application_id application id
         @param group_tag group tag md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
@@ -143,15 +144,12 @@ class DocumentService(BaseService):
         if not aps.is_my_application(application_id):
             return None
 
+        cache_key = MemcacheKey.document_detail(application_id, group_tag, DocumentModel.exception)
+        cache_value = memcache.get(key=cache_key)
+        if cache_value: return cache_value  # return data from cache
         if document_model == DocumentModel.exception:
-            cache_key = MemcacheKey.document + 'exception' + str(application_id) + group_tag
-            cache_value = memcache.get(key=cache_key)
-            if cache_value: return cache_value
             documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
         else:
-            cache_key = MemcacheKey.document + 'log' + str(application_id) + group_tag
-            cache_value = memcache.get(key=cache_key)
-            if cache_value: return cache_value
             documents = db.GqlQuery('select * from LogModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
 
         for document in documents.fetch(1):
@@ -211,7 +209,7 @@ class DocumentService(BaseService):
         model.put()
 
         # clear memory cache for document search
-        memcache.delete(MemcacheKey.document_search + str(document_model) + str(model.app_id))
+        memcache.delete(MemcacheKey.document_search(model.app_id, document_model))
 
 
         # post document to text search
@@ -225,7 +223,7 @@ class DocumentService(BaseService):
         # search
         options = search.QueryOptions(returned_fields = ['times'])
         query_string = 'app_id=%s AND group_tag=%s' % (model.app_id, model.group_tag)
-        cache_key = MemcacheKey.text_search_document + text_search_name + query_string
+        cache_key = MemcacheKey.document_add(query_string, document_model)
         cache_document = memcache.get(key=cache_key)
         if cache_document:
             # load document group from cache
