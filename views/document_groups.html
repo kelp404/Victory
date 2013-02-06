@@ -5,7 +5,7 @@
         <!-- search -->
         <form class="input-append pull-right" method="get" action="/{{ document_model }}_groups/{{ application_id }}">
             <input class="span3 focus" type="text" id="document_keyword" name="q" placeholder="search" value="{{ keyword }}"/>
-            <input type="submit" class="btn" value="Search" />
+            <input type="submit" class="btn" style="height: 30px;" value="Search" />
             {% if page.index == 0 %}{# previous page #}
                 <a href="#disabled" class="btn disabled" onclick="return false;">«</a>
             {% else %}
