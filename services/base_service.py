@@ -5,6 +5,7 @@ import logging
 class DocumentModel(object):
     exception = 1
     log = 2
+    crash = 3
 
 class BaseService(object):
     def __init__(self, context):

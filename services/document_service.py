@@ -1,5 +1,7 @@
 
 from data_models.exception_model import *
+from data_models.log_model import *
+from data_models.crash_model import *
 from services.base_service import *
 from services.application_service import *
 from utilities.value_injector import *
@@ -182,16 +184,22 @@ class DocumentService(BaseService):
         if document_model == DocumentModel.exception:
             # add a exception document
             model = ExceptionModel()
-        else:
+        elif document_model == DocumentModel.log:
             # add a log document
             model = LogModel()
+        else:
+            # add a crash document
+            model = CrashModel()
 
         # fixed input value
         ValueInjector.inject(model, document)
-        if model.parameters:
-            # remove password=\w*&
-            model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
-        if 'status' in document and model.status is None: model.status = str(document['status'])
+        if document_model == DocumentModel.crash:
+            model.report = document['report']
+        else:
+            if model.parameters:
+                # remove password=\w*&
+                model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
+            if 'status' in document and model.status is None: model.status = str(document['status'])
 
         # set create_time
         if 'create_time' in document and document['create_time']:
@@ -215,8 +223,10 @@ class DocumentService(BaseService):
         # post document to text search
         if document_model == DocumentModel.exception:
             text_search_name = 'ExceptionModel'
-        else:
+        elif document_model == DocumentModel.log:
             text_search_name = 'LogModel'
+        else:
+            text_search_name = 'CrashModel'
         index = search.Index(name=text_search_name)
 
         # check document exist with group_tag
@@ -246,7 +256,6 @@ class DocumentService(BaseService):
                                            search.TextField(name='email', value=model.email),
                                            search.TextField(name='name', value=model.name),
                                            search.TextField(name='title', value=model.title),
-                                           search.TextField(name='status', value=model.status),
                                            search.TextField(name='ip', value=model.ip),
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])

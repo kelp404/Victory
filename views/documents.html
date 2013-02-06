@@ -38,8 +38,9 @@
                         <td>{{ ''|default(item.status, item.status) }}</td>
                         {% if item.description %}
                             <td>{{ item.description }}</td>{% elif item.parameters %}
-                            <td>Parameters: {{ item.parameters }}</td>{% else %}
-                            <td>URL: {{ item.url }}</td>
+                            <td>Parameters: {{ item.parameters }}</td>{% elif item.url %}
+                            <td>URL: {{ item.url }}</td>{% else %}
+                            <td></td>
                         {% endif %}
                         <td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td>
                     </tr>

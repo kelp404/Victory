@@ -5,10 +5,40 @@ from services.document_service import *
 import urllib2
 import logging
 import json
-from google.appengine.ext import webapp
+
+class CrashDocumentHandler(BaseHandler):
+    def post(self, key=None):
+        """
+        Add a crash document
+        """
+        if 'Content-Type' not in self.request.headers or self.request.headers['Content-Type'].find('multipart/form-data') < 0:
+            self.json({ 'success': False, 'message': 'input error' })
+            return
+
+        reports = json.loads(self.request.get('reports'))
+        if reports:
+            ds = DocumentService(self.context)
+            for report in reports:
+                title = ['%s  %s' % (x['backtrace']['contents'][0]['object_name'], x['backtrace']['contents'][0]['symbol_name']) for x in report['crash']['threads'] if x['crashed']]
+                document = { 'report': report, 'name': report['user']['name'], 'title': title }
+                result, msg = ds.add_document(key, document, DocumentModel.crash)
+                if not result:
+                    # error
+                    self.json({ 'success': False, 'message': msg })
+                    return
+
+            # success
+            self.json({ 'success': True, 'message': None })
+            return
+
+        self.json({ 'success': False, 'message': 'input error' })
+
 
 class ExceptionDocumentHandler(BaseHandler):
     def post(self, key=None):
+        """
+        Add a exception document
+        """
         wh = WSHelper()
         document = wh.get_request_document(self.request)
 
@@ -20,9 +50,11 @@ class ExceptionDocumentHandler(BaseHandler):
             self.json({ 'success': False, 'message': 'input error' })
 
 
-
 class LogDocumentHandler(BaseHandler):
     def post(self, key=None):
+        """
+        Add a log document
+        """
         wh = WSHelper()
         document = wh.get_request_document(self.request)
 

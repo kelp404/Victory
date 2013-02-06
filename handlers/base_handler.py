@@ -81,8 +81,7 @@ class BaseHandler(webapp2.RequestHandler):
         # do not redirect without login
         if self.user is None \
             and request.route.name != 'login' \
-            and request.route.name[:4] != 'api_' \
-            and request.route.name[:10] != 'task_queue':
+            and request.route.name[:4] != 'api_':
             self.abort(302, location='/login')
 
     # write json to response

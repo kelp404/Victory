@@ -36,6 +36,7 @@ _routes = [
     # API
     RedirectRoute('/api/v1/exception/<key>', ExceptionDocumentHandler, name='api_exception_with_key', strict_slash=True),
     RedirectRoute('/api/v1/log/<key>', LogDocumentHandler, name='api_log_with_key', strict_slash=True),
+    RedirectRoute('/api/v1/crash/<key>', CrashDocumentHandler, name='api_crash_with_key', strict_slash=True),
 ]
 
 def get_routes():
