@@ -86,6 +86,7 @@ var takanashi = takanashi || {
     // みこ ←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙
     pop_state: function (state) {
         if (state) {
+            $('.modal.in').modal('hide');
             takanashi.nav_select(state.nav_select_index);
             takanashi.miko(state, false);
         }
