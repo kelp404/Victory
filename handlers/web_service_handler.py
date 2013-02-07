@@ -19,10 +19,7 @@ class CrashDocumentHandler(BaseHandler):
         if reports:
             ds = DocumentService(self.context)
             for report in reports:
-                title = ['[%s %s]' % (x['backtrace']['contents'][0]['object_name'], x['backtrace']['contents'][0]['symbol_name']) for x in report['crash']['threads'] if x['crashed']][0]
-                name = report['user']['name']
-                document = { 'report': report, 'name': name, 'title': title }
-                result, msg = ds.add_document(key, document, DocumentModel.crash)
+                result, msg = ds.add_document(key, report, DocumentModel.crash)
                 if not result:
                     # error
                     self.json({ 'success': False, 'message': msg })

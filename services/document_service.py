@@ -179,8 +179,9 @@ class DocumentService(BaseService):
         @returns True, None / False, error message
         """
         if key is None: return False, 'key is required'
-        if 'title' not in document or document['title'] is None: return False, 'title is required'
-        if 'name' not in document or document['name'] is None: return False, 'name is required'
+        if document_model != DocumentModel.crash:
+            if 'title' not in document or document['title'] is None: return False, 'title is required'
+            if 'name' not in document or document['name'] is None: return False, 'name is required'
 
         # check application is exist
         applications = db.GqlQuery('select * from ApplicationModel where app_key = :1 limit 1', key)
@@ -200,27 +201,27 @@ class DocumentService(BaseService):
 
         # fixed input value
         if document_model == DocumentModel.crash:
-            model.report = document['report']
-            model.title = document['title']
-            model.name = document['name']
+            model.report = document
+            model.title = ['0x%s %s %s' % (('00000000' + (hex(x['backtrace']['contents'][0]['instruction_addr'])[2:]))[-8:], x['backtrace']['contents'][0]['object_name'], x['backtrace']['contents'][0]['symbol_name']) for x in document['crash']['threads'] if x['crashed']][0]
+            model.name = document['user']['name']
             # set user info
-            try: model.email = document['report']['user']['email']
+            try: model.email = document['user']['email']
             except: pass
-            try: model.access_token = document['report']['user']['access_token']
+            try: model.access_token = document['user']['access_token']
             except: pass
             # set create_time
-            try: model.create_time = datetime.datetime.strptime(document['report']['report']['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+            try: model.create_time = datetime.datetime.strptime(document['report']['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
             except: model.create_time = datetime.datetime.now()
             # set app uuid
-            model.app_uuid = document['report']['system']['app_uuid']
+            model.app_uuid = document['system']['app_uuid']
             # set version
-            try: model.version = '%s (%s)' % (document['report']['system']['CFBundleShortVersionString'], document['report']['system']['CFBundleVersion'])
+            try: model.version = '%s (%s)' % (document['system']['CFBundleShortVersionString'], document['system']['CFBundleVersion'])
             except: pass
             # set os version
-            try: model.os_version = document['report']['system']['system_version']
+            try: model.os_version = document['system']['system_version']
             except: pass
             # set device
-            try: model.device = document['report']['system']['machine']
+            try: model.device = document['system']['machine']
             except: pass
         else:
             ValueInjector.inject(model, document)
@@ -279,7 +280,7 @@ class DocumentService(BaseService):
                 times = 1
 
         # insert to text search
-        document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
+        search_document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
                                            search.NumberField(name='app_id', value=model.app_id),
                                            search.TextField(name='description', value=model.description),
                                            search.TextField(name='email', value=model.email),
@@ -288,7 +289,7 @@ class DocumentService(BaseService):
                                            search.TextField(name='ip', value=model.ip),
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
-        result = index.put(document)
+        result = index.put(search_document)
         # set memory cache for 1 hour
         memcache.set(key=cache_key, value={'doc_id': result[0].id, 'times': times}, time=3600)
 

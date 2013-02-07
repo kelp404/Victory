@@ -95,7 +95,7 @@ https://developers.google.com/appengine/downloads
 
 
 ##RESTful API
-**Crash (only iOS)**  
+**Crash (only for iOS)**  
 `POST` your-domain/api/v1/crash/{ application key }  
 > Content-Type:`multipart/form-data`  
   
