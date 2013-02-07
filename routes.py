@@ -6,7 +6,7 @@ from handlers.document_handler import *
 from handlers.web_service_handler import *
 
 _routes = [
-    RedirectRoute('/', DocumentHandler, name='exception_group', strict_slash=True),
+    RedirectRoute('/', DocumentHandler, name='crash_group', strict_slash=True),
 
     # Login
     RedirectRoute('/login', LoginHandler, name='login', strict_slash=True),
@@ -26,6 +26,9 @@ _routes = [
     RedirectRoute('/settings/users/<user_id>', UsersHandler, name='settings_users', strict_slash=True),
 
     # Document
+    RedirectRoute('/crash_groups/<application_id>/<group_tag>', DocumentHandler, name='crash_detail', strict_slash=True),
+    RedirectRoute('/crash_groups/<application_id>',  DocumentHandler, name='crash_group', strict_slash=True),
+    RedirectRoute('/crash_groups',  DocumentHandler, name='crash_group', strict_slash=True),
     RedirectRoute('/exception_groups/<application_id>/<group_tag>', DocumentHandler, name='exception_list', strict_slash=True),
     RedirectRoute('/exception_groups/<application_id>',  DocumentHandler, name='exception_group', strict_slash=True),
     RedirectRoute('/exception_groups',  DocumentHandler, name='exception_group', strict_slash=True),

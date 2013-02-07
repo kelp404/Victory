@@ -95,13 +95,24 @@ https://developers.google.com/appengine/downloads
 
 
 ##RESTful API
+**Crash (only iOS)**  
+`POST` your-domain/api/v1/crash/{ application key }  
+> Content-Type:`multipart/form-data`  
+  
+**send crash reports:**  
+> send reports by KSCrash  
+> https://github.com/Kelp404/KSCrash  
+
+---
 **Handled Exception**  
 `POST` your-domain/api/v1/exception/{ application key }  
+> Content-Type:`application/x-www-form-urlencoded` / `application/json`  
   
 **Log**  
 `POST` your-domain/api/v1/log/{ application key }  
-  
-**request body**  
+> Content-Type:`application/x-www-form-urlencoded` / `application/json`  
+
+**send handled exception, log reports:**  
 ```JavaScript
 {
     "name": "User Name", // required

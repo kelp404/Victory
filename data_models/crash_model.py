@@ -6,6 +6,8 @@ class CrashModel(db.Model):
     # takanashi
     app_id = db.IntegerProperty()
     group_tag = db.StringProperty()
+    # app uuid in crash report
+    app_uuid = db.StringProperty()
 
     name = db.TextProperty()
     title = db.TextProperty()
@@ -40,6 +42,7 @@ class CrashModel(db.Model):
             'device': self.device,
             'access_token': self.access_token,
             'title': self.title,
+            'app_uuid': self.app_uuid,
             'version': self.version,
             'report': self.report,
             'ip': self.ip,

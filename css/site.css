@@ -184,6 +184,10 @@ a:hover { text-decoration: underline; color: #3d85c6; }
     width:1100px;
     margin: 0 auto;
 }
+.crash_info dl
+{
+    margin: 0 0 3px 0;
+}
 /* table */
 .table { table-layout:fixed; }
 .table-content tbody td { white-space: nowrap; overflow: hidden; text-overflow:ellipsis; }

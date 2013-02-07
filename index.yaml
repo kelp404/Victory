@@ -22,3 +22,9 @@ indexes:
   - name: group_tag
   - name: create_time
     direction: desc
+- kind: CrashModel
+  properties:
+  - name: app_id
+  - name: group_tag
+  - name: create_time
+    direction: desc

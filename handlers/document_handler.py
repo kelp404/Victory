@@ -3,7 +3,6 @@
 from handlers.base_handler import BaseHandler
 from services.document_service import *
 import config
-import datetime, copy
 import logging
 
 
@@ -22,10 +21,14 @@ class DocumentHandler(BaseHandler):
             document_model = DocumentModel.exception
             self.view_model['document_model'] = 'exception'
             self.view_model['title'] = 'Handled Exceptions - '
-        else:
+        elif self.request.route.name[:4] == 'log_':
             document_model = DocumentModel.log
             self.view_model['document_model'] = 'log'
             self.view_model['title'] = 'Logs - '
+        else:
+            document_model = DocumentModel.crash
+            self.view_model['document_model'] = 'crash'
+            self.view_model['title'] = 'Crashes  - '
 
         # get applications
         aps = ApplicationService(self.context)
@@ -65,17 +68,35 @@ class DocumentHandler(BaseHandler):
                 'size': config.page_size,
                 'max': (total - 1) / config.page_size
             }
-            documents = []
-            for item in result:
-                if item['times'] == 1:
-                    document = ds.get_last_document(application_id, item['group_tag'], document_model)
-                    if document: documents.append(document)
-            self.view_model['documents'] = documents
+            if document_model != DocumentModel.crash:
+                documents = []
+                for item in result:
+                    if item['times'] == 1:
+                        document = ds.get_last_document(application_id, item['group_tag'], document_model)
+                        if document: documents.append(document)
+                self.view_model['documents'] = documents
 
             return self.render_template('document_groups.html', **self.view_model)
         else:
-            # get documents
-            result = ds.get_documents(application_id, group_tag, document_model)
-            if len(result) == 0: self.abort(404)
-            self.view_model['result'] = result
-            return self.render_template('documents.html', **self.view_model)
+            if document_model == DocumentModel.crash:
+                # get crash document
+                result = ds.get_last_document(application_id, group_tag, document_model)
+                if result is None: self.abort(404)
+                self.view_model['result'] = result
+                self.view_model['crashed_threads'] = [thread for thread in result['report']['crash']['threads'] if thread['crashed']]
+                self.view_model['threads'] = [thread for thread in result['report']['crash']['threads'] if not thread['crashed']]
+                for thread in self.view_model['crashed_threads']:
+                    if 'backtrace' in thread:
+                        for x in thread['backtrace']['contents']:
+                            x['instruction_addr_hex'] = '0x' + ('00000000' + hex(x['instruction_addr'])[2:])[-8:]
+                for thread in self.view_model['threads']:
+                    if 'backtrace' in thread:
+                        for x in thread['backtrace']['contents']:
+                            x['instruction_addr_hex'] = '0x' + ('00000000' + hex(x['instruction_addr'])[2:])[-8:]
+                return self.render_template('document_crash.html', **self.view_model)
+            else:
+                # get exception or log documents
+                result = ds.get_documents(application_id, group_tag, document_model)
+                if len(result) == 0: self.abort(404)
+                self.view_model['result'] = result
+                return self.render_template('documents.html', **self.view_model)

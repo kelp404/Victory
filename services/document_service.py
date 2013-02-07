@@ -67,9 +67,12 @@ class DocumentService(BaseService):
             if document_model == DocumentModel.exception:
                 # search data from ExceptionModel
                 documents = search.Index(name='ExceptionModel').search(query)
-            else:
+            elif document_model == DocumentModel.log:
                 # search data from LogModel
                 documents = search.Index(name='LogModel').search(query)
+            else:
+                # search data from CrashModel
+                documents = search.Index(name='CrashModel').search(query)
 
             for document in documents:
                 result.append({'group_tag': document.field('group_tag').value,
@@ -118,8 +121,10 @@ class DocumentService(BaseService):
 
         if document_model == DocumentModel.exception:
             documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
-        else:
+        elif document_model == DocumentModel.log:
             documents = db.GqlQuery('select * from LogModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
+        else:
+            documents = db.GqlQuery('select * from CrashModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
 
         result = []
         for document in documents.fetch(100):
@@ -151,13 +156,15 @@ class DocumentService(BaseService):
         if cache_value: return cache_value  # return data from cache
         if document_model == DocumentModel.exception:
             documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
-        else:
+        elif document_model == DocumentModel.log:
             documents = db.GqlQuery('select * from LogModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
+        else:
+            documents = db.GqlQuery('select * from CrashModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
 
         for document in documents.fetch(1):
             cache_value = document.dict()
             # 18000 = 5 hours
-            memcache.set(key=cache_key, value=document.dict(), time=18000)
+            memcache.set(key=cache_key, value=cache_value, time=18000)
             return cache_value
 
         return None
@@ -192,25 +199,47 @@ class DocumentService(BaseService):
             model = CrashModel()
 
         # fixed input value
-        ValueInjector.inject(model, document)
         if document_model == DocumentModel.crash:
             model.report = document['report']
+            model.title = document['title']
+            model.name = document['name']
+            # set user info
+            try: model.email = document['report']['user']['email']
+            except: pass
+            try: model.access_token = document['report']['user']['access_token']
+            except: pass
+            # set create_time
+            try: model.create_time = datetime.datetime.strptime(document['report']['report']['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+            except: model.create_time = datetime.datetime.now()
+            # set app uuid
+            model.app_uuid = document['report']['system']['app_uuid']
+            # set version
+            try: model.version = '%s (%s)' % (document['report']['system']['CFBundleShortVersionString'], document['report']['system']['CFBundleVersion'])
+            except: pass
+            # set os version
+            try: model.os_version = document['report']['system']['system_version']
+            except: pass
+            # set device
+            try: model.device = document['report']['system']['machine']
+            except: pass
         else:
+            ValueInjector.inject(model, document)
+            model.create_time = datetime.datetime.now()
             if model.parameters:
                 # remove password=\w*&
                 model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
+            # set status
             if 'status' in document and model.status is None: model.status = str(document['status'])
+            # set create_time
+            if 'create_time' in document and document['create_time']:
+                try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
+                except:
+                    try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M')
+                    except: pass
 
-        # set create_time
-        if 'create_time' in document and document['create_time']:
-            try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
-            except:
-                try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M')
-                except: pass
         model.app_id = applications[0].key().id()
         model.ip = os.environ["REMOTE_ADDR"]
         model.user_agent = self.context.request.headers['User-Agent']
-        model.create_time = datetime.datetime.now()
         # group ta is md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
         group_tag = '%s_%s_%s' % (model.title, model.name, model.create_time.strftime('%Y-%m-%d'))
         model.group_tag = hashlib.md5(group_tag.encode('utf-8')).hexdigest()

@@ -29,7 +29,7 @@
         <!-- content table -->
         <table class="table table-bordered table-hover table-content table-pointer">
             <thead>
-            <tr><td class="span1">Status</td><td>Description</td><td style="width: 150px;">Datetime</td></tr>
+            <tr><th class="span1">Status</th><th>Description</th><th style="width: 150px;">Datetime</th></tr>
             </thead>
             <tbody>
                 {% set index = 0 %}
@@ -38,9 +38,8 @@
                         <td>{{ ''|default(item.status, item.status) }}</td>
                         {% if item.description %}
                             <td>{{ item.description }}</td>{% elif item.parameters %}
-                            <td>Parameters: {{ item.parameters }}</td>{% elif item.url %}
-                            <td>URL: {{ item.url }}</td>{% else %}
-                            <td></td>
+                            <td>Parameters: {{ item.parameters }}</td>{% else %}
+                            <td>URL: {{ item.url }}</td>
                         {% endif %}
                         <td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</td>
                     </tr>

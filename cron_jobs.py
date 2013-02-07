@@ -16,8 +16,10 @@ class ClearDocumentsHandler(webapp2.RequestHandler):
         # clear documents
         self.__delete_text_search('ExceptionModel', query)
         self.__delete_text_search('LogModel', query)
+        self.__delete_text_search('CrashModel', query)
         self.__delete_data_store('ExceptionModel', date_tag)
         self.__delete_data_store('LogModel', date_tag)
+        self.__delete_data_store('CrashModel', date_tag)
 
     def __delete_text_search(self, model_name, query):
         index = search.Index(name=model_name)

@@ -36,28 +36,44 @@
         <!-- Breadcrumb -->
         <ul class="breadcrumb pull-left" style="background-color: #fff; margin-bottom: 0">
             {% if document_model == 'exception' %}<li class="active">Handled Exceptions</li>
-            {% elif document_model == 'log' %}<li class="active">Logs</li>{% endif %}
+            {% elif document_model == 'log' %}<li class="active">Logs</li>
+            {% elif document_model == 'crash' %}<li class="active">Crashes</li>{% endif %}
         </ul>
 
         <div class="clear" style="height: 10px;"></div>
 
         <!-- content table -->
         <table class="table table-bordered table-hover table-content table-pointer">
-            <thead>
-            <tr><td class="span2">User Name</td><td class="span2">Title</td><td class="span6">Description</td><td class="span2">Last Occurred</td><td style="width: 60px; text-align: right;">Times/Day</td></tr>
-            </thead>
-            <tbody>
-            {% for item in page['items'] %}
-                {% if item.times > 1 %}
-                <tr href="/{{ document_model }}_groups/{{ application_id }}/{{ item.group_tag }}" class="document_group">{% else %}
-                <tr href="#document_{{ item.group_tag }}" data-toggle="modal">{% endif %}
+            {% if document_model != 'crash' %}<!-- exception, log -->
+                <thead>
+                <tr><th class="span2">User Name</th><th class="span2">Title</th><th class="span6">Description</th><th class="span2">Last Occurred</th><th style="width: 60px; text-align: right;">Times/Day</th></tr>
+                </thead>
+                <tbody>
+                {% for item in page['items'] %}
+                    {% if item.times > 1 %}
+                    <tr href="/{{ document_model }}_groups/{{ application_id }}/{{ item.group_tag }}" class="document_group">{% else %}
+                    <tr href="#document_{{ item.group_tag }}" data-toggle="modal">{% endif %}
+                        <td><span rel="tooltip" title="{{ ''|default(item.email, item.email) }}">{{ ''|default(item.name, item.name) }}</span></td>
+                        <td>{{ ''|default(item.title, item.title) }}</td>
+                        <td>{{ ''|default(item.description, item.description) }}</td>
+                        <td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td>
+                        <td style="text-align: right;">{{ item.times }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}<!-- crash -->
+                <thead>
+                <tr><th class="span2">User Name</th><th>Title</th><th class="span2">Last Occurred</th><th style="width: 60px; text-align: right;">Times/Day</th></tr>
+                </thead>
+                <tbody>
+                {% for item in page['items'] %}
+                    <tr href="/{{ document_model }}_groups/{{ application_id }}/{{ item.group_tag }}" class="document_group">
                     <td><span rel="tooltip" title="{{ ''|default(item.email, item.email) }}">{{ ''|default(item.name, item.name) }}</span></td>
                     <td>{{ ''|default(item.title, item.title) }}</td>
-                    <td>{{ ''|default(item.description, item.description) }}</td>
                     <td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td>
                     <td style="text-align: right;">{{ item.times }}</td>
-                </tr>
-            {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
             </tbody>
         </table>
 
