@@ -249,7 +249,6 @@ class DocumentService(BaseService):
         # clear memory cache for document search
         memcache.delete(MemcacheKey.document_search(model.app_id, document_model))
 
-
         # post document to text search
         if document_model == DocumentModel.exception:
             text_search_name = 'ExceptionModel'
@@ -259,25 +258,17 @@ class DocumentService(BaseService):
             text_search_name = 'CrashModel'
         index = search.Index(name=text_search_name)
 
-        # check document exist with group_tag
-        # search
-        options = search.QueryOptions(returned_fields = ['times'])
+        # update times field
+        memcache.incr(key=MemcacheKey.document_add(model.app_id, model.group_tag, document_model), initial_value=0)
+        times = memcache.get(MemcacheKey.document_add(model.app_id, model.group_tag, document_model))
+
+        # delete text search document group_tag of that are same
+        options = search.QueryOptions(returned_fields = [])
         query_string = 'app_id=%s AND group_tag=%s' % (model.app_id, model.group_tag)
-        cache_key = MemcacheKey.document_add(query_string, document_model)
-        cache_document = memcache.get(key=cache_key)
-        if cache_document:
-            # load document group from cache
-            times = cache_document['times'] + 1
-            index.delete([cache_document['doc_id']])
-        else:
-            # load document group from text search
-            query = search.Query(query_string=query_string, options=options)
-            items = index.search(query)
-            if items.number_found > 0:
-                times = items.results[0].field('times').value + 1
-                index.delete([x.doc_id for x in items])
-            else:
-                times = 1
+        query = search.Query(query_string=query_string, options=options)
+        items = index.search(query)
+        if items.number_found > 0:
+            index.delete([x.doc_id for x in items])
 
         # insert to text search
         search_document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
@@ -289,8 +280,6 @@ class DocumentService(BaseService):
                                            search.TextField(name='ip', value=model.ip),
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
-        result = index.put(search_document)
-        # set memory cache for 1 hour
-        memcache.set(key=cache_key, value={'doc_id': result[0].id, 'times': times}, time=3600)
+        index.put(search_document)
 
         return True, None

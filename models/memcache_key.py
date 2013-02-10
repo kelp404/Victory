@@ -1,5 +1,4 @@
 
-import hashlib
 
 class MemcacheKey:
     def document_search(application_id, document_model):
@@ -13,17 +12,16 @@ class MemcacheKey:
         return 'doc_search_%s_%s' % (str(application_id), str(document_model))
     document_search = staticmethod(document_search)
 
-    def document_add(query_string, document_model):
+    def document_add(app_id, group_tag, document_model):
         """
         Get a cache key for add a new document
-        (cache text search document for log times
 
-        @param query_string text search query string
+        @param app_id application id
+        @param group_tag document's group_tag
         @param document_model document type
         @returns cache key
         """
-        query_hash = hashlib.md5(query_string.encode('utf-8')).hexdigest()
-        return 'doc_add_%s_%s' % (str(document_model), query_hash)
+        return 'doc_add_%s_%s_%s' % (str(app_id), str(document_model), group_tag)
     document_add = staticmethod(document_add)
 
     def document_detail(application_id, group_tag, document_model):
