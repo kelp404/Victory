@@ -1,0 +1,37 @@
+{% if not miko %}{% extends '_base.html' %}{% endif %}
+{% macro render_page(page, class='', arg='') -%}
+    <div class="pagination {{ class }}">
+        <ul>
+            {% if page.index == 0 %}
+                <li class="disabled"><a href="#disabled" onclick="return false;">«</a></li>
+            {% else %}
+                <li><a href="?index={{ page.index - 1 }}&{{ arg }}">«</a></li>
+            {% endif %}
+
+            {% if page.index - 3 >= 0 %}<li><a href="?index={{ page.index - 3 }}&{{ arg }}">{{ page.index - 2 }}</a></li>{% endif %}
+            {% if page.index - 2 >= 0 %}<li><a href="?index={{ page.index - 2 }}&{{ arg }}">{{ page.index - 1 }}</a></li>{% endif %}
+            {% if page.index - 1 >= 0 %}<li><a href="?index={{ page.index - 1 }}&{{ arg }}">{{ page.index }}</a></li>{% endif %}
+            <li class="disabled"><a href="#disabled" onclick="return false;">{{ page.index + 1 }}</a></li>
+            {% if page.index + 1 <= page.max %}<li><a href="?index={{ page.index + 1 }}&{{ arg }}">{{ page.index + 2 }}</a></li>{% endif %}
+            {% if page.index + 2 <= page.max %}<li><a href="?index={{ page.index + 2 }}&{{ arg }}">{{ page.index + 3 }}</a></li>{% endif %}
+            {% if page.index + 3 <= page.max %}<li><a href="?index={{ page.index + 3 }}&{{ arg }}">{{ page.index + 4 }}</a></li>{% endif %}
+
+            {% if (page.index + 1) * page.size >= page.total %}
+                <li class="disabled"><a href="#disabled" onclick="return false;">»</a></li>
+            {% else %}
+                <li><a href="?index={{ page.index + 1 }}&{{ arg }}">»</a></li>
+            {% endif %}
+        </ul>
+    </div>
+{%- endmacro %}
+{% macro render_datetime(datetime, format) -%}
+    <span datetime="{{ datetime }}" class="datetime" format="{{ format }}"></span>
+{%- endmacro %}
+
+{% if miko %}
+<!miko>
+<title>{{ title }}{{ title_prefix }}</title>
+@#content
+    {% block content %}
+    {% endblock %}
+{% endif %}

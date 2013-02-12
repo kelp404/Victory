@@ -18,17 +18,9 @@ document_expiration = 30
 page_size = 20
 
 
-webapp2_config = {}
-webapp2_config['webapp2_extras.jinja2'] = {
-    'template_path': 'views',
-#    'environment_args': {'extensions': ['jinja2.ext.i18n']},
-}
-
-error_templates = {
-    403: 'errors/default_error.html',
-    404: 'errors/default_error.html',
-    500: 'errors/default_error.html',
-}
-
-# jinja2 base layout templates
-base_layout = '_base.html'
+import os
+DEBUG_MODE = False
+# Auto-set debug mode based on App Engine dev environ
+if 'SERVER_SOFTWARE' in os.environ and os.environ['SERVER_SOFTWARE'].startswith('Dev'):
+    DEBUG_MODE = True
+DEBUG = DEBUG_MODE
