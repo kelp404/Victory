@@ -9,7 +9,7 @@ import sys
 import os
 
 
-def adjust_sys_path(dir_name='libs'):
+def adjust_sys_path(dir_name=''):
     """
     Patch to search the libs folder. At the moment, I believe it's unable to
     find .egg's, but it does search libs for imports before anything else.
@@ -18,7 +18,7 @@ def adjust_sys_path(dir_name='libs'):
     sys.path.insert(0, os.path.join(root_dir, dir_name))
 
 
-def find_gae_sdk(dir_name='libs'):
+def find_gae_sdk(dir_name=''):
     """
     Correct any ImportError caused from being unable to find Google App
     Engine's SDK. These normally occur when trying to run the application
