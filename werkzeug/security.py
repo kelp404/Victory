@@ -5,32 +5,52 @@
 
     Security related helpers such as secure password hashing tools.
 
-    :copyright: (c) 2010 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
+import os
 import hmac
-import string
+import posixpath
+from itertools import izip
 from random import SystemRandom
 
-# because the API of hmac changed with the introduction of the
-# new hashlib module, we have to support both.  This sets up a
-# mapping to the digest factory functions and the digest modules
-# (or factory functions with changed API)
-try:
-    from hashlib import sha1, md5
-    _hash_funcs = _hash_mods = {'sha1': sha1, 'md5': md5}
-    _sha1_mod = sha1
-    _md5_mod = md5
-except ImportError:
-    import sha as _sha1_mod, md5 as _md5_mod
-    _hash_mods = {'sha1': _sha1_mod, 'md5': _md5_mod}
-    _hash_funcs = {'sha1': _sha1_mod.new, 'md5': _md5_mod.new}
 
-
-SALT_CHARS = string.letters + string.digits
+SALT_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
 
 _sys_rng = SystemRandom()
+_os_alt_seps = list(sep for sep in [os.path.sep, os.path.altsep]
+                    if sep not in (None, '/'))
+
+
+def _find_hashlib_algorithms():
+    import hashlib
+    algos = getattr(hashlib, 'algorithms', None)
+    if algos is None:
+        algos = ('md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512')
+    rv = {}
+    for algo in algos:
+        func = getattr(hashlib, algo, None)
+        if func is not None:
+            rv[algo] = func
+    return rv
+_hash_funcs = _find_hashlib_algorithms()
+
+
+def safe_str_cmp(a, b):
+    """This function compares strings in somewhat constant time.  This
+    requires that the length of at least one string is known in advance.
+
+    Returns `True` if the two strings are equal or `False` if they are not.
+
+    .. versionadded:: 0.7
+    """
+    if len(a) != len(b):
+        return False
+    rv = 0
+    for x, y in izip(a, b):
+        rv |= ord(x) ^ ord(y)
+    return rv == 0
 
 
 def gen_salt(length):
@@ -48,11 +68,11 @@ def _hash_internal(method, salt, password):
     if method == 'plain':
         return password
     if salt:
-        if method not in _hash_mods:
+        if method not in _hash_funcs:
             return None
         if isinstance(salt, unicode):
             salt = salt.encode('utf-8')
-        h = hmac.new(salt, None, _hash_mods[method])
+        h = hmac.new(salt, None, _hash_funcs[method])
     else:
         if method not in _hash_funcs:
             return None
@@ -77,7 +97,7 @@ def generate_password_hash(password, method='sha1', salt_length=8):
     is used, hmac is used internally to salt the password.
 
     :param password: the password to hash
-    :param method: the hash method to use (``'md5'`` or ``'sha1'``)
+    :param method: the hash method to use (one that hashlib supports)
     :param salt_length: the lengt of the salt in letters
     """
     salt = method != 'plain' and gen_salt(salt_length) or ''
@@ -101,4 +121,20 @@ def check_password_hash(pwhash, password):
     if pwhash.count('$') < 2:
         return False
     method, salt, hashval = pwhash.split('$', 2)
-    return _hash_internal(method, salt, password) == hashval
+    return safe_str_cmp(_hash_internal(method, salt, password), hashval)
+
+
+def safe_join(directory, filename):
+    """Safely join `directory` and `filename`.  If this cannot be done,
+    this function returns ``None``.
+
+    :param directory: the base directory.
+    :param filename: the untrusted filename relative to that directory.
+    """
+    filename = posixpath.normpath(filename)
+    for sep in _os_alt_seps:
+        if sep in filename:
+            return None
+    if os.path.isabs(filename) or filename.startswith('../'):
+        return None
+    return os.path.join(directory, filename)

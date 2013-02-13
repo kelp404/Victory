@@ -5,7 +5,7 @@
 
     Interactive console support.
 
-    :copyright: (c) 2010 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD.
 """
 import sys
@@ -14,7 +14,6 @@ from types import CodeType
 from werkzeug.utils import escape
 from werkzeug.local import Local
 from werkzeug.debug.repr import debug_repr, dump, helper
-from werkzeug.debug.utils import render_template
 
 
 _local = Local()
@@ -36,10 +35,14 @@ class HTMLStringO(object):
         pass
 
     def seek(self, n, mode=0):
-        raise IOError('Bad file descriptor')
+        pass
 
     def readline(self):
-        raise IOError('Bad file descriptor')
+        if len(self._buffer) == 0:
+            return ''
+        ret = self._buffer[0]
+        del self._buffer[0]
+        return ret
 
     def reset(self):
         val = ''.join(self._buffer)
@@ -83,6 +86,7 @@ class ThreadedStream(object):
         # stream._write bypasses escaping as debug_repr is
         # already generating HTML for us.
         if obj is not None:
+            _local._current_ipy.locals['_'] = obj
             stream._write(debug_repr(obj))
     displayhook = staticmethod(displayhook)
 
@@ -170,7 +174,7 @@ class _InteractiveConsole(code.InteractiveInterpreter):
     def runcode(self, code):
         try:
             exec code in self.globals, self.locals
-        except:
+        except Exception:
             self.showtraceback()
 
     def showtraceback(self):
@@ -198,4 +202,9 @@ class Console(object):
         self._ipy = _InteractiveConsole(globals, locals)
 
     def eval(self, code):
-        return self._ipy.runsource(code)
+        _local._current_ipy = self._ipy
+        old_sys_stdout = sys.stdout
+        try:
+            return self._ipy.runsource(code)
+        finally:
+            sys.stdout = old_sys_stdout

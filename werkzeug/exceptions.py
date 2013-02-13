@@ -12,7 +12,8 @@
 
     ::
 
-        from werkzeug import BaseRequest, responder
+        from werkzeug.wrappers import BaseRequest
+        from werkzeug.wsgi import responder
         from werkzeug.exceptions import HTTPException, NotFound
 
         def view(request):
@@ -53,7 +54,7 @@
                 return e
 
 
-    :copyright: (c) 2010 by the Werkzeug Team, see AUTHORS for more details.
+    :copyright: (c) 2011 by the Werkzeug Team, see AUTHORS for more details.
     :license: BSD, see LICENSE for more details.
 """
 import sys
@@ -178,6 +179,21 @@ class BadRequest(HTTPException):
     )
 
 
+class ClientDisconnected(BadRequest):
+    """Internal exception that is raised if Werkzeug detects a disconnected
+    client.  Since the client is already gone at that point attempting to
+    send the error message to the client might not work and might ultimately
+    result in another exception in the server.  Mainly this is here so that
+    it is silenced by default as far as Werkzeug is concerned.
+
+    Since disconnections cannot be reliably detected and are unspecified
+    by WSGI to a large extend this might or might not be raised if a client
+    is gone.
+
+    .. versionadded:: 0.8
+    """
+
+
 class Unauthorized(HTTPException):
     """*401* `Unauthorized`
 
@@ -278,6 +294,21 @@ class RequestTimeout(HTTPException):
     )
 
 
+class Conflict(HTTPException):
+    """*409* `Conflict`
+
+    Raise to signal that a request cannot be completed because it conflicts
+    with the current state on the server.
+
+    .. versionadded:: 0.7
+    """
+    code = 409
+    description = (
+        '<p>A conflict happened while processing the request.  The resource '
+        'might have been modified while the request was being processed.'
+    )
+
+
 class Gone(HTTPException):
     """*410* `Gone`
 
@@ -352,6 +383,101 @@ class UnsupportedMediaType(HTTPException):
         '<p>The server does not support the media type transmitted in '
         'the request.</p>'
     )
+
+
+class RequestedRangeNotSatisfiable(HTTPException):
+    """*416* `Requested Range Not Satisfiable`
+
+    The client asked for a part of the file that lies beyond the end
+    of the file.
+
+    .. versionadded:: 0.7
+    """
+    code = 416
+    description = (
+        '<p>The server cannot provide the requested range.'
+    )
+
+
+class ExpectationFailed(HTTPException):
+    """*417* `Expectation Failed`
+
+    The server cannot meet the requirements of the Expect request-header.
+
+    .. versionadded:: 0.7
+    """
+    code = 417
+    description = (
+        '<p>The server could not meet the requirements of the Expect header'
+    )
+
+
+class ImATeapot(HTTPException):
+    """*418* `I'm a teapot`
+
+    The server should return this if it is a teapot and someone attempted
+    to brew coffee with it.
+
+    .. versionadded:: 0.7
+    """
+    code = 418
+    description = (
+        '<p>This server is a teapot, not a coffee machine'
+    )
+    
+class UnprocessableEntity(HTTPException):
+    """*422* `Unprocessable Entity`
+
+    Used if the request is well formed, but the instructions are otherwise
+    incorrect.
+    """
+    code = 422
+    description = (
+        '<p>The request was well-formed but was unable to be followed due to semantic errors.'
+    )    
+
+class PreconditionRequired(HTTPException):
+    """*428* `Precondition Required`
+
+    The server requires this request to be conditional, typically to prevent
+    the lost update problem, which is a race condition between two or more
+    clients attempting to update a resource through PUT or DELETE. By requiring
+    each client to include a conditional header ("If-Match" or "If-Unmodified-
+    Since") with the proper value retained from a recent GET request, the
+    server ensures that each client has at least seen the previous revision of
+    the resource.
+    """
+    code = 428
+    description = (
+        '<p>This request is required to be conditional; try using "If-Match" '
+        'or "If-Unmodified-Since".'
+    )    
+
+class TooManyRequests(HTTPException):
+    """*429* `Too Many Requests`
+
+    The server is limiting the rate at which this user receives responses, and
+    this request exceeds that rate. (The server may use any convenient method
+    to identify users and their request rates). The server may include a
+    "Retry-After" header to indicate how long the user should wait before
+    retrying.
+    """
+    code = 429
+    description = (
+        '<p>This user has exceeded an allotted request count. Try again later.'
+    )    
+
+class RequestHeaderFieldsTooLarge(HTTPException):
+    """*431* `Request Header Fields Too Large`
+
+    The server refuses to process the request because the header fields are too
+    large. One or more individual fields may be too large, or the set of all
+    headers is too large.
+    """
+    code = 431
+    description = (
+        '<p>One or more header fields exceeds the maximum size.'
+    )    
 
 
 class InternalServerError(HTTPException):
@@ -453,6 +579,11 @@ class Aborter(object):
         raise self.mapping[code](*args, **kwargs)
 
 abort = Aborter()
+
+
+#: an exception that is used internally to signal both a key error and a
+#: bad request.  Used by a lot of the datastructures.
+BadRequestKeyError = BadRequest.wrap(KeyError)
 
 
 # imported here because of circular dependencies of werkzeug.utils
