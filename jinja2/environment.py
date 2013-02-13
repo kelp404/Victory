@@ -67,7 +67,7 @@ def copy_cache(cache):
 
 def load_extensions(environment, extensions):
     """Load the extensions from the list and bind it to the environment.
-    Returns a dict of instanciated environments.
+    Returns a dict of instantiated environments.
     """
     result = {}
     for extension in extensions:
@@ -196,7 +196,8 @@ class Environment(object):
 
     #: if this environment is sandboxed.  Modifying this variable won't make
     #: the environment sandboxed though.  For a real sandboxed environment
-    #: have a look at jinja2.sandbox
+    #: have a look at jinja2.sandbox.  This flag alone controls the code
+    #: generation by the compiler.
     sandboxed = False
 
     #: True if the environment is just an overlay
@@ -238,7 +239,7 @@ class Environment(object):
         #   passed by keyword rather than position.  However it's important to
         #   not change the order of arguments because it's used at least
         #   internally in those cases:
-        #       -   spontaneus environments (i18n extension and Template)
+        #       -   spontaneous environments (i18n extension and Template)
         #       -   unittests
         #   If parameter changes are required only add parameters at the end
         #   and don't change the arguments (or the defaults!) of the arguments
@@ -354,7 +355,7 @@ class Environment(object):
             if isinstance(argument, basestring):
                 try:
                     attr = str(argument)
-                except:
+                except Exception:
                     pass
                 else:
                     try:
@@ -434,7 +435,7 @@ class Environment(object):
         return stream
 
     def _generate(self, source, name, filename, defer_init=False):
-        """Internal hook that can be overriden to hook a different generate
+        """Internal hook that can be overridden to hook a different generate
         method in.
 
         .. versionadded:: 2.5
@@ -442,7 +443,7 @@ class Environment(object):
         return generate(source, self, name, filename, defer_init=defer_init)
 
     def _compile(self, source, filename):
-        """Internal hook that can be overriden to hook a different compile
+        """Internal hook that can be overridden to hook a different compile
         method in.
 
         .. versionadded:: 2.5
@@ -539,7 +540,7 @@ class Environment(object):
     def compile_templates(self, target, extensions=None, filter_func=None,
                           zip='deflated', log_function=None,
                           ignore_errors=True, py_compile=False):
-        """Compiles all the templates the loader can find, compiles them
+        """Finds all the templates the loader can find, compiles them
         and stores them in `target`.  If `zip` is `None`, instead of in a
         zipfile, the templates will be will be stored in a directory.
         By default a deflate zip algorithm is used, to switch to
@@ -565,9 +566,13 @@ class Environment(object):
             log_function = lambda x: None
 
         if py_compile:
-            import imp, struct, marshal
+            import imp, marshal
             py_header = imp.get_magic() + \
                 u'\xff\xff\xff\xff'.encode('iso-8859-15')
+
+            # Python 3.3 added a source filesize to the header
+            if sys.version_info >= (3, 3):
+                py_header += u'\x00\x00\x00\x00'.encode('iso-8859-15')
 
         def write_file(filename, data, mode):
             if zip:
@@ -632,6 +637,8 @@ class Environment(object):
         in the result list.
 
         If the loader does not support that, a :exc:`TypeError` is raised.
+
+        .. versionadded:: 2.4
         """
         x = self.loader.list_templates()
         if extensions is not None:
@@ -886,7 +893,7 @@ class Template(object):
         vars = dict(*args, **kwargs)
         try:
             return concat(self.root_render_func(self.new_context(vars)))
-        except:
+        except Exception:
             exc_info = sys.exc_info()
         return self.environment.handle_exception(exc_info, True)
 
@@ -908,7 +915,7 @@ class Template(object):
         try:
             for event in self.root_render_func(self.new_context(vars)):
                 yield event
-        except:
+        except Exception:
             exc_info = sys.exc_info()
         else:
             return
@@ -1050,7 +1057,7 @@ class TemplateStream(object):
     def dump(self, fp, encoding=None, errors='strict'):
         """Dump the complete stream into a file or file-like object.
         Per default unicode strings are written, if you want to encode
-        before writing specifiy an `encoding`.
+        before writing specify an `encoding`.
 
         Example usage::
 

@@ -8,7 +8,6 @@
     :copyright: (c) 2010 by the Jinja Team.
     :license: BSD.
 """
-import sys
 from itertools import chain, imap
 from jinja2.nodes import EvalContext, _context_function_types
 from jinja2.utils import Markup, partial, soft_unicode, escape, missing, \
@@ -30,6 +29,8 @@ to_string = unicode
 
 #: the identity function.  Useful for certain things in the environment
 identity = lambda x: x
+
+_last_iteration = object()
 
 
 def markup_join(seq):
@@ -76,8 +77,6 @@ class TemplateReference(object):
 
     def __getitem__(self, name):
         blocks = self.__context.blocks[name]
-        wrap = self.__context.eval_ctx.autoescape and \
-               Markup or (lambda x: x)
         return BlockReference(name, self.__context, blocks, 0)
 
     def __repr__(self):
@@ -190,6 +189,7 @@ class Context(object):
         """Internal helper function to create a derived context."""
         context = new_context(self.environment, self.name, {},
                               self.parent, True, None, locals)
+        context.vars.update(self.vars)
         context.eval_ctx = self.eval_ctx
         context.blocks.update((k, list(v)) for k, v in self.blocks.iteritems())
         return context
@@ -272,6 +272,7 @@ class LoopContext(object):
     def __init__(self, iterable, recurse=None):
         self._iterator = iter(iterable)
         self._recurse = recurse
+        self._after = self._safe_next()
         self.index0 = -1
 
         # try to get the length of the iterable early.  This must be done
@@ -290,7 +291,7 @@ class LoopContext(object):
         return args[self.index0 % len(args)]
 
     first = property(lambda x: x.index0 == 0)
-    last = property(lambda x: x.index0 + 1 == x.length)
+    last = property(lambda x: x._after is _last_iteration)
     index = property(lambda x: x.index0 + 1)
     revindex = property(lambda x: x.length - x.index0)
     revindex0 = property(lambda x: x.length - x.index)
@@ -300,6 +301,12 @@ class LoopContext(object):
 
     def __iter__(self):
         return LoopContextIterator(self)
+
+    def _safe_next(self):
+        try:
+            return next(self._iterator)
+        except StopIteration:
+            return _last_iteration
 
     @internalcode
     def loop(self, iterable):
@@ -346,7 +353,11 @@ class LoopContextIterator(object):
     def next(self):
         ctx = self.context
         ctx.index0 += 1
-        return next(ctx._iterator), ctx
+        if ctx._after is _last_iteration:
+            raise StopIteration()
+        next_elem = ctx._after
+        ctx._after = ctx._safe_next()
+        return next_elem, ctx
 
 
 class Macro(object):
@@ -458,11 +469,17 @@ class Undefined(object):
             hint = self._undefined_hint
         raise self._undefined_exception(hint)
 
+    @internalcode
+    def __getattr__(self, name):
+        if name[:2] == '__':
+            raise AttributeError(name)
+        return self._fail_with_undefined_error()
+
     __add__ = __radd__ = __mul__ = __rmul__ = __div__ = __rdiv__ = \
     __truediv__ = __rtruediv__ = __floordiv__ = __rfloordiv__ = \
     __mod__ = __rmod__ = __pos__ = __neg__ = __call__ = \
-    __getattr__ = __getitem__ = __lt__ = __le__ = __gt__ = __ge__ = \
-    __int__ = __float__ = __complex__ = __pow__ = __rpow__ = \
+    __getitem__ = __lt__ = __le__ = __gt__ = __ge__ = __int__ = \
+    __float__ = __complex__ = __pow__ = __rpow__ = \
         _fail_with_undefined_error
 
     def __str__(self):
