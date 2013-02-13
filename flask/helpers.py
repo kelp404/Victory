@@ -23,22 +23,6 @@ from werkzeug.routing import BuildError
 from werkzeug.urls import url_quote
 from functools import update_wrapper
 
-# try to load the best simplejson implementation available.  If JSON
-# is not installed, we add a failing class.
-json_available = True
-json = None
-try:
-    import simplejson as json
-except ImportError:
-    try:
-        import json
-    except ImportError:
-        try:
-            # Google Appengine offers simplejson via django
-            from django.utils import simplejson as json
-        except ImportError:
-            json_available = False
-
 
 from werkzeug.datastructures import Headers
 from werkzeug.exceptions import NotFound
@@ -53,24 +37,6 @@ from jinja2 import FileSystemLoader
 
 from .globals import session, _request_ctx_stack, _app_ctx_stack, \
      current_app, request
-
-
-def _assert_have_json():
-    """Helper function that fails if JSON is unavailable."""
-    if not json_available:
-        raise RuntimeError('simplejson not installed')
-
-
-# figure out if simplejson escapes slashes.  This behavior was changed
-# from one version to another without reason.
-if not json_available or '\\/' not in json.dumps('/'):
-
-    def _tojson_filter(*args, **kwargs):
-        if __debug__:
-            _assert_have_json()
-        return json.dumps(*args, **kwargs).replace('/', '\\/')
-else:
-    _tojson_filter = json.dumps
 
 
 # sentinel
@@ -163,39 +129,6 @@ def stream_with_context(generator_or_function):
     wrapped_g = generator()
     wrapped_g.next()
     return wrapped_g
-
-
-def jsonify(*args, **kwargs):
-    """Creates a :class:`~flask.Response` with the JSON representation of
-    the given arguments with an `application/json` mimetype.  The arguments
-    to this function are the same as to the :class:`dict` constructor.
-
-    Example usage::
-
-        @app.route('/_get_current_user')
-        def get_current_user():
-            return jsonify(username=g.user.username,
-                           email=g.user.email,
-                           id=g.user.id)
-
-    This will send a JSON response like this to the browser::
-
-        {
-            "username": "admin",
-            "email": "admin@localhost",
-            "id": 42
-        }
-
-    This requires Python 2.6 or an installed version of simplejson.  For
-    security reasons only objects are supported toplevel.  For more
-    information about this, have a look at :ref:`json-security`.
-
-    .. versionadded:: 0.2
-    """
-    if __debug__:
-        _assert_have_json()
-    return current_app.response_class(json.dumps(dict(*args, **kwargs),
-        indent=None if request.is_xhr else 2), mimetype='application/json')
 
 
 def make_response(*args):
@@ -296,6 +229,9 @@ def url_for(endpoint, **values):
     that this is for building URLs outside the current application, and not for
     handling 404 NotFound errors.
 
+    .. versionadded:: 0.10
+       The `_scheme` parameter was added.
+
     .. versionadded:: 0.9
        The `_anchor` and `_method` parameters were added.
 
@@ -308,14 +244,17 @@ def url_for(endpoint, **values):
     :param _external: if set to `True`, an absolute URL is generated. Server
       address can be changed via `SERVER_NAME` configuration variable which
       defaults to `localhost`.
+    :param _scheme: a string specifying the desired URL scheme. The `_external`
+      parameter must be set to `True` or a `ValueError` is raised.
     :param _anchor: if provided this is added as anchor to the URL.
     :param _method: if provided this explicitly specifies an HTTP method.
     """
     appctx = _app_ctx_stack.top
     reqctx = _request_ctx_stack.top
     if appctx is None:
-        raise RuntimeError('Attempted to generate a URL with the application '
-                           'context being pushed.  This has to be executed ')
+        raise RuntimeError('Attempted to generate a URL without the '
+                           'application context being pushed. This has to be '
+                           'executed when application context is available.')
 
     # If request specific information is available we have some extra
     # features that support "relative" urls.
@@ -350,7 +289,14 @@ def url_for(endpoint, **values):
 
     anchor = values.pop('_anchor', None)
     method = values.pop('_method', None)
+    scheme = values.pop('_scheme', None)
     appctx.app.inject_url_defaults(endpoint, values)
+
+    if scheme is not None:
+        if not external:
+            raise ValueError('When specifying _scheme, _external must be True')
+        url_adapter.url_scheme = scheme
+
     try:
         rv = url_adapter.build(endpoint, values, method=method,
                                force_external=external)
@@ -362,8 +308,6 @@ def url_for(endpoint, **values):
         values['_method'] = method
         return appctx.app.handle_url_build_error(error, endpoint, values)
 
-    rv = url_adapter.build(endpoint, values, method=method,
-                           force_external=external)
     if anchor is not None:
         rv += '#' + url_quote(anchor)
     return rv
@@ -564,6 +508,7 @@ def send_file(filename_or_fp, mimetype=None, as_attachment=False,
         if file is not None:
             file.close()
         headers['X-Sendfile'] = filename
+        headers['Content-Length'] = os.path.getsize(filename)
         data = None
     else:
         if file is None:
@@ -591,7 +536,7 @@ def send_file(filename_or_fp, mimetype=None, as_attachment=False,
             os.path.getmtime(filename),
             os.path.getsize(filename),
             adler32(
-                filename.encode('utf8') if isinstance(filename, unicode)
+                filename.encode('utf-8') if isinstance(filename, unicode)
                 else filename
             ) & 0xffffffff
         ))
@@ -624,7 +569,9 @@ def safe_join(directory, filename):
     for sep in _os_alt_seps:
         if sep in filename:
             raise NotFound()
-    if os.path.isabs(filename) or filename.startswith('../'):
+    if os.path.isabs(filename) or \
+       filename == '..' or \
+       filename.startswith('../'):
         raise NotFound()
     return os.path.join(directory, filename)
 

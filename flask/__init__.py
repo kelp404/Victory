@@ -20,9 +20,8 @@ from jinja2 import Markup, escape
 
 from .app import Flask, Request, Response
 from .config import Config
-from .helpers import url_for, jsonify, json_available, flash, \
-    send_file, send_from_directory, get_flashed_messages, \
-    get_template_attribute, make_response, safe_join, \
+from .helpers import url_for, flash, send_file, send_from_directory, \
+    get_flashed_messages, get_template_attribute, make_response, safe_join, \
     stream_with_context
 from .globals import current_app, g, request, session, _request_ctx_stack, \
      _app_ctx_stack
@@ -34,11 +33,17 @@ from .templating import render_template, render_template_string
 
 # the signals
 from .signals import signals_available, template_rendered, request_started, \
-     request_finished, got_request_exception, request_tearing_down
+     request_finished, got_request_exception, request_tearing_down, \
+     appcontext_tearing_down
 
-# only import json if it's available
-if json_available:
-    from .helpers import json
+# We're not exposing the actual json module but a convenient wrapper around
+# it.
+from . import json
+
+# This was the only thing that flask used to export at one point and it had
+# a more generic name.
+jsonify = json.jsonify
 
 # backwards compat, goes away in 1.0
 from .sessions import SecureCookieSession as Session
+json_available = True

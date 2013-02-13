@@ -12,7 +12,7 @@ import posixpath
 from jinja2 import BaseLoader, Environment as BaseEnvironment, \
      TemplateNotFound
 
-from .globals import _request_ctx_stack
+from .globals import _request_ctx_stack, _app_ctx_stack
 from .signals import template_rendered
 from .module import blueprint_is_module
 
@@ -22,12 +22,14 @@ def _default_template_ctx_processor():
     `session` and `g`.
     """
     reqctx = _request_ctx_stack.top
-    return dict(
-        config=reqctx.app.config,
-        request=reqctx.request,
-        session=reqctx.session,
-        g=reqctx.g
-    )
+    appctx = _app_ctx_stack.top
+    rv = {}
+    if appctx is not None:
+        rv['g'] = appctx.g
+    if reqctx is not None:
+        rv['request'] = reqctx.request
+        rv['session'] = reqctx.session
+    return rv
 
 
 class Environment(BaseEnvironment):
@@ -119,7 +121,7 @@ def render_template(template_name_or_list, **context):
     :param context: the variables that should be available in the
                     context of the template.
     """
-    ctx = _request_ctx_stack.top
+    ctx = _app_ctx_stack.top
     ctx.app.update_template_context(context)
     return _render(ctx.app.jinja_env.get_or_select_template(template_name_or_list),
                    context, ctx.app)
@@ -129,12 +131,12 @@ def render_template_string(source, **context):
     """Renders a template from the given template source string
     with the given context.
 
-    :param template_name: the sourcecode of the template to be
-                          rendered
+    :param source: the sourcecode of the template to be
+                   rendered
     :param context: the variables that should be available in the
                     context of the template.
     """
-    ctx = _request_ctx_stack.top
+    ctx = _app_ctx_stack.top
     ctx.app.update_template_context(context)
     return _render(ctx.app.jinja_env.from_string(source),
                    context, ctx.app)
