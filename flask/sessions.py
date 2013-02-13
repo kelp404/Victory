@@ -15,7 +15,7 @@ from werkzeug.http import http_date, parse_date
 from werkzeug.datastructures import CallbackDict
 from . import Markup, json
 
-from itsdangerous import URLSafeTimedSerializer, BadSignature
+from .itsdangerous.itsdangerous import URLSafeTimedSerializer, BadSignature
 
 
 def total_seconds(td):
