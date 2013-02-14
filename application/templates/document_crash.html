@@ -69,7 +69,7 @@
                 <dt>Bundle Identifier</dt>
                 <dd>{{ result.report.system.CFBundleIdentifier }}</dd>
             </dl>{% endif %}
-            {% if result.report.system.memory %}<dl class="dl-horizontal pull-left span7">
+            {% if result.report.system.memory and result.report.system.memory.free %}<dl class="dl-horizontal pull-left span7">
                 <dt>Memory</dt>
                 <dd><span rel="tooltip" title="free / usable">{{ (result.report.system.memory.free / 1048576)|round|int }}/{{ (result.report.system.memory.usable / 1048576)|round|int }} MB</span></dd>
             </dl>{% endif %}

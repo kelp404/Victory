@@ -28,7 +28,7 @@ def before_request():
     g.view_model['miko'] = 'X-Miko' in request.headers
 
     # do not redirect without login
-    if g.user is None \
+    if request.url_rule is not None and g.user is None \
         and request.url_rule.endpoint != 'login' \
         and request.url_rule.endpoint[:4] != 'api_':
         return redirect('/login')

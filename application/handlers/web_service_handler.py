@@ -17,6 +17,7 @@ def CrashDocumentAdd(key=None):
         ds = DocumentService()
         for report in reports:
             documents = json.loads(report.read())
+            if type(documents) is not type([]): documents = [documents]
             for document in documents:
                 result, msg = ds.add_document(key, document, DocumentModel.crash)
                 if not result:
