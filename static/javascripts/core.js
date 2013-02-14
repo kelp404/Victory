@@ -108,6 +108,7 @@ var takanashi = takanashi || {
                         state.nav_select_index = $('#nav_bar li.select').index();
                         history.pushState(state, document.title, state.href);
                     }
+                    $('html,body').animate({scrollTop: (0)}, 500, 'easeOutExpo');
                 }
                 else {
                     takanashi.nav_select(state.nav_select_index);
