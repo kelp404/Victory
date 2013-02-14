@@ -10,6 +10,17 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+# for application service .get_applications()
+- kind: ApplicationModel
+  properties:
+  - name: owner
+  - name: create_time
+- kind: ApplicationModel
+  properties:
+  - name: viewer
+  - name: create_time
+
+# for document service .get_documents()
 - kind: CrashModel
   properties:
   - name: app_id
@@ -18,6 +29,13 @@ indexes:
     direction: desc
 
 - kind: ExceptionModel
+  properties:
+  - name: app_id
+  - name: group_tag
+  - name: create_time
+    direction: desc
+
+- kind: LogModel
   properties:
   - name: app_id
   - name: group_tag
