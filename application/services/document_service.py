@@ -252,6 +252,7 @@ class DocumentService(BaseService):
         memcache.delete(MemcacheKey.document_search(model.app_id, document_model))
 
         # post document to text search
+        # text search schema name is same with data store name
         if document_model == DocumentModel.exception:
             text_search_name = 'ExceptionModel'
         elif document_model == DocumentModel.log:
@@ -261,8 +262,16 @@ class DocumentService(BaseService):
         index = search.Index(name=text_search_name)
 
         # update times field
-        memcache.incr(key=MemcacheKey.document_add(model.app_id, model.group_tag, document_model), initial_value=0)
-        times = memcache.get(MemcacheKey.document_add(model.app_id, model.group_tag, document_model))
+        cache_key = MemcacheKey.document_add(model.app_id, model.group_tag, document_model)
+        exist = memcache.get(cache_key)
+        if exist is None:
+            # load times form data store
+            times = db.GqlQuery('select * from %s where app_id = :1 and group_tag = :2 order by create_time DESC' % text_search_name, model.app_id, model.group_tag).count(100)
+            memcache.incr(key=cache_key, initial_value=times - 1)
+        else:
+            # load times from memory cache
+            memcache.incr(key=cache_key, initial_value=0)
+            times = memcache.get(cache_key)
 
         # delete text search document group_tag of that are same
         options = search.QueryOptions(returned_fields = [])
