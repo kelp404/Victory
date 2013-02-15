@@ -4,8 +4,8 @@
     --clear_datastore --clear_search_indexes
 
     unittest:
-        $ cd tests
-        $ python test.py
+        $ cd Takanashi
+        $ python tests
 """
 
 import unittest, json, re, random
@@ -188,7 +188,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         application_key = re.search('<td>Key</td>.*<td>(.*)</td>', r.content).group(1)
 
         # add a crash
-        f = open('./CrashTester-CrashReport.json', 'r')
+        f = open('./tests/CrashTester-CrashReport.json', 'r')
         r = requests.post('%s/api/v1/crash/%s' % (self.url, application_key), files={'reports': f})
         f.close()
         self.assertEqual(r.status_code, 200)
