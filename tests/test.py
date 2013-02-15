@@ -2,6 +2,10 @@
     Before test, you should run GAE local server, and clear datastore, text search,
      and update url in function 'setUp()'.
     --clear_datastore --clear_search_indexes
+
+    unittest:
+        $ cd tests
+        $ python test.py
 """
 
 import unittest, json, re, random
