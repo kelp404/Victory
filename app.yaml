@@ -25,6 +25,7 @@ skip_files:
 - ^\.git/.*
 - \.*\.lint$
 - ^_images/.*
+- ^static/minifier/.*
 
 handlers:
 # icon / robots.txt
