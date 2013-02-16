@@ -63,3 +63,5 @@ handlers:
 libraries:
 - name: webapp2
   version: "2.5.1"
+- name: markupsafe
+  version: "latest"
