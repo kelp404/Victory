@@ -66,7 +66,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertRegexpMatches(r.content, '.*<.*name="name".*value="Kelp".*')
         self.assertRegexpMatches(r.content, '.*<.*name="account".*value="kelp@phate.org".*')
 
-    def test_settings_users(self):
+    def test_00_settings_users(self):
         """
         test settings/users
         """
@@ -77,15 +77,16 @@ class TestTakanashiFunctions(unittest.TestCase):
         # get user list
         r = requests.get('%s/settings/users' % self.url, cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
-        self.assertRegexpMatches(r.content, '.*<td>%s</td>.*' % self.email)
         self.assertRegexpMatches(r.content, '.*<td>user@phate.org</td>.*')
 
         # delete the user
-        user_id = re.search('<a href="/settings/users/(\d+)#" class="delete_user">', r.content)
+        user_id = re.search('.*<a href="/settings/users/(\d+)#" class="delete_user">', r.content).group(1)
         r = requests.delete('%s/settings/users/%s' % (self.url, user_id), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
+        result = json.loads(r.content)
+        self.assertTrue(result['success'])
 
-    def test_00_settings_applications_add(self):
+    def test_01_settings_applications_add(self):
         """
         add an application for test
         """
@@ -98,7 +99,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         result = json.loads(r.content)
         self.assertTrue(result['success'])
 
-    def test_01_add_exception_document(self):
+    def test_02_add_exception_document(self):
         """
         add an exception document
         """
@@ -138,7 +139,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertRegexpMatches(r.content, '<tr><td>Email</td><td>name@gmail.com</td></tr>')
 
-    def test_02_add_log_document(self):
+    def test_03_add_log_document(self):
         """
         add a log document
         """
@@ -178,7 +179,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertRegexpMatches(r.content, '<tr><td>Email</td><td>name@gmail.com</td></tr>')
 
-    def test_03_add_crash_document(self):
+    def test_04_add_crash_document(self):
         """
         add a crash document
         """
@@ -205,7 +206,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertRegexpMatches(r.content, 'user@gmail.com')
 
-    def test_04_settings_application_update(self):
+    def test_05_settings_application_update(self):
         """
         update the application
         """
@@ -221,7 +222,7 @@ class TestTakanashiFunctions(unittest.TestCase):
         })
         self.assertEqual(r.status_code, 200)
 
-    def test_05_settings_application_invite(self):
+    def test_06_settings_application_invite(self):
         """
         POST: /settings/applications/<application_id>/invite
 
@@ -245,13 +246,25 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         uri = re.search('<a href="(/settings/applications/\d+/members/\d+)#" class="delete_viewer" ', r.content).group(1)
 
-        # delete the user
+        # delete the viewer in this application
         r = requests.delete('%s%s' % (self.url, uri), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
         result = json.loads(r.content)
         self.assertTrue(result['success'])
 
-    def test_06_settings_application_delete(self):
+        # get user list
+        r = requests.get('%s/settings/users' % self.url, cookies=self.cookies)
+        self.assertEqual(r.status_code, 200)
+        self.assertRegexpMatches(r.content, '.*<td>invite@phate.org</td>.*')
+
+        # delete the user
+        user_id = re.search('.*<a href="/settings/users/(\d+)#" class="delete_user">', r.content).group(1)
+        r = requests.delete('%s/settings/users/%s' % (self.url, user_id), cookies=self.cookies)
+        self.assertEqual(r.status_code, 200)
+        result = json.loads(r.content)
+        self.assertTrue(result['success'])
+
+    def test_07_settings_application_delete(self):
         """
         delete the test application
         """
