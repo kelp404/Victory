@@ -5,7 +5,7 @@ from application.data_models.log_model import *
 from application.data_models.crash_model import *
 from application.services.base_service import *
 from application.services.application_service import *
-from application.utilities.value_injector import *
+from application.utilities.dict_mapping import *
 from google.appengine.api import search
 from application.models.memcache_key import *
 from google.appengine.api import memcache
@@ -50,6 +50,7 @@ class DocumentService(BaseService):
                     keyword = ' '.join(minus)
                     query_string = query_string + ' AND NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
             cache_key = MemcacheKey.document_search(application_id, document_model)
+            logging.error(cache_key)
             cache_value = memcache.get(key=cache_key)
             if cache_value and keyword + str(index) in cache_value:
                 # return from cache
@@ -121,11 +122,11 @@ class DocumentService(BaseService):
             return []
 
         if document_model == DocumentModel.exception:
-            documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
+            documents = db.GqlQuery('select * from ExceptionModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
         elif document_model == DocumentModel.log:
-            documents = db.GqlQuery('select * from LogModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
+            documents = db.GqlQuery('select * from LogModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
         else:
-            documents = db.GqlQuery('select * from CrashModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 100', application_id, group_tag)
+            documents = db.GqlQuery('select * from CrashModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
 
         result = []
         for document in documents.fetch(100):
@@ -156,11 +157,11 @@ class DocumentService(BaseService):
         cache_value = memcache.get(key=cache_key)
         if cache_value: return cache_value  # return data from cache
         if document_model == DocumentModel.exception:
-            documents = db.GqlQuery('select * from ExceptionModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
+            documents = db.GqlQuery('select * from ExceptionModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
         elif document_model == DocumentModel.log:
-            documents = db.GqlQuery('select * from LogModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
+            documents = db.GqlQuery('select * from LogModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
         else:
-            documents = db.GqlQuery('select * from CrashModel where app_id = :1 and group_tag = :2 order by create_time DESC limit 1', application_id, group_tag)
+            documents = db.GqlQuery('select * from CrashModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
 
         for document in documents.fetch(1):
             cache_value = document.dict()
@@ -225,7 +226,7 @@ class DocumentService(BaseService):
             try: model.device = document['system']['machine']
             except: pass
         else:
-            ValueInjector.inject(model, document)
+            DictMapping.inject(model, document)
             model.create_time = datetime.datetime.now()
             if model.parameters:
                 # remove password=\w*&
@@ -243,9 +244,9 @@ class DocumentService(BaseService):
         model.ip = os.environ["REMOTE_ADDR"]
         if 'User-Agent' in request.headers:
             model.user_agent = request.headers['User-Agent']
-        # group ta is md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
-        group_tag = '%s_%s_%s' % (model.title, model.name, model.create_time.strftime('%Y-%m-%d'))
-        model.group_tag = hashlib.md5(group_tag.encode('utf-8')).hexdigest()
+        # group ta is sha1({ app_id }_{ title }_{ name }_{ create_time(yyyy-MM-dd) })
+        group_tag = '%s_%s_%s_%s' % (model.app_id, model.title, model.name, model.create_time.strftime('%Y-%m-%d'))
+        model.group_tag = hashlib.sha1(group_tag.encode('utf-8')).hexdigest()
         model.put()
 
         # clear memory cache for document search
@@ -266,8 +267,9 @@ class DocumentService(BaseService):
         exist = memcache.get(cache_key)
         if exist is None:
             # load times form data store
-            times = db.GqlQuery('select * from %s where app_id = :1 and group_tag = :2 order by create_time DESC' % text_search_name, model.app_id, model.group_tag).count(100)
-            memcache.incr(key=cache_key, initial_value=times - 1)
+            times = db.GqlQuery('select * from %s where group_tag = :1' % text_search_name, model.group_tag).count(100)
+            if times <= 0: times = 1
+            memcache.incr(delta=0, key=cache_key, initial_value=times)
         else:
             # load times from memory cache
             memcache.incr(key=cache_key, initial_value=0)
@@ -275,7 +277,7 @@ class DocumentService(BaseService):
 
         # delete text search document group_tag of that are same
         options = search.QueryOptions(returned_fields = [])
-        query_string = 'app_id=%s AND group_tag=%s' % (model.app_id, model.group_tag)
+        query_string = 'group_tag=%s' % model.group_tag
         query = search.Query(query_string=query_string, options=options)
         items = index.search(query)
         if items.number_found > 0:

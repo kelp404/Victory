@@ -23,21 +23,18 @@ indexes:
 # for document service .get_documents()
 - kind: CrashModel
   properties:
-  - name: app_id
   - name: group_tag
   - name: create_time
     direction: desc
 
 - kind: ExceptionModel
   properties:
-  - name: app_id
   - name: group_tag
   - name: create_time
     direction: desc
 
 - kind: LogModel
   properties:
-  - name: app_id
   - name: group_tag
   - name: create_time
     direction: desc
