@@ -50,7 +50,6 @@ class DocumentService(BaseService):
                     keyword = ' '.join(minus)
                     query_string = query_string + ' AND NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
             cache_key = MemcacheKey.document_search(application_id, document_model)
-            logging.error(cache_key)
             cache_value = memcache.get(key=cache_key)
             if cache_value and keyword + str(index) in cache_value:
                 # return from cache
