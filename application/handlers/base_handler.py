@@ -19,7 +19,10 @@ def before_request():
     acs = AccountService()
     g.user = acs.authorization()
     g.view_model['user'] = g.user
-    g.view_model['google_logout_url'] = users.create_logout_url('/')
+    if g.user:
+        g.view_model['logout_url'] = users.create_logout_url('/')
+    else:
+        g.view_model['login_url'] = users.create_login_url()
 
     # miko framework
     # miko result

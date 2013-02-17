@@ -210,9 +210,7 @@ var takanashi = takanashi || {
 
     // loading ←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙
     loading_on: function (message) {
-        $('body').css('cursor', 'wait');
-        $('a').css('cursor', 'wait');
-        $('.table-pointer tbody tr').css('cursor', 'wait');
+        $('body, a, .table-pointer tbody tr').css('cursor', 'wait');
         if (takanashi.is_ie) { return; }
         if ($('#loading').length > 0) {
             $('#loading .message').html(message);
@@ -227,8 +225,7 @@ var takanashi = takanashi || {
     },
     loading_off: function () {
         $('body').css('cursor', 'default');
-        $('a').css('cursor', 'pointer');
-        $('.table-pointer tbody tr').css('cursor', 'pointer');
+        $('a, .table-pointer tbody tr').css('cursor', 'pointer');
         if (takanashi.is_ie) { return; }
         $('#loading').dequeue();
         var loading_height = $('#loading').height() + 10;
