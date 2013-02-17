@@ -1,6 +1,7 @@
 
 
 class MemcacheKey:
+    @staticmethod
     def document_search(application_id, document_model):
         """
         Get a cache key for document groups search
@@ -10,8 +11,8 @@ class MemcacheKey:
         @returns cache key
         """
         return 'doc_search_%s_%s' % (str(application_id), str(document_model))
-    document_search = staticmethod(document_search)
 
+    @staticmethod
     def document_add(app_id, group_tag, document_model):
         """
         Get a cache key for add a new document
@@ -22,8 +23,8 @@ class MemcacheKey:
         @returns cache key
         """
         return 'doc_add_%s_%s_%s' % (str(app_id), str(document_model), group_tag)
-    document_add = staticmethod(document_add)
 
+    @staticmethod
     def document_detail(application_id, group_tag, document_model):
         """
         Get a cache key for the first document in same group tag
@@ -34,4 +35,3 @@ class MemcacheKey:
         @returns cache key
         """
         return 'doc_detail_%s_%s_%s' % (str(application_id), str(document_model), group_tag)
-    document_detail = staticmethod(document_detail)
