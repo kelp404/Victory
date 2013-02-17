@@ -4,9 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>{{ title }}{{ title_prefix }}</title>
-    <meta name="description" content="">
     <meta name="author" content="Kelp">
-    <meta name="keywords" content="(」・ω・)」うー！(／・ω・)／にゃー！">
     <link rel="shortcut icon" href="/favicon.ico">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="0">
@@ -53,10 +51,9 @@
 <body onpopstate="takanashi.pop_state(event.state);">
     {% include '_nav_bar.html' %}
 
-    <div id="content_background" class="">
+    <div id="content_background">
         <div id="content" class="container">
-            {% block content %}
-            {% endblock %}
+            {% block content %}{% endblock %}
         </div>
     </div>
 
@@ -64,4 +61,3 @@
     {{ profiler_includes|safe }}
 </body>
 </html>
-
