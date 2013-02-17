@@ -78,28 +78,25 @@ var takanashi = takanashi || {
         }
     },
     miko: function(state, push) {
+        var before_index = $('#nav_bar li.select').index();
         $.ajax({ url: state.href,
             type: 'get',
             data: state.data,
             cache: false,
-            beforeSend: function (xhr) { xhr.setRequestHeader('X-Miko', 'miko'); takanashi.loading_on(takanashi.text_loading); },
-            error: function (xhr) { takanashi.loading_off(); takanashi.error_message(); },
+            beforeSend: function (xhr) {
+                var index = state.href == '/' ? 1 : $('#nav_bar li a[href*="' + state.href + '"]').parent().index();
+                takanashi.nav_select(index);
+
+                xhr.setRequestHeader('X-Miko', 'miko');
+                takanashi.loading_on(takanashi.text_loading);
+            },
+            error: function (xhr) {
+                takanashi.loading_off();
+                takanashi.error_message();
+                takanashi.nav_select(before_index);
+            },
             success: function (result) {
                 takanashi.loading_off();
-                if (push) {
-                    var index = state.href == '/' ? 1 : $('#nav_bar li a[href*="' + state.href + '"]').parent().index();
-                    takanashi.nav_select(index);
-
-                    if (state.href != location.pathname || location.href.indexOf('?') >= 0) {
-                        state.nav_select_index = $('#nav_bar li.select').index();
-                        history.pushState(state, document.title, state.href);
-                    }
-                    $('html,body').animate({scrollTop: (0)}, 500, 'easeOutExpo');
-                }
-                else {
-                    takanashi.nav_select(state.nav_select_index);
-                }
-
                 var miko = result.match(/<!miko>/);
                 if (!miko) {
                     // the result is not miko content
@@ -117,6 +114,17 @@ var takanashi = takanashi || {
                 takanashi.setup_datetime();
                 takanashi.setup_focus();
                 takanashi.setup_tooltip();
+
+                if (push) {
+                    if (state.href != location.pathname || location.href.indexOf('?') >= 0) {
+                        state.nav_select_index = $('#nav_bar li.select').index();
+                        history.pushState(state, document.title, state.href);
+                    }
+                    $('html,body').animate({scrollTop: (0)}, 500, 'easeOutExpo');
+                }
+                else {
+                    takanashi.nav_select(state.nav_select_index);
+                }
             }
         });
     },
@@ -199,6 +207,9 @@ var takanashi = takanashi || {
 
     // loading ←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙
     loading_on: function (message) {
+        $('body').css('cursor', 'wait');
+        $('a').css('cursor', 'wait');
+        $('.table-pointer tbody tr').css('cursor', 'wait');
         if (takanashi.is_ie) { return; }
         if ($('#loading').length > 0) {
             $('#loading .message').html(message);
@@ -212,6 +223,9 @@ var takanashi = takanashi || {
         Spinner({ color: '#444', width: 2, length: 4, radius: 4 }).spin($('#loading .spin')[0]);
     },
     loading_off: function () {
+        $('body').css('cursor', 'default');
+        $('a').css('cursor', 'pointer');
+        $('.table-pointer tbody tr').css('cursor', 'pointer');
         if (takanashi.is_ie) { return; }
         $('#loading').dequeue();
         var loading_height = $('#loading').height() + 10;
@@ -261,6 +275,7 @@ var takanashi = takanashi || {
 
     // nav custom ←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙
     change_nav: function(app_id) {
+        $('#nav_bar a[href^="/crash_groups"]').attr('href', '/crash_groups/' + app_id);
         $('#nav_bar a[href^="/exception_groups"]').attr('href', '/exception_groups/' + app_id);
         $('#nav_bar a[href^="/log_groups"]').attr('href', '/log_groups/' + app_id);
     },

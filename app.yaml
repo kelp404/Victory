@@ -23,27 +23,28 @@ skip_files:
 - ^README.md
 - \.gitignore
 - ^\.git/.*
+- ^\.idea/.*
 - \.*\.lint$
 - ^_images/.*
-- ^static/minifier/.*
+- ^application/static/minifier/.*
 
 handlers:
 # icon / robots.txt
 - url: /favicon\.ico
   mime_type: image/vnd.microsoft.icon
-  static_files: static/icon/favicon.ico
-  upload: static/icon/favicon.ico
+  static_files: application/static/icon/favicon.ico
+  upload: application/static/icon/favicon.ico
 - url: /robots\.txt
-  static_files: static/robots.txt
-  upload: static/robots\.txt
+  static_files: application/static/robots.txt
+  upload: application/static/robots\.txt
 
-# javascript / css
+# javascript / css / image
 - url: /javascripts/
-  static_dir: static/javascripts
+  static_dir: application/static/javascripts
 - url: /css/
-  static_dir: static/css
+  static_dir: application/static/css
 - url: /imgs/
-  static_dir: static/imgs
+  static_dir: application/static/imgs
 
 # mini profiler
 - url: /gae_mini_profiler/static
