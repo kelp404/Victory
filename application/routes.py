@@ -43,5 +43,7 @@ app.add_url_rule('/log_groups', 'log_group_default', view_func=DocumentView, met
 
 # API
 app.add_url_rule('/api/v1/exception/<key>', 'api_exception', view_func=ExceptionDocumentAdd, methods=['POST'])
+app.add_url_rule('/api/v1/exception/<key>', 'api_exception_jsonp', view_func=ExceptionDocumentAddJSONP, methods=['GET'])
 app.add_url_rule('/api/v1/log/<key>', 'api_log', view_func=LogDocumentAdd, methods=['POST'])
+app.add_url_rule('/api/v1/log/<key>', 'api_log_jsonp', view_func=LogDocumentAdd, methods=['GET'])
 app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=CrashDocumentAdd, methods=['POST'])

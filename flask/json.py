@@ -25,7 +25,7 @@ _slash_escape = '\\/' not in _json.dumps('/')
 
 __all__ = ['dump', 'dumps', 'load', 'loads', 'htmlsafe_dump',
            'htmlsafe_dumps', 'JSONDecoder', 'JSONEncoder',
-           'jsonify']
+           'jsonify', 'jsonpify']
 
 
 class JSONEncoder(_json.JSONEncoder):
@@ -133,6 +133,11 @@ def htmlsafe_dumps(obj, **kwargs):
 def htmlsafe_dump(obj, fp, **kwargs):
     """Like :func:`htmlsafe_dumps` but writes into a file object."""
     fp.write(htmlsafe_dumps(obj, **kwargs))
+
+
+def jsonpify(*args, **kwargs):
+    return current_app.response_class('%s(%s)' % (request.args.get('callback'), dumps(dict(*args, **kwargs), indent=None if request.is_xhr else 2)),
+                                      mimetype='application/json')
 
 
 def jsonify(*args, **kwargs):

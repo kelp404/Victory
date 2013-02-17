@@ -94,7 +94,7 @@ https://developers.google.com/appengine/downloads
 
 
 
-##RESTful API
+##RESTful Web Service
 **Crash (only for iOS)**  
 `POST` your-domain/api/v1/crash/{ application key }  
 > Content-Type:`multipart/form-data`  
@@ -105,10 +105,12 @@ https://developers.google.com/appengine/downloads
 
 ---
 **Handled Exception**  
+`GET` your-domain/api/v1/exception/{ application key } **(for JSONP)**  
 `POST` your-domain/api/v1/exception/{ application key }  
 > Content-Type:`application/x-www-form-urlencoded` / `application/json`  
   
 **Log**  
+`GET` your-domain/api/v1/log/{ application key } **(for JSONP)**  
 `POST` your-domain/api/v1/log/{ application key }  
 > Content-Type:`application/x-www-form-urlencoded` / `application/json`  
 

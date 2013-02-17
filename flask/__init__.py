@@ -43,6 +43,7 @@ from . import json
 # This was the only thing that flask used to export at one point and it had
 # a more generic name.
 jsonify = json.jsonify
+jsonpify = json.jsonpify
 
 # backwards compat, goes away in 1.0
 from .sessions import SecureCookieSession as Session

@@ -1,5 +1,5 @@
 
-from flask import request, jsonify
+from flask import request, jsonify, jsonpify
 from application.services.document_service import *
 import json
 
@@ -29,50 +29,71 @@ def CrashDocumentAdd(key=None):
     # no reports
     return jsonify({ 'success': False, 'message': 'input error' })
 
-def ExceptionDocumentAdd(key=None):
+
+def ExceptionDocumentAddJSONP(key=None):
+    """
+    GET: api/vX/exception/<application_key>
+    add a exception document by JSONP
+    """
+    return ExceptionDocumentAdd(key, is_jsonp=True)
+def ExceptionDocumentAdd(key=None, is_jsonp=False):
     """
     POST: api/vX/exception/<application_key>
     add a exception document by web service
     """
     wh = WSHelper()
-    document = wh.get_request_document()
+    document = wh.get_request_document(is_jsonp)
 
     if document:
         ds = DocumentService()
         result, msg = ds.add_document(key, document, DocumentModel.exception)
-        return jsonify({ 'success': result, 'message': msg })
+        result = { 'success': result, 'message': msg }
     else:
-        return jsonify({ 'success': False, 'message': 'input error' })
+        result = { 'success': False, 'message': 'input error' }
 
-def LogDocumentAdd(key=None):
+    if is_jsonp: return jsonpify(result)
+    else: return jsonify(result)
+
+
+def LogDocumentAddJSONP(key=None):
+    """
+    GET: api/vX/log/<application_key>
+    add a log document by JSONP
+    """
+    return LogDocumentAdd(key, is_jsonp=True)
+def LogDocumentAdd(key=None, is_jsonp=False):
     """
     POST: api/vX/log/<application_key>
     add a log document by web service
     """
     wh = WSHelper()
-    document = wh.get_request_document()
+    document = wh.get_request_document(is_jsonp)
 
     if document:
         ds = DocumentService()
         result, msg = ds.add_document(key, document, DocumentModel.log)
-        return jsonify({ 'success': result, 'message': msg })
+        result = { 'success': result, 'message': msg }
     else:
-        return jsonify({ 'success': False, 'message': 'input error' })
+        result = { 'success': False, 'message': 'input error' }
+
+    if is_jsonp: return jsonpify(result)
+    else: return jsonify(result)
 
 
 class WSHelper(object):
-    def get_request_document(self):
+    def get_request_document(self, is_jsonp=False):
         """
         parse request
 
         @param request flask.request
         @returns document object / None
         """
-        if 'Content-Type' in request.headers and request.headers['Content-Type'].find('application/x-www-form-urlencoded') >= 0:
+        if is_jsonp:
+            # jsonp
+            pars = request.args
+        elif 'Content-Type' in request.headers and request.headers['Content-Type'].find('application/x-www-form-urlencoded') >= 0:
             # data format: application/x-www-form-urlencoded
-            pars = {}
-            for key in request.form:
-                pars[key] = request.form.get(key)
+            pars = request.form
         else:
             # data format: application/json
             try: pars = json.loads(request.data)
