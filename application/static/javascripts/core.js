@@ -59,6 +59,7 @@ var noop = function () { };
 var takanashi = takanashi || {
     text_loading: 'Loading...',
     is_ie: false,
+    is_safari: false,
     get_url_vars: function (key) {
         var result;
         var parts = location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,skey,value) {
@@ -73,7 +74,7 @@ var takanashi = takanashi || {
     pop_state: function (state) {
         if (state) {
             $('.modal.in').modal('hide');
-            takanashi.nav_select(state.nav_select_index);
+            state.is_pop = true;
             takanashi.miko(state, false);
         }
     },
@@ -81,11 +82,13 @@ var takanashi = takanashi || {
         var before_index = $('#nav_bar li.select').index();
         $.ajax({ url: state.href,
             type: 'get',
+            // fixed flash when pop state in safari
+            async: !(takanashi.is_safari && state.is_pop),
             data: state.data,
             cache: false,
             beforeSend: function (xhr) {
                 var index = state.href == '/' ? 1 : $('#nav_bar li a[href*="' + state.href + '"]').parent().index();
-                takanashi.nav_select(index);
+                takanashi.nav_select(index, !(takanashi.is_safari && state.is_pop));
 
                 xhr.setRequestHeader('X-Miko', 'miko');
                 takanashi.loading_on(takanashi.text_loading);
@@ -93,10 +96,20 @@ var takanashi = takanashi || {
             error: function (xhr) {
                 takanashi.loading_off();
                 takanashi.error_message();
-                takanashi.nav_select(before_index);
+                takanashi.nav_select(before_index, !(takanashi.is_safari && state.is_pop));
             },
             success: function (result) {
                 takanashi.loading_off();
+
+                // push state
+                if (push) {
+                    if (state.href != location.pathname || location.href.indexOf('?') >= 0) {
+                        state.nav_select_index = $('#nav_bar li.select').index();
+                        history.pushState(state, document.title, state.href);
+                    }
+                    $('html,body').animate({scrollTop: (0)}, 500, 'easeOutExpo');
+                }
+
                 var miko = result.match(/<!miko>/);
                 if (!miko) {
                     // the result is not miko content
@@ -109,22 +122,12 @@ var takanashi = takanashi || {
                 document.title = title[1];
                 var content = result.match(/\s@([#.]?\w+)/);
                 if (content) {
+                    // update content
                     $(content[1]).html(result.replace(content[0], ''));
                 }
                 takanashi.setup_datetime();
                 takanashi.setup_focus();
                 takanashi.setup_tooltip();
-
-                if (push) {
-                    if (state.href != location.pathname || location.href.indexOf('?') >= 0) {
-                        state.nav_select_index = $('#nav_bar li.select').index();
-                        history.pushState(state, document.title, state.href);
-                    }
-                    $('html,body').animate({scrollTop: (0)}, 500, 'easeOutExpo');
-                }
-                else {
-                    takanashi.nav_select(state.nav_select_index);
-                }
             }
         });
     },
@@ -235,11 +238,22 @@ var takanashi = takanashi || {
     },
 
     // nav ←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙←↖↑↗→↘↓↙
-    nav_select: function (index) {
+    nav_select: function (index, animate) {
+        if (animate == undefined) { animate = true; }
+
         if (index > 0 && !$($('#nav_bar li')[index]).hasClass('select')) {
             $('#nav_bar li').removeClass('select');
             $($('#nav_bar li')[index]).addClass('select');
-            $($('#nav_bar li')[index]).mouseover();
+
+            if (animate) { $($('#nav_bar li')[index]).mouseover(); }
+            else {
+                $('#nav_bar li.top').each(function () {
+                    $(this).dequeue();
+                }).animate({
+                        width: $('#nav_bar li.select').css('width'),
+                        left: $('#nav_bar li.select').position().left
+                    }, 0);
+            }
         }
     },
     setup_nav: function () {
@@ -533,7 +547,9 @@ var takanashi = takanashi || {
         }
     }
 };
-takanashi.is_ie = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+var user_agent = navigator.userAgent.toLowerCase();
+takanashi.is_ie = user_agent.indexOf('msie') != -1;
+takanashi.is_safari = user_agent.indexOf('safari') != -1 && user_agent.indexOf('chrome') == -1;
 
 $(document).ready(function () {
     takanashi.setup_nav();
