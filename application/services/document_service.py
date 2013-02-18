@@ -108,7 +108,7 @@ class DocumentService(BaseService):
         Get documents with application id and group tag
 
         @param application_id application id
-        @param group_tag group tag md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
+        @param group_tag group tag
         @param document_model document type (ExceptionModel / LogModel)
         @returns [document] / []
         """
@@ -139,7 +139,7 @@ class DocumentService(BaseService):
         (result maybe from cache
 
         @param application_id application id
-        @param group_tag group tag md5({ title }_{ name }_{ create_time(yyyy-MM-dd) })
+        @param group_tag group tag
         @param document_model document type
         @returns document / None
         """
