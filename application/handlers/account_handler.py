@@ -1,7 +1,7 @@
 
 from flask import g, redirect, render_template
 
-def LoginView():
+def login_page():
     if g.user is not None:
         return redirect('/')
 

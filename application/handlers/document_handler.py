@@ -4,7 +4,7 @@ import config
 from flask import request, render_template, g, abort
 
 
-def DocumentView(application_id=None, group_tag=None):
+def document_view(application_id=None, group_tag=None):
     try: index = int(request.args.get('index'))
     except: index = 0
     try: application_id = long(application_id)

@@ -19,7 +19,6 @@ class AccountService(BaseService):
         User Authorization.
         * Do not use return object to update user entity.
 
-        @param cookie user's token (cookie
         @returns UserModel / None
         """
         google_user = users.get_current_user()

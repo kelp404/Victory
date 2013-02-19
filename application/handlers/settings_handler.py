@@ -5,14 +5,14 @@ from application.services.account_service import AccountService
 from application.services.application_service import *
 
 
-def RedirectToApplication():
+def redirect_to_application():
     """
     302: /settings/applications
     """
     return redirect('/settings/applications')
 
 
-def ProfileView():
+def profile():
     """
     GET: settings/profile
     get profile
@@ -20,7 +20,7 @@ def ProfileView():
     g.view_model['title'] = 'Profile - '
     return render_template('settings_profile.html', **g.view_model)
 
-def ProfileUpdate():
+def profile_update():
     """
     PUT: settings/profile
     update profile
@@ -31,7 +31,7 @@ def ProfileUpdate():
     return jsonify({ 'success': success, 'name': result_name })
 
 
-def ApplicationsView():
+def applications():
     """
     GET: settings/applications
     get applications list
@@ -42,7 +42,7 @@ def ApplicationsView():
     g.view_model['result'] = aps.get_applications(True)
     return render_template('settings_applications.html', **g.view_model)
 
-def ApplicationAdd():
+def application_add():
     """
     POST: settings/applications
     add an application
@@ -52,7 +52,7 @@ def ApplicationAdd():
     aps = ApplicationService()
     return jsonify({ 'success': aps.add_application(name, description) })
 
-def ApplicationUpdate(application_id):
+def application_update(application_id):
     """
     PUT: settings/applications/<application_id>
     update the application
@@ -65,7 +65,7 @@ def ApplicationUpdate(application_id):
     aps = ApplicationService()
     return jsonify({ 'success': aps.update_application(application_id, name, description) })
 
-def ApplicationDelete(application_id):
+def application_delete(application_id):
     """
     DELETE: settings/applications/<application_id>
     delete the application
@@ -73,7 +73,7 @@ def ApplicationDelete(application_id):
     aps = ApplicationService()
     return jsonify({ 'success': aps.delete_application(application_id) })
 
-def ApplicationInvite(application_id):
+def application_invite(application_id):
     """
     POST: settings/application/<application_id>/invite
     invite user to join the application
@@ -99,7 +99,7 @@ def ApplicationInvite(application_id):
 
     return jsonify({ 'success': success })
 
-def ApplicationMemberDelete(application_id, member_id):
+def application_member_delete(application_id, member_id):
     """
     DELETE: settings/applications/<application_id>/members/<member_id>
     delete a member in the application
@@ -113,7 +113,7 @@ def ApplicationMemberDelete(application_id, member_id):
     return jsonify({ 'success': aps.delete_user_from_application(member_id, application_id) })
 
 
-def UsersView():
+def users():
     """
     GET: settings/users
     get users list
@@ -123,7 +123,7 @@ def UsersView():
 
     return render_template('settings_users.html', **g.view_model)
 
-def UserAdd():
+def user_add():
     """
     POST: settings/users
     add an user
@@ -132,7 +132,7 @@ def UserAdd():
     acs = AccountService()
     return jsonify({ 'success': acs.invite_user(email) is not None })
 
-def UserDelete(user_id):
+def user_delete(user_id):
     """
     DELETE: settings/users/<user_id>
     delete the user

@@ -4,7 +4,7 @@ from application.services.document_service import *
 import json
 
 
-def CrashDocumentAdd(key=None):
+def crash_document_add(key=None):
     """
     POST: api/vX/crash/<application_key>
     add a crash document by web service
@@ -30,13 +30,13 @@ def CrashDocumentAdd(key=None):
     return jsonify({ 'success': False, 'message': 'input error' })
 
 
-def ExceptionDocumentAddJSONP(key=None):
+def exception_document_add_jsonp(key=None):
     """
     GET: api/vX/exception/<application_key>
     add a exception document by JSONP
     """
-    return ExceptionDocumentAdd(key, is_jsonp=True)
-def ExceptionDocumentAdd(key=None, is_jsonp=False):
+    return exception_document_add(key, is_jsonp=True)
+def exception_document_add(key=None, is_jsonp=False):
     """
     POST: api/vX/exception/<application_key>
     add a exception document by web service
@@ -54,13 +54,13 @@ def ExceptionDocumentAdd(key=None, is_jsonp=False):
     else: return jsonify(result)
 
 
-def LogDocumentAddJSONP(key=None):
+def log_document_add_jsonp(key=None):
     """
     GET: api/vX/log/<application_key>
     add a log document by JSONP
     """
-    return LogDocumentAdd(key, is_jsonp=True)
-def LogDocumentAdd(key=None, is_jsonp=False):
+    return log_document_add(key, is_jsonp=True)
+def log_document_add(key=None, is_jsonp=False):
     """
     POST: api/vX/log/<application_key>
     add a log document by web service
