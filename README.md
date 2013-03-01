@@ -8,6 +8,7 @@ Kelp http://kelp.phate.org/
 Takanashi is an error reporting server. It runs on Google App Engine.  
 You could download this project and then deploy to GAE with free plan.  
 Your app could send error information to Takanashi with RESTful API.  
+**iOS example code: https://github.com/Kelp404/Takanashi-iOS**  
 
 
 <img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot00.png' height='488px' width='850px' />
