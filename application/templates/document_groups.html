@@ -27,7 +27,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     {% for item in applications %}
-                        <li><a tabindex="-1" href="/{{ document_model }}_groups/{{ item.id }}" onclick="takanashi.change_nav('{{ item.id }}');">{{ item.name }}</a></li>
+                        <li><a tabindex="-1" href="/{{ document_model }}_groups/{{ item.id }}" class="change_nav" application_id="{{ item.id }}">{{ item.name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
