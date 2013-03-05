@@ -4,12 +4,12 @@ class ViewEventsApplication
     event of views about applications.
     ###
     constructor: ->
-        @.show_modal_for_add_application()
-        @.add_application()
-        @.update_application()
-        @.delete_application()
-        @.invite_user()
-        @.delete_viewer()
+        @show_modal_for_add_application()
+        @add_application()
+        @update_application()
+        @delete_application()
+        @invite_user()
+        @delete_viewer()
         return @
 
     show_modal_for_add_application: ->
@@ -168,7 +168,7 @@ class ViewEventsSwitchApplicationi
     switch application then update nav link href.
     ###
     constructor: ->
-        @.change_nav()
+        @change_nav()
         return @
 
     change_nav: ->
@@ -186,8 +186,8 @@ class ViewEventsUser
     event of views about users.
     ###
     constructor: ->
-        @.add_user()
-        @.delete_user()
+        @add_user()
+        @delete_user()
         return @
 
     add_user: ->
@@ -246,7 +246,7 @@ class ViewEventsAccount
     event of views about account.
     ###
     constructor: ->
-        @.update_profile()
+        @update_profile()
         return @
 
     update_profile: ->
@@ -285,7 +285,7 @@ class ViewEventsDocument
     event of views about documents.
     ###
     constructor: ->
-        @.click_document_group()
+        @click_document_group()
         return @
 
     click_document_group: ->

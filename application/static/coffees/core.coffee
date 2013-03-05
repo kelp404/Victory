@@ -13,6 +13,7 @@ core =
         ###
         if state
             $('.modal.in').modal 'hide'
+            state.is_pop = true
             @miko state, false
         return
 
