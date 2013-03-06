@@ -31,7 +31,7 @@ KNotification =
 
         #insert notification
         $('#' + nid).animate right: 0, 400, 'easeOutExpo', delay arg.expire, -> KNotification.hide(nid)
-        return nid
+        nid
 
     hide: (nid) ->
         ###

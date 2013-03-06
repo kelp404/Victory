@@ -10,7 +10,7 @@ class ViewEventsApplication
         @delete_application()
         @invite_user()
         @delete_viewer()
-        return @
+        @
 
     show_modal_for_add_application: ->
         ###
@@ -51,7 +51,7 @@ class ViewEventsApplication
                             title: 'Failed!'
                             message: 'Please check again.'
             $($(@).closest('.modal')).modal 'hide'
-            return false
+            false
 
     update_application: ->
         ###
@@ -78,7 +78,7 @@ class ViewEventsApplication
                             title: 'Failed!'
                             message: 'Please check again.'
             $($(@).closest('.modal')).modal 'hide'
-            return false
+            false
 
     delete_application: ->
         ###
@@ -104,7 +104,7 @@ class ViewEventsApplication
                             title: 'Failed!'
                             message: 'Please check again.'
             $($(@).closest('.modal')).modal 'hide'
-            return false
+            false
 
     invite_user: ->
         ###
@@ -135,7 +135,7 @@ class ViewEventsApplication
                         core.miko href: location.href, false
                     else
                         $invite_email.closest('.control-group').addClass 'error'
-            return false
+            false
         # click entern in text box
         $(document).on 'keypress', 'input.invite', (e) ->
             if e.keyCode == 13
@@ -159,7 +159,7 @@ class ViewEventsApplication
                 success: (r) ->
                     core.loading_off()
                     $member_div.remove() if r.success
-            return false
+            false
 
 
 
@@ -169,7 +169,7 @@ class ViewEventsSwitchApplicationi
     ###
     constructor: ->
         @change_nav()
-        return @
+        @
 
     change_nav: ->
         $(document).on 'click', '.change_nav', ->
@@ -188,7 +188,7 @@ class ViewEventsUser
     constructor: ->
         @add_user()
         @delete_user()
-        return @
+        @
 
     add_user: ->
         ###
@@ -214,7 +214,7 @@ class ViewEventsUser
                         KNotification.pop
                             title: 'Failed!'
                             message: 'Please check again.'
-            return false
+            false
 
     delete_user: ->
         ###
@@ -225,7 +225,7 @@ class ViewEventsUser
             return false if !core.validation $(@)
 
             $.ajax
-                type: 'delete', url: $(@).attr('href'), dataType: 'json', cache: fase
+                type: 'delete', url: $(@).attr('href'), dataType: 'json', cache: false
                 beforeSend: -> core.loading_on core.text_loading
                 error: ->
                     core.loading_off()
@@ -237,7 +237,7 @@ class ViewEventsUser
                         KNotification.pop
                             title: 'Failed!'
                             message: 'Please check again.'
-            return false
+            false
 
 
 
@@ -247,7 +247,7 @@ class ViewEventsAccount
     ###
     constructor: ->
         @update_profile()
-        return @
+        @
 
     update_profile: ->
         ###
@@ -270,13 +270,13 @@ class ViewEventsAccount
                         KNotification.pop
                             title: 'Success!'
                             message: 'Data had be Saved.'
-                        $('#name').val result.name
-                        $($('.profile p')[0]).text result.name
+                        $('#name').val r.name
+                        $($('.profile p')[0]).text r.name
                     else
                         KNotification.pop
                             title: 'Failed!'
                             message: 'Please check again.'
-            return false
+            false
 
 
 
@@ -286,7 +286,7 @@ class ViewEventsDocument
     ###
     constructor: ->
         @click_document_group()
-        return @
+        @
 
     click_document_group: ->
         ###
@@ -295,7 +295,7 @@ class ViewEventsDocument
         ###
         $(document).on 'click', 'tr.document_group', ->
             core.miko href: $(this).attr('href'), true
-            return false
+            false
 
 
 
@@ -307,7 +307,7 @@ class ViewEvents
         new ViewEventsUser()
         new ViewEventsAccount()
         new ViewEventsDocument()
-        return @
+        @
 
 
 $ ->
