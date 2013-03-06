@@ -1,6 +1,6 @@
 """
     Before test, you should run GAE local server, and clear datastore, text search,
-     and update url in function 'setUp()'.
+     and update url in function TestTakanashiFunctions.setUp().
     --clear_datastore --clear_search_indexes
 
     unittest:
@@ -10,13 +10,14 @@
 
 import unittest, json, re, random
 import requests
+from bs4 import BeautifulSoup
 
 
 class TestTakanashiFunctions(unittest.TestCase):
     def setUp(self):
         self.url = 'http://localhost:8080'
         self.email = 'kelp@phate.org'
-        self.cookies = { 'dev_appserver_login': "kelp@phate.org:True:111325016121394242422" }
+        self.cookies = {'dev_appserver_login': "kelp@phate.org:True:111325016121394242422"}
         self.application_name = 'Application-X'
 
 
@@ -26,7 +27,8 @@ class TestTakanashiFunctions(unittest.TestCase):
         """
         r = requests.get('%s/aaa' % self.url, allow_redirects=False)
         self.assertEqual(r.status_code, 404)
-        self.assertRegexpMatches(r.content, '<div class="status">404</div>')
+        soup = BeautifulSoup(r.content)
+        self.assertEqual(soup.findAll('div', {'class': 'status'})[0].contents[0], '404')
 
     def test_405_page(self):
         """
@@ -34,7 +36,8 @@ class TestTakanashiFunctions(unittest.TestCase):
         """
         r = requests.post('%s/login' % self.url, allow_redirects=False)
         self.assertEqual(r.status_code, 405)
-        self.assertRegexpMatches(r.content, '<div class="status">405</div>')
+        soup = BeautifulSoup(r.content)
+        self.assertEqual(soup.findAll('div', {'class': 'status'})[0].contents[0], '405')
 
     def test_redirect_login_page(self):
         """
@@ -50,7 +53,8 @@ class TestTakanashiFunctions(unittest.TestCase):
         """
         r = requests.get(self.url)
         self.assertEqual(r.status_code, 200)
-        self.assertRegexpMatches(r.content, '.*<legend>Sign In</legend>.*')
+        soup = BeautifulSoup(r.content)
+        self.assertEqual(soup.findAll('legend')[0].contents[0], 'Sign In')
 
     def test_settings_profile_page(self):
         """
@@ -63,15 +67,16 @@ class TestTakanashiFunctions(unittest.TestCase):
 
         r = requests.get('%s/settings/profile' % self.url, cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
-        self.assertRegexpMatches(r.content, '.*<.*name="name".*value="Kelp".*')
-        self.assertRegexpMatches(r.content, '.*<.*name="account".*value="kelp@phate.org".*')
+        soup = BeautifulSoup(r.content)
+        self.assertEqual(len(soup.findAll('input', {'name': 'name', 'value': 'Kelp'})), 1)
+        self.assertEqual(len(soup.findAll('input', {'name': 'account', 'value': 'kelp@phate.org'})), 1)
 
     def test_00_settings_users(self):
         """
         test settings/users
         """
         # add an user
-        r = requests.post('%s/settings/users' % self.url, cookies=self.cookies, data={'email':'user@phate.org'})
+        r = requests.post('%s/settings/users' % self.url, cookies=self.cookies, data={'email': 'user@phate.org'})
         self.assertEqual(r.status_code, 200)
 
         # get user list
