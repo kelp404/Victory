@@ -11,22 +11,15 @@ skip_files:
 - ^(.*/)?#.*#
 - ^(.*/)?.*~
 - ^(.*/)?.*\.py[co]
-- ^(.*/)?.*/RCS/.*
 - ^(.*/)?\..*
-- ^test.py
 - ^(.*/)?tests/.*
-- ^(.*/)?test/.*
-- ^(.*/)?unittest2$
-- ^mock.py
-- ^Makefile
-- ^COPYING.LESSER
 - ^README.md
 - \.gitignore
+- \.gitmodules
 - ^\.git/.*
 - ^\.idea/.*
-- \.*\.lint$
 - ^_images/.*
-- ^application/static/minify/.*
+- ^application/static/jc/.*
 - ^application/static/coffees/.*
 
 handlers:

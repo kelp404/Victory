@@ -1,6 +1,6 @@
 #Takanashi
 
-Kelp http://kelp.phate.org/  
+Kelp https://twitter.com/kelp404  
 [MIT License][mit]  
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 
