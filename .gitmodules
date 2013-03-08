@@ -1,4 +1,4 @@
 [submodule "gae_mini_profiler"]
 	path = gae_mini_profiler
-	url = git://github.com/Kelp404/gae_mini_profiler.git
+	url = git://github.com/kelp404/gae_mini_profiler.git
 	ignore = dirty
