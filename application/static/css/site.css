@@ -209,10 +209,6 @@ a:hover { text-decoration: underline; color: #3d85c6; }
     text-align:center;
     font-weight:bolder;
 }
-footer a{ color:#eee;text-decoration: none;}
-footer a:link{ color:#eee;text-decoration: none;}
-footer a:visited{ color:#eee;text-decoration: none;}
-footer a:hover{ color:#eee; }
 
 /* loading */
 #loading

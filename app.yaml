@@ -14,8 +14,8 @@ skip_files:
 - ^(.*/)?\..*
 - ^(.*/)?tests/.*
 - ^README.md
-- \.gitignore
-- \.gitmodules
+- ^\.gitignore
+- ^\.gitmodules
 - ^\.git/.*
 - ^\.idea/.*
 - ^_images/.*
@@ -30,7 +30,7 @@ handlers:
   upload: application/static/icon/favicon.ico
 - url: /robots\.txt
   static_files: application/static/robots.txt
-  upload: application/static/robots\.txt
+  upload: application/static/robots.txt
 
 # javascript / css / image
 - url: /javascripts/
