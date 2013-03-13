@@ -145,11 +145,11 @@ https://developers.google.com/appengine/downloads
 
 
 ##Unittest
-Before test, you should run GAE local server, and clear datastore, text search, and update url in function 'setUp()'.
+Before test, you should run GAE local server, and clear datastore, text search, and update url in function `TestTakanashiFunctions.setUp()`.
 ```Python
-class TestFunctions(unittest.TestCase):
+class TestTakanashiFunctions(unittest.TestCase):
     def setUp(self):
-        self.url = 'http://localhost:8081'
+        self.url = 'http://localhost:8080'
         self.email = 'kelp@phate.org'
         self.cookies = { 'dev_appserver_login': "kelp@phate.org:True:111325016121394242422" }
 ```
@@ -158,7 +158,7 @@ clear datastore & text search:
 --clear_datastore --clear_search_indexes
 ```
 ```
-$ cd Flask-GAE
+$ cd Takanashi
 $ python tests
 ```
 References:  
