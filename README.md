@@ -46,6 +46,11 @@ $.ajax({
 <img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot02.png' height='599px' width='850px' />
 
 
+##Clone
+```
+$ git clone --recursive git://github.com/kelp404/Takanashi.git
+```
+
 
 ##Deploy
 You should create a GAE account.  
@@ -137,6 +142,30 @@ https://developers.google.com/appengine/downloads
     "create_time": "yyyy-MM-ddTHH:mm:ss"
 }
 ```
+
+
+##Unittest
+Before test, you should run GAE local server, and clear datastore, text search, and update url in function 'setUp()'.
+```Python
+class TestFunctions(unittest.TestCase):
+    def setUp(self):
+        self.url = 'http://localhost:8081'
+        self.email = 'kelp@phate.org'
+        self.cookies = { 'dev_appserver_login': "kelp@phate.org:True:111325016121394242422" }
+```
+clear datastore & text search:
+```
+--clear_datastore --clear_search_indexes
+```
+```
+$ cd Flask-GAE
+$ python tests
+```
+References:  
++ <a href="http://docs.python.org/2/library/unittest.html" target="_blank">Python unit test</a>
++ <a href="https://github.com/kennethreitz/requests" target="_blank">Requests on GitHub</a>
++ <a href="http://www.crummy.com/software/BeautifulSoup/bs4/doc/" target="_blank">Beautiful Soup</a>
+
 
 
 ##Close mini profiler  
