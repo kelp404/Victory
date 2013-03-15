@@ -180,7 +180,9 @@ class DocumentService(BaseService):
         @returns True, None / False, error message
         """
         if key is None: return False, 'key is required'
-        if document_model != DocumentModel.crash:
+        if document_model == DocumentModel.crash:
+            if 'user' not in document or 'name' not in document['user']: return False, 'name is required'
+        else:
             if 'title' not in document or document['title'] is None: return False, 'title is required'
             if 'name' not in document or document['name'] is None: return False, 'name is required'
 
