@@ -181,10 +181,16 @@ class DocumentService(BaseService):
         """
         if key is None: return False, 'key is required'
         if document_model == DocumentModel.crash:
-            if 'user' not in document or 'name' not in document['user']: return False, 'name is required'
+            user = document.get('user')
+            if user is None:
+                return False, 'user is missing'
+            if user.get('name') is None:
+                return False, 'user.name is required'
         else:
-            if 'title' not in document or document['title'] is None: return False, 'title is required'
-            if 'name' not in document or document['name'] is None: return False, 'name is required'
+            if 'title' not in document or document['title'] is None:
+                return False, 'title is required'
+            if 'name' not in document or document['name'] is None:
+                return False, 'name is required'
 
         # check application is exist
         applications = db.GqlQuery('select * from ApplicationModel where app_key = :1 limit 1', key)
@@ -206,17 +212,16 @@ class DocumentService(BaseService):
         if document_model == DocumentModel.crash:
             model.report = document
             model.title = ['0x%s %s %s' % (('00000000' + (hex(x['backtrace']['contents'][0]['instruction_addr'])[2:]))[-8:], x['backtrace']['contents'][0]['object_name'], x['backtrace']['contents'][0]['symbol_name']) for x in document['crash']['threads'] if x['crashed']][0]
-            model.name = document['user']['name']
             # set user info
-            try: model.email = document['user']['email']
-            except: pass
-            try: model.access_token = document['user']['access_token']
-            except: pass
+            user = document['user']
+            model.name = user['name']
+            model.email = user.get('email')
+            model.access_token = user.get('access_token')
             # set create_time
             try: model.create_time = datetime.datetime.strptime(document['report']['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
             except: model.create_time = datetime.datetime.now()
             # set app uuid
-            model.app_uuid = document['system']['app_uuid']
+            model.app_uuid = document['system'].get('app_uuid')
             # set version
             try: model.version = '%s (%s)' % (document['system']['CFBundleShortVersionString'], document['system']['CFBundleVersion'])
             except: pass
@@ -233,13 +238,16 @@ class DocumentService(BaseService):
                 # remove password=\w*&
                 model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
             # set status
-            if 'status' in document and model.status is None: model.status = str(document['status'])
+            if 'status' in document and model.status is None:
+                model.status = str(document['status'])
             # set create_time
             if 'create_time' in document and document['create_time']:
                 try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
                 except:
                     try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M')
-                    except: pass
+                    except:
+                        try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%SZ')
+                        except: pass
 
         model.app_id = applications[0].key().id()
         model.ip = os.environ["REMOTE_ADDR"]
