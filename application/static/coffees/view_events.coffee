@@ -266,6 +266,7 @@ class ViewEventsAccount
                     core.loading_off()
                     core.error_message()
                 success: (r) ->
+                    core.loading_off()
                     if r.success
                         KNotification.pop
                             title: 'Success!'
