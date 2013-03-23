@@ -33,6 +33,7 @@ class AccountService(BaseService):
             user.name = google_user
             user.level = UserLevel.root
             user.put()
+            return user
 
         if google_user:
             # auth with google account

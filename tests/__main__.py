@@ -1,7 +1,7 @@
 """
     Before test, you should run GAE local server, and clear datastore, text search,
      and update url in function TestTakanashiFunctions.setUp().
-    --clear_datastore --clear_search_indexes
+    --clear_datastore=yes --clear_search_indexes=yes
 
     unittest:
         $ cd Takanashi

@@ -157,7 +157,7 @@ class TestTakanashiFunctions(unittest.TestCase):
 ```
 clear datastore & text search:
 ```
---clear_datastore --clear_search_indexes
+--clear_datastore=yes --clear_search_indexes=yes
 ```
 ```
 $ cd Takanashi

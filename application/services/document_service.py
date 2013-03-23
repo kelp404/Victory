@@ -285,16 +285,18 @@ class DocumentService(BaseService):
             times = memcache.get(cache_key)
 
         # delete text search document group_tag of that are same
-        options = search.QueryOptions(returned_fields = [])
-        query_string = 'group_tag=%s' % model.group_tag
-        query = search.Query(query_string=query_string, options=options)
-        items = index.search(query)
-        if items.number_found > 0:
-            index.delete([x.doc_id for x in items])
+        try:
+            options = search.QueryOptions(returned_fields = [])
+            query_string = 'group_tag=%s' % model.group_tag
+            query = search.Query(query_string=query_string, options=options)
+            items = index.search(query)
+            if items.number_found > 0:
+                index.delete([x.doc_id for x in items])
+        except: pass
 
         # insert to text search
         search_document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
-                                           search.NumberField(name='app_id', value=model.app_id),
+                                           search.TextField(name='app_id', value=str(model.app_id)),
                                            search.TextField(name='description', value=model.description),
                                            search.TextField(name='email', value=model.email),
                                            search.TextField(name='name', value=model.name),
