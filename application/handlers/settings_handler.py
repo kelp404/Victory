@@ -50,7 +50,8 @@ def application_add():
     name = request.form.get('name')
     description = request.form.get('description')
     aps = ApplicationService()
-    return jsonify({ 'success': aps.add_application(name, description) })
+    aps.add_application(name, description)
+    return applications()
 
 def application_update(application_id):
     """

@@ -5,7 +5,6 @@ class ViewEventsApplication
     ###
     constructor: ->
         @show_modal_for_add_application()
-        @add_application()
         @update_application()
         @delete_application()
         @invite_user()
@@ -25,33 +24,6 @@ class ViewEventsApplication
             $('#name').val $('.appended_input_application').val()
             setTimeout "$('#name').focus()", 500
             return
-
-    add_application: ->
-        ###
-        add an application.
-        :param url: $(@).attr('action')
-        :param data: $(@).serialize()
-        ###
-        $(document).on 'submit', 'form#form_add_application', ->
-            return false if !core.validation $(@)
-
-            $.ajax
-                type: 'post', url: $(@).attr('action'), dataType: 'json', cache: false
-                data: $(@).serialize()
-                beforeSend: -> core.loading_on core.text_loading
-                error: ->
-                    core.loading_off()
-                    core.error_message()
-                success: (r) ->
-                    core.loading_off()
-                    if r.success
-                        core.miko href: location.href, false
-                    else
-                        KNotification.pop
-                            title: 'Failed!'
-                            message: 'Please check again.'
-            $($(@).closest('.modal')).modal 'hide'
-            false
 
     update_application: ->
         ###

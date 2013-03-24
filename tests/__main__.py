@@ -101,8 +101,6 @@ class TestTakanashiFunctions(unittest.TestCase):
             'description': ''
         })
         self.assertEqual(r.status_code, 200)
-        result = json.loads(r.content)
-        self.assertTrue(result['success'])
 
     def test_02_add_exception_document(self):
         """
