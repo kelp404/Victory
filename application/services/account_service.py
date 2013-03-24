@@ -103,6 +103,7 @@ class AccountService(BaseService):
         message.body = 'Takanashi https://%s\n\nAccount: %s' % (config.domain, email)
         message.send()
 
+        user.get(user.key())    #sync
         return user
 
     def get_users(self):

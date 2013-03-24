@@ -109,6 +109,7 @@ class ApplicationService(BaseService):
         app.app_key = str(uuid.uuid4())
         app.owner = g.user.key().id()
         app.put()
+        app.get(app.key())  # sync
         return True
 
     def delete_application(self, application_id):
@@ -125,7 +126,7 @@ class ApplicationService(BaseService):
         # delete the application
         app = ApplicationModel().get_by_id(application_id)
         app.delete()
-
+        app.get(app.key())
         return True
 
     def update_application(self, application_id, name, description):
@@ -153,6 +154,7 @@ class ApplicationService(BaseService):
             app.app_name = name
             app.description = description
             app.put()
+            app.get(app.key())  #sync
             return True
 
         return False
@@ -176,6 +178,7 @@ class ApplicationService(BaseService):
         if self.is_my_application(application_id, True) and user_id not in application.viewer and user_id != application.owner:
             application.viewer.append(user_id)
             application.put()
+            application.get(application.key())  #sync
             return True
         else:
             return False
@@ -199,6 +202,7 @@ class ApplicationService(BaseService):
         if self.is_my_application(application_id, True) and user_id in application.viewer:
             application.viewer.remove(user_id)
             application.put()
+            application.get(application.key())  # sync
             return True
         else:
             return False
