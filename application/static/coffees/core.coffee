@@ -68,7 +68,7 @@ core =
         ###
         pop error message.
         ###
-        KNotification.pop title: 'Failed', message: 'Loading failed, please try again later.'
+        $.av.pop {title: 'Error', message: 'Loading failed, please try again later.', template: 'error'}
 
     validation: ($form) ->
         ###

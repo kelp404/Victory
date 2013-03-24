@@ -1,24 +1,26 @@
 /*
  z-index
     #nav_bar: 1000
-    .knotification: 1600
+    .alert_view: 1600
     #loading: 1600
 
-    bootstrap modal: 1040
+    bootstrap .modal: 1040
  */
 
 
-/* KNotification */
-.knotification {
+/* AlertView */
+#alert_view_center {
     position: fixed;
-    margin: 5px;
-    width: 250px;
-    height: 65px;
+    z-index: 1600;
+}
+.alert_view {
     overflow: hidden;
     z-index: 1600;
+    opacity: 0.9;
+    padding: 10px;
+    position: absolute;
+    color: #333;
 
-    padding: 0;
-    opacity: 0.8;
     background-color:#f5f5f5;
     border:1px solid #e3e3e3;
     -webkit-border-radius:4px;
@@ -27,37 +29,97 @@
     -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.05);
     -moz-box-shadow:inset 0 1px 1px rgba(0,0,0,0.05);
     box-shadow:inset 0 1px 1px rgba(0,0,0,0.05);
+    -webkit-box-shadow: 0 0 10px #999;
+    -moz-box-shadow: 0 0 10px #999;
+    box-shadow: 0 0 10px #999;
+}
+.alert_view_notification {
+    padding: 0;
+    position: fixed;
+    margin: 10px;
+    width: 250px;
+    height: 73px;
     -webkit-box-shadow: 0 0 10px #444;
     -moz-box-shadow: 0 0 10px #444;
     box-shadow: 0 0 10px #444;
 }
-.knotification .ntitle
+.alert_view .av_title {
+    font-size: 15px;
+    line-height: 25px;
+    font-weight: bolder;
+    color: #222;
+}
+.alert_view .av_message {
+    margin-left: 10px;
+    font-size: 13px;
+    line-height: 20px;
+}
+.alert_view_notification .av_title
 {
     border-bottom:1px solid #e3e3e3;
     background:-moz-linear-gradient(0% 0% 270deg, #f0f0f0, #fff 100%);
     background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#f0f0f0), to(#fff));
-    font-weight: bolder;
-    line-height: 20px;
-    font-size: 14px;
     padding: 0 10px;
 }
-.knotification .nmessage
+.alert_view_notification .av_message
 {
-    padding: 0 10px;
-    font-size: 13px;
+    padding: 2px 10px;
+    margin-left: 0;
+}
+.alert_view .av_close {
+    line-height: 25px;
+    float: right;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #888;
+}
+
+/* Template error */
+.alert_view_error {
+    background-color: #f2dede;
+    color: #b92a28;
+}
+.alert_view_notification.alert_view_error .av_title {
+    color: white;
+}
+.alert_view_notification.alert_view_error .av_title {
+    border-bottom:0px solid #e3e3e3;
+    background:-moz-linear-gradient(0% 0% 270deg, #ee5f5b, #bd362f 100%);
+    background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#ee5f5b), to(#bd362f));
+}
+.alert_view_error .av_title {
+    color: #b92a28;
+}
+/* Template black */
+.alert_view_black {
+    border:1px solid #777;
+    -webkit-box-shadow: 0 0 10px #888;
+    -moz-box-shadow: 0 0 10px #888;
+    box-shadow: 0 0 10px #888;
+    background-color: #222;
+    color: #f6f6f6;
+}
+.alert_view_notification.alert_view_black .av_title {
+    border-bottom:1px solid #777;
+    background:-moz-linear-gradient(0% 0% 270deg, #555, #222 100%);
+    background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#555), to(#222));
+}
+.alert_view_black .av_title {
+    color: white;
 }
 
 
 /* font-family */
 @font-face {
-    font-family: MyCustomFont;
+    font-family: CustomFont;
     src: local("ヒラギノ角ゴ ProN"), local("Hiragino Kaku Gothic ProN"),
     local(Ubuntu),
     local("微軟正黑體");
 }
 /* Latin */
 @font-face {
-    font-family: MyCustomFont;
+    font-family: CustomFont;
     unicode-range: U+00-024F, U+203F;
     src: local(Helvetica),
     local(Ubuntu),
@@ -74,7 +136,7 @@
 body
 {
     font-size: 13px;
-    font-family: MyCustomFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: CustomFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #232323;
     background: url(/css/dust.png);
 }

@@ -46,9 +46,7 @@ class ViewEventsApplication
                     if r.success
                         core.miko href: location.href, false
                     else
-                        KNotification.pop
-                            title: 'Failed!'
-                            message: 'Please check again.'
+                        $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             $($(@).closest('.modal')).modal 'hide'
             false
 
@@ -72,9 +70,7 @@ class ViewEventsApplication
                     if r.success
                         core.miko href: location.href, false
                     else
-                        KNotification.pop
-                            title: 'Failed!'
-                            message: 'Please check again.'
+                        $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             $($(@).closest('.modal')).modal 'hide'
             false
 
@@ -101,9 +97,7 @@ class ViewEventsApplication
                     core.loading_off()
                     if r.success
                         $application_form.modal 'hide'
-                        KNotification.pop
-                            title: 'Success!'
-                            message: $invite_email.val() + ' will get a invited email.'
+                        $.av.pop {title: 'Successful!', message: $invite_email.val() + ' will get a invited email.'}
                         core.miko href: location.href, false
                     else
                         $invite_email.closest('.control-group').addClass 'error'
@@ -183,9 +177,7 @@ class ViewEventsUser
                     if r.success
                         core.miko href: location.href, false
                     else
-                        KNotification.pop
-                            title: 'Failed!'
-                            message: 'Please check again.'
+                        $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             false
 
     delete_user: ->
@@ -206,9 +198,7 @@ class ViewEventsUser
                     if r.success
                         core.miko href: location.href, false
                     else
-                        KNotification.pop
-                            title: 'Failed!'
-                            message: 'Please check again.'
+                        $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             false
 
 
@@ -240,15 +230,11 @@ class ViewEventsAccount
                 success: (r) ->
                     core.loading_off()
                     if r.success
-                        KNotification.pop
-                            title: 'Success!'
-                            message: 'Data had be Saved.'
+                        $.av.pop {title: 'Successful!', message: 'Data had be Saved.', mode: 'alert'}
                         $('#name').val r.name
                         $($('.profile p')[0]).text r.name
                     else
-                        KNotification.pop
-                            title: 'Failed!'
-                            message: 'Please check again.'
+                        $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             false
 
 
