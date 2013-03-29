@@ -33,6 +33,7 @@ class AccountService(BaseService):
             user.name = google_user
             user.level = UserLevel.root
             user.put()
+            user.get(user.key())    # sync
             return user
 
         if google_user:
@@ -46,6 +47,7 @@ class AccountService(BaseService):
                 user.email = google_user
                 user.name = google_user
                 user.put()
+                user.get(user.key())    # sync
                 return user
 
         return None
@@ -68,6 +70,7 @@ class AccountService(BaseService):
             user = UserModel().get_by_id(g.user.key().id())
             user.name = name
             user.put()
+            user.get(user.key())    # sync
             return True, name
 
         return False, None

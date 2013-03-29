@@ -36,56 +36,52 @@ class DocumentService(BaseService):
             return [], 0
 
         result = []
-        try:
-            query_string = '(app_id:%s)' % application_id
-            if keyword and len(keyword.strip()) > 0:
-                source = [item for item in keyword.split(' ') if len(item) > 0]
-                plus = [item for item in source if item.find('-') != 0]
-                minus = [item[1:] for item in source if item.find('-') == 0 and len(item) > 1]
+        query_string = '(app_id:%s)' % application_id
+        if keyword and len(keyword.strip()) > 0:
+            source = [item for item in keyword.split(' ') if len(item) > 0]
+            plus = [item for item in source if item.find('-') != 0]
+            minus = [item[1:] for item in source if item.find('-') == 0 and len(item) > 1]
 
-                if len(plus) > 0:
-                    keyword = ' '.join(plus)
-                    query_string = query_string + ' AND ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
-                if len(minus) > 0:
-                    keyword = ' '.join(minus)
-                    query_string = query_string + ' AND NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
-            cache_key = MemcacheKey.document_search(application_id, document_model)
-            cache_value = memcache.get(key=cache_key)
-            if cache_value and keyword + str(index) in cache_value:
-                # return from cache
-                return cache_value[keyword + str(index)]['result'], cache_value[keyword + str(index)]['count']
+            if len(plus) > 0:
+                keyword = ' '.join(plus)
+                query_string = query_string + ' AND ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
+            if len(minus) > 0:
+                keyword = ' '.join(minus)
+                query_string = query_string + ' AND NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
+        cache_key = MemcacheKey.document_search(application_id, document_model)
+        cache_value = memcache.get(key=cache_key)
+        if cache_value and keyword + str(index) in cache_value:
+            # return from cache
+            return cache_value[keyword + str(index)]['result'], cache_value[keyword + str(index)]['count']
 
-            create_time_desc = search.SortExpression(
-                expression = 'create_time',
-                direction = search.SortExpression.DESCENDING,
-                default_value = '0')
-            options = search.QueryOptions(
-                offset = config.page_size * index,
-                limit = config.page_size,
-                sort_options = search.SortOptions(expressions=[create_time_desc]),
-                returned_fields = ['title', 'name', 'times', 'description', 'email', 'create_time', 'group_tag'])
-            query = search.Query(query_string, options=options)
-            if document_model == DocumentModel.exception:
-                # search data from ExceptionModel
-                documents = search.Index(name='ExceptionModel').search(query)
-            elif document_model == DocumentModel.log:
-                # search data from LogModel
-                documents = search.Index(name='LogModel').search(query)
-            else:
-                # search data from CrashModel
-                documents = search.Index(name='CrashModel').search(query)
+        create_time_desc = search.SortExpression(
+            expression = 'create_time',
+            direction = search.SortExpression.DESCENDING,
+            default_value = 0)
+        options = search.QueryOptions(
+            offset = config.page_size * index,
+            limit = config.page_size,
+            sort_options = search.SortOptions(expressions=[create_time_desc], limit=1000),
+            returned_fields = ['title', 'name', 'times', 'description', 'email', 'create_time', 'group_tag'])
+        query = search.Query(query_string=query_string, options=options)
+        if document_model == DocumentModel.exception:
+            # search data from ExceptionModel
+            documents = search.Index(name='ExceptionModel').search(query)
+        elif document_model == DocumentModel.log:
+            # search data from LogModel
+            documents = search.Index(name='LogModel').search(query)
+        else:
+            # search data from CrashModel
+            documents = search.Index(name='CrashModel').search(query)
 
-            for document in documents:
-                result.append({'group_tag': document.field('group_tag').value,
-                               'title': document.field('title').value,
-                               'name': document.field('name').value,
-                               'times': int(document.field('times').value),
-                               'description': document.field('description').value,
-                               'email': document.field('email').value,
-                               'create_time': document.field('create_time').value.strftime('%Y-%m-%dT%H:%M:%S.%fZ')})
-
-        except:
-            return [], 0
+        for document in documents:
+            result.append({'group_tag': document.field('group_tag').value,
+                           'title': document.field('title').value,
+                           'name': document.field('name').value,
+                           'times': int(document.field('times').value),
+                           'description': document.field('description').value,
+                           'email': document.field('email').value,
+                           'create_time': document.field('create_time').value.strftime('%Y-%m-%dT%H:%M:%S.%fZ')})
 
         # if number of documents over maximum then return the maximum
         if documents.number_found > 1000 + config.page_size:
@@ -305,5 +301,6 @@ class DocumentService(BaseService):
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
         index.put(search_document)
+        model.get(model.key())  # sync
 
         return True, None
