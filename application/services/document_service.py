@@ -282,7 +282,7 @@ class DocumentService(BaseService):
 
         # delete text search document group_tag of that are same
         try:
-            options = search.QueryOptions(returned_fields = [])
+            options = search.QueryOptions(returned_fields=['doc_id'])
             query_string = 'group_tag=%s' % model.group_tag
             query = search.Query(query_string=query_string, options=options)
             items = index.search(query)
