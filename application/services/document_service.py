@@ -11,7 +11,6 @@ from application.models.memcache_key import *
 from google.appengine.api import memcache
 import os, re, datetime, hashlib
 import config
-import logging
 
 class DocumentService(BaseService):
     def get_document_groups(self, application_id, keyword, index, document_model):
@@ -36,7 +35,7 @@ class DocumentService(BaseService):
             return [], 0
 
         result = []
-        query_string = '(app_id:%s)' % application_id
+        query_string = ''
         if keyword and len(keyword.strip()) > 0:
             source = [item for item in keyword.split(' ') if len(item) > 0]
             plus = [item for item in source if item.find('-') != 0]
@@ -44,10 +43,10 @@ class DocumentService(BaseService):
 
             if len(plus) > 0:
                 keyword = ' '.join(plus)
-                query_string = query_string + ' AND ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
+                query_string = '(name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1})'.replace('{1}', keyword)
             if len(minus) > 0:
                 keyword = ' '.join(minus)
-                query_string = query_string + ' AND NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
+                query_string = 'NOT ((name:{1}) OR (email:{1}) OR (description:{1}) OR (ip:{1}) OR (title:{1}) OR (status:{1}))'.replace('{1}', keyword)
         cache_key = MemcacheKey.document_search(application_id, document_model)
         cache_value = memcache.get(key=cache_key)
         if cache_value and keyword + str(index) in cache_value:
@@ -64,15 +63,19 @@ class DocumentService(BaseService):
             sort_options = search.SortOptions(expressions=[create_time_desc], limit=1000),
             returned_fields = ['title', 'name', 'times', 'description', 'email', 'create_time', 'group_tag'])
         query = search.Query(query_string=query_string, options=options)
-        if document_model == DocumentModel.exception:
-            # search data from ExceptionModel
-            documents = search.Index(name='ExceptionModel').search(query)
-        elif document_model == DocumentModel.log:
-            # search data from LogModel
-            documents = search.Index(name='LogModel').search(query)
-        else:
-            # search data from CrashModel
-            documents = search.Index(name='CrashModel').search(query)
+        try:
+            if document_model == DocumentModel.exception:
+                # search data from ExceptionModel
+                documents = search.Index(namespace='ExceptionModel', name=str(application_id)).search(query)
+            elif document_model == DocumentModel.log:
+                # search data from LogModel
+                documents = search.Index(namespace='LogModel', name=str(application_id)).search(query)
+            else:
+                # search data from CrashModel
+                documents = search.Index(namespace='CrashModel', name=str(application_id)).search(query)
+        except:
+            # schema missing
+            return [], 0
 
         for document in documents:
             result.append({'group_tag': document.field('group_tag').value,
@@ -233,9 +236,6 @@ class DocumentService(BaseService):
             if model.parameters:
                 # remove password=\w*&
                 model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
-            # set status
-            if 'status' in document and model.status is None:
-                model.status = str(document['status'])
             # set create_time
             if 'create_time' in document and document['create_time']:
                 try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
@@ -249,7 +249,7 @@ class DocumentService(BaseService):
         model.ip = os.environ["REMOTE_ADDR"]
         if 'User-Agent' in request.headers:
             model.user_agent = request.headers['User-Agent']
-        # group ta is sha1({ app_id }_{ title }_{ name }_{ create_time(yyyy-MM-dd) })
+        # group tag is sha1({ app_id }_{ title }_{ name }_{ create_time(yyyy-MM-dd) })
         group_tag = '%s_%s_%s_%s' % (model.app_id, model.title, model.name, model.create_time.strftime('%Y-%m-%d'))
         model.group_tag = hashlib.sha1(group_tag.encode('utf-8')).hexdigest()
         model.put()
@@ -260,20 +260,21 @@ class DocumentService(BaseService):
         # post document to text search
         # text search schema name is same with data store name
         if document_model == DocumentModel.exception:
-            text_search_name = 'ExceptionModel'
+            text_search_namespace = 'ExceptionModel'
         elif document_model == DocumentModel.log:
-            text_search_name = 'LogModel'
+            text_search_namespace = 'LogModel'
         else:
-            text_search_name = 'CrashModel'
-        index = search.Index(name=text_search_name)
+            text_search_namespace = 'CrashModel'
+        index = search.Index(namespace=text_search_namespace, name=str(applications[0].key().id()))
 
         # update times field
         cache_key = MemcacheKey.document_add(model.app_id, model.group_tag, document_model)
         exist = memcache.get(cache_key)
         if exist is None:
             # load times form data store
-            times = db.GqlQuery('select * from %s where group_tag = :1' % text_search_name, model.group_tag).count(100)
-            if times <= 0: times = 1
+            times = db.GqlQuery('select * from %s where group_tag = :1' % text_search_namespace, model.group_tag).count(100)
+            if times <= 0:
+                times = 1
             memcache.incr(delta=0, key=cache_key, initial_value=times)
         else:
             # load times from memory cache
@@ -292,7 +293,6 @@ class DocumentService(BaseService):
 
         # insert to text search
         search_document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
-                                           search.TextField(name='app_id', value=str(model.app_id)),
                                            search.TextField(name='description', value=model.description),
                                            search.TextField(name='email', value=model.email),
                                            search.TextField(name='name', value=model.name),

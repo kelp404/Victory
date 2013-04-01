@@ -4,6 +4,7 @@ from application.data_models.application_model import *
 from application.data_models.user_model import *
 from application.services.base_service import *
 from google.appengine.ext import db
+from google.appengine.api import search
 import uuid
 import logging
 
@@ -126,8 +127,29 @@ class ApplicationService(BaseService):
         # delete the application
         app = ApplicationModel().get_by_id(application_id)
         app.delete()
-        app.get(app.key())
+        app.get(app.key())  # sync
+
+        # delete text search
+        self.__clear_text_search(application_id, 'CrashModel')
+        self.__clear_text_search(application_id, 'ExceptionModel')
+        self.__clear_text_search(application_id, 'LogModel')
+
         return True
+
+    def __clear_text_search(self, application_id, namespace):
+        """
+        Clear text search with application id
+        :param application_id: long, application id
+        :param namespace: text search schema namespace
+        """
+        index = search.Index(namespace=namespace, name=str(application_id))
+        while True:
+            # Get a list of documents populating only the doc_id field and extract the ids.
+            document_ids = [document.doc_id for document in index.get_range(ids_only=True)]
+            if not document_ids:
+                break
+                # Delete the documents for the given ids from the Index.
+            index.delete(document_ids)
 
     def update_application(self, application_id, name, description):
         """

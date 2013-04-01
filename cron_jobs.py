@@ -4,7 +4,6 @@ from google.appengine.ext import db
 from google.appengine.api import search
 import datetime
 import config
-import logging
 
 
 # clear document data
@@ -14,15 +13,23 @@ class ClearDocumentsHandler(webapp2.RequestHandler):
         options = search.QueryOptions(returned_fields=['doc_id'])
         query = search.Query(query_string='create_time<=%s' % date_tag.strftime('%Y-%m-%d'), options=options)
         # clear documents
-        self.__delete_text_search('ExceptionModel', query)
-        self.__delete_text_search('LogModel', query)
-        self.__delete_text_search('CrashModel', query)
+        applications = db.GqlQuery('select * from ApplicationModel')
+        for application in applications:
+            self.__delete_text_search('ExceptionModel', str(application.key().id()), query)
+            self.__delete_text_search('LogModel', str(application.key().id()), query)
+            self.__delete_text_search('CrashModel', str(application.key().id()), query)
         self.__delete_data_store('ExceptionModel', date_tag)
         self.__delete_data_store('LogModel', date_tag)
         self.__delete_data_store('CrashModel', date_tag)
 
-    def __delete_text_search(self, model_name, query):
-        index = search.Index(name=model_name)
+    def __delete_text_search(self, namespace, name, query):
+        """
+        Delete text search documents.
+        :param namespace: string, schema namespace
+        :param name: string, schema name
+        :param query:
+        """
+        index = search.Index(namespace=namespace, name=name)
         while True:
             documents = index.search(query)
             if documents.number_found == 0: break
