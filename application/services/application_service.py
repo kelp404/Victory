@@ -72,16 +72,24 @@ class ApplicationService(BaseService):
         """
         try: application_id = long(application_id)
         except: return False
+
         # no id or no application
-        if application_id is None or application_id == 0: return False
+        if application_id is None or application_id == 0:
+            return False
 
         # check auth
-        if g.user is None: return False
+        if g.user is None:
+            return False
+
+        # no application
+        app = ApplicationModel().get_by_id(application_id)
+        if app is None:
+            return False
 
         # query by root
-        if g.user.level == UserLevel.root: return True
+        if g.user.level == UserLevel.root:
+            return True
 
-        app = ApplicationModel().get_by_id(application_id)
         if check_is_owner:
             return app.owner == g.user.key().id()
         else:
@@ -120,20 +128,19 @@ class ApplicationService(BaseService):
         @param application_id application id
         @returns True / False
         """
-        try: application_id = long(application_id)
-        except: return False
-        if not self.is_my_application(application_id, True): return False
+        if not self.is_my_application(application_id, True):
+            return False
 
         # delete the application
         app = ApplicationModel().get_by_id(application_id)
         app.delete()
-        app.get(app.key())  # sync
 
         # delete text search
         self.__clear_text_search(application_id, 'CrashModel')
         self.__clear_text_search(application_id, 'ExceptionModel')
         self.__clear_text_search(application_id, 'LogModel')
 
+        app.get(app.key())  # sync
         return True
 
     def __clear_text_search(self, application_id, namespace):
@@ -160,8 +167,6 @@ class ApplicationService(BaseService):
         @param description the new application description
         @returns True / False
         """
-        try: application_id = long(application_id)
-        except: return False
         # check auth
         if not self.is_my_application(application_id, True): return False
 
@@ -191,10 +196,6 @@ class ApplicationService(BaseService):
         """
         # check input value
         if user_id is None or application_id is None: return False
-        try:
-            user_id = long(user_id)
-            application_id = long(application_id)
-        except: return False
 
         application = ApplicationModel.get_by_id(application_id)
         if self.is_my_application(application_id, True) and user_id not in application.viewer and user_id != application.owner:
@@ -214,11 +215,8 @@ class ApplicationService(BaseService):
         @returns True / False
         """
         # check input value
-        if user_id is None or application_id is None: return False
-        try:
-            user_id = long(user_id)
-            application_id = long(application_id)
-        except: return False
+        if user_id is None or application_id is None:
+            return False
 
         application = ApplicationModel.get_by_id(application_id)
         if self.is_my_application(application_id, True) and user_id in application.viewer:

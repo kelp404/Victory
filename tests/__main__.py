@@ -88,8 +88,6 @@ class TestTakanashiFunctions(unittest.TestCase):
         user_id = re.search('.*<a href="/settings/users/(\d+)#" class="delete_user">', r.content).group(1)
         r = requests.delete('%s/settings/users/%s' % (self.url, user_id), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
-        result = json.loads(r.content)
-        self.assertTrue(result['success'])
 
     def test_01_settings_applications_add(self):
         """
@@ -218,12 +216,25 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         application_id = re.search('<form id="application(\d+)"', r.content).group(1)
 
-        # update the application
+        # update the application -> 200
         r = requests.put('%s/settings/applications/%s' % (self.url, application_id), cookies=self.cookies, data={
             'name': self.application_name,
             'description': 'description'
         })
         self.assertEqual(r.status_code, 200)
+
+        # update the application -> 400
+        r = requests.put('%s/settings/applications/aaa' % self.url, cookies=self.cookies, data={
+            'name': self.application_name,
+            'description': 'description'
+        })
+        self.assertEqual(r.status_code, 400)
+
+        # update the application -> 417
+        r = requests.put('%s/settings/applications/%s' % (self.url, application_id), cookies=self.cookies, data={
+            'description': 'description'
+        })
+        self.assertEqual(r.status_code, 417)
 
     def test_06_settings_application_invite(self):
         """
@@ -241,8 +252,6 @@ class TestTakanashiFunctions(unittest.TestCase):
             'email': 'invite@phate.org'
         })
         self.assertEqual(r.status_code, 200)
-        result = json.loads(r.content)
-        self.assertTrue(result['success'])
 
         # get applications
         r = requests.get('%s/settings/applications' % self.url, cookies=self.cookies)
@@ -252,8 +261,6 @@ class TestTakanashiFunctions(unittest.TestCase):
         # delete the viewer in this application
         r = requests.delete('%s%s' % (self.url, uri), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
-        result = json.loads(r.content)
-        self.assertTrue(result['success'])
 
         # get user list
         r = requests.get('%s/settings/users' % self.url, cookies=self.cookies)
@@ -264,8 +271,6 @@ class TestTakanashiFunctions(unittest.TestCase):
         user_id = re.search('.*<a href="/settings/users/(\d+)#" class="delete_user">', r.content).group(1)
         r = requests.delete('%s/settings/users/%s' % (self.url, user_id), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
-        result = json.loads(r.content)
-        self.assertTrue(result['success'])
 
     def test_07_settings_application_delete(self):
         """
@@ -276,11 +281,17 @@ class TestTakanashiFunctions(unittest.TestCase):
         self.assertEqual(r.status_code, 200)
         application_id = re.search('<form id="application(\d+)"', r.content).group(1)
 
-        # delete the application
+        # delete the application -> 400
+        r = requests.delete('%s/settings/applications/aa' % self.url, cookies=self.cookies)
+        self.assertEqual(r.status_code, 400)
+
+        # delete the application -> 417
+        r = requests.delete('%s/settings/applications/11111' % self.url, cookies=self.cookies)
+        self.assertEqual(r.status_code, 417)
+
+        # delete the application -> 200
         r = requests.delete('%s/settings/applications/%s' % (self.url, application_id), cookies=self.cookies)
         self.assertEqual(r.status_code, 200)
-        result = json.loads(r.content)
-        self.assertTrue(result['success'])
 
 
 if __name__ == '__main__':

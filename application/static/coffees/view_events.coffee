@@ -20,10 +20,10 @@ class ViewEventsApplication
                 $(@).parent().find('a').click()
                 return false
             return
-        $(document).on 'click', 'a[href="#form_add_application"]', ->
+        # call back
+        $(document).on 'shown', '#form_add_application', ->
             $('#name').val $('.appended_input_application').val()
-            setTimeout "$('#name').focus()", 500
-            return
+            $('#name').focus()
 
     update_application: ->
         ###
@@ -38,15 +38,15 @@ class ViewEventsApplication
                 type: 'put', url: $(@).attr('action'), dataType: 'json', cache: false
                 data: $(@).serialize()
                 beforeSend: -> core.loading_on core.text_loading
-                error: ->
+                error: (e) ->
                     core.loading_off()
-                    core.error_message()
-                success: (r) ->
-                    core.loading_off()
-                    if r.success
-                        core.miko href: location.href, false
-                    else
+                    if e.status in [400, 417]
                         $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
+                    else
+                        core.error_message()
+                success: ->
+                    core.loading_off()
+                    core.miko href: location.href, false
             $($(@).closest('.modal')).modal 'hide'
             false
 
@@ -62,15 +62,15 @@ class ViewEventsApplication
                 type: 'delete', url: $(@).attr('href'), dataType: 'json', cache: false
                 data: { id: $(@).attr('document_id') }
                 beforeSend: -> core.loading_on core.text_loading
-                error: ->
+                error: (e) ->
                     core.loading_off()
-                    core.error_message()
-                success: (r) ->
-                    core.loading_off()
-                    if r.success
-                        core.miko href: location.href, false
-                    else
+                    if e.status in [400, 417]
                         $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
+                    else
+                        core.error_message()
+                success: ->
+                    core.loading_off()
+                    core.miko href: location.href, false
             $($(@).closest('.modal')).modal 'hide'
             false
 
@@ -90,17 +90,17 @@ class ViewEventsApplication
                 type: 'post', url: $(@).attr('href'), dataType: 'json', cache: false
                 data: { email: $invite_email.val() }
                 beforeSend: -> core.loading_on core.text_loading
-                error: ->
+                error: (e) ->
                     core.loading_off()
-                    core.error_message()
-                success: (r) ->
-                    core.loading_off()
-                    if r.success
-                        $application_form.modal 'hide'
-                        $.av.pop {title: 'Successful!', message: $invite_email.val() + ' will get a invited email.'}
-                        core.miko href: location.href, false
-                    else
+                    if e.status in [400, 403, 417]
                         $invite_email.closest('.control-group').addClass 'error'
+                    else
+                        core.error_message()
+                success: ->
+                    core.loading_off()
+                    $application_form.modal 'hide'
+                    $.av.pop {title: 'Successful!', message: $invite_email.val() + ' will get a invited email.'}
+                    core.miko href: location.href, false
             false
         # click entern in text box
         $(document).on 'keypress', 'input.invite', (e) ->
@@ -152,33 +152,8 @@ class ViewEventsUser
     event of views about users.
     ###
     constructor: ->
-        @add_user()
         @delete_user()
         @
-
-    add_user: ->
-        ###
-        add a new user to Takanashi.
-        :param url: $(this).attr('action')
-        :param data: $(this).serialize()
-        ###
-        $(document).on 'submit', 'form#form_add_user', ->
-            return false if !core.validation $(@)
-
-            $.ajax
-                type: 'post', url: $(@).attr('action'), dataType: 'json', cache: false
-                data: $(@).serialize()
-                beforeSend: -> core.loading_on core.text_loading
-                error: ->
-                    core.loading_off()
-                    core.error_message()
-                success: (r) ->
-                    core.loading_off()
-                    if r.success
-                        core.miko href: location.href, false
-                    else
-                        $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
-            false
 
     delete_user: ->
         ###

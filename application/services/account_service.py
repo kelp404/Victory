@@ -92,7 +92,7 @@ class AccountService(BaseService):
         user = db.GqlQuery('select * from UserModel where email = :1 limit 1', email)
         if user.count(1) > 0:
             # user is exist
-            return UserModel().get(user[0].key())
+            return UserModel().get(user[0])
 
         # add a new user
         user = UserModel()

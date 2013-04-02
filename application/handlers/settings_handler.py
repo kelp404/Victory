@@ -1,6 +1,6 @@
 
 
-from flask import redirect, render_template, jsonify, request
+from flask import redirect, render_template, jsonify, request, abort
 from application.services.account_service import AccountService
 from application.services.application_service import *
 
@@ -28,7 +28,10 @@ def profile_update():
     name = request.form.get('name')
     acs = AccountService()
     success, result_name = acs.update_profile(name)
-    return jsonify({ 'success': success, 'name': result_name })
+    if success:
+        return jsonify({ 'success': success, 'name': result_name })
+    else:
+        return abort(417)
 
 
 def applications():
@@ -58,60 +61,79 @@ def application_update(application_id):
     PUT: settings/applications/<application_id>
     update the application
     """
+    # check input
     try: application_id = long(application_id)
-    except: return jsonify({ 'success': False })
+    except: return abort(400)
 
     name = request.form.get('name')
     description = request.form.get('description')
     aps = ApplicationService()
-    return jsonify({ 'success': aps.update_application(application_id, name, description) })
+    success = aps.update_application(application_id, name, description)
+    if success:
+        return jsonify({'success': success})
+    else:
+        return abort(417)
 
 def application_delete(application_id):
     """
     DELETE: settings/applications/<application_id>
     delete the application
     """
+    try: application_id = long(application_id)
+    except: return abort(400)
+
     aps = ApplicationService()
-    return jsonify({ 'success': aps.delete_application(application_id) })
+    success = aps.delete_application(application_id)
+    if success:
+        return jsonify({'success': success})
+    else:
+        return abort(417)
 
 def application_invite(application_id):
     """
     POST: settings/application/<application_id>/invite
     invite user to join the application
     """
-    email = request.form.get('email')
     try: application_id = long(application_id)
-    except: return jsonify({ 'success': False })
+    except: return abort(400)
+    email = request.form.get('email')
 
     acs = AccountService()
     aps = ApplicationService()
 
     # am I owner?
     if not aps.is_my_application(application_id, True):
-        return jsonify({ 'success': False })
+        return abort(403)
 
     # invite user
     user = acs.invite_user(email)
     if user is None:
-        return jsonify({ 'success': False })
+        return abort(417)
 
     # add the new user to the application
     success = aps.add_user_to_application(user.key().id(), application_id)
-
-    return jsonify({ 'success': success })
+    if success:
+        return jsonify({ 'success': success })
+    else:
+        return abort(417)
 
 def application_member_delete(application_id, member_id):
     """
     DELETE: settings/applications/<application_id>/members/<member_id>
     delete a member in the application
     """
-    try: application_id = long(application_id)
-    except: return jsonify({ 'success': False })
-    try: member_id = long(member_id)
-    except: return jsonify({ 'success': False })
+    try:
+        application_id = long(application_id)
+        member_id = long(member_id)
+    except:
+        return abort(400)
 
     aps = ApplicationService()
-    return jsonify({ 'success': aps.delete_user_from_application(member_id, application_id) })
+    success = aps.delete_user_from_application(member_id, application_id)
+    if success:
+        return jsonify({'success': success})
+    else:
+        return abort(417)
 
 
 def users():
@@ -131,7 +153,11 @@ def user_add():
     """
     email = request.form.get('email')
     acs = AccountService()
-    return jsonify({ 'success': acs.invite_user(email) is not None })
+    user = acs.invite_user(email)
+    if user:
+        return jsonify({'success': True})
+    else:
+        return abort(417)
 
 def user_delete(user_id):
     """
@@ -139,4 +165,8 @@ def user_delete(user_id):
     delete the user
     """
     acs = AccountService()
-    return jsonify({ 'success': acs.delete_user(user_id) })
+    success = acs.delete_user(user_id)
+    if success:
+        return jsonify({'success': success})
+    else:
+        return abort(417)
