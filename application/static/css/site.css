@@ -114,8 +114,8 @@
 @font-face {
     font-family: CustomFont;
     src: local("ヒラギノ角ゴ ProN"), local("Hiragino Kaku Gothic ProN"),
-    local(Ubuntu),
-    local("微軟正黑體");
+    local("Ubuntu"),
+    local("微軟正黑體"), local("Microsoft JhengHei");
 }
 /* Latin */
 @font-face {
@@ -126,6 +126,7 @@
     local(Arial);
 }
 
+/* Segoe Print */
 @font-face {
     font-family: 'Segoe Print';
     font-style: normal;
