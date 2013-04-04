@@ -1,0 +1,4 @@
+[submodule "gae_mini_profiler"]
+	path = gae_mini_profiler
+	url = git://github.com/kamens/gae_mini_profiler.git
+	ignore = dirty
