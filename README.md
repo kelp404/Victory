@@ -170,14 +170,19 @@ References:
 
 
 
-##Close mini profiler  
+##Enable/Disable mini profiler on GAE  
 update `/gae_mini_profiler/config.py`  
 ```Python
 # Default, mini profiler will work when user is admin
 # close mini profiler:
 
 def _should_profile_production_default():
+    # disable
     return False
+
+    # enable
+    from google.appengine.api import users
+    return users.is_current_user_admin()
 ```
 ref: https://github.com/kamens/gae_mini_profiler
 
