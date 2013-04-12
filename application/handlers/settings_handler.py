@@ -155,7 +155,7 @@ def user_add():
     acs = AccountService()
     user = acs.invite_user(email)
     if user:
-        return jsonify({'success': True})
+        return users()
     else:
         return abort(417)
 
