@@ -9,7 +9,6 @@ class ViewEventsApplication
         @delete_application()
         @invite_user()
         @delete_viewer()
-        @
 
     show_modal_for_add_application: ->
         ###
@@ -135,7 +134,6 @@ class ViewEventsSwitchApplicationi
     ###
     constructor: ->
         @change_nav()
-        @
 
     change_nav: ->
         $(document).on 'click', '.change_nav', ->
@@ -153,7 +151,6 @@ class ViewEventsUser
     ###
     constructor: ->
         @delete_user()
-        @
 
     delete_user: ->
         ###
@@ -184,7 +181,6 @@ class ViewEventsAccount
     ###
     constructor: ->
         @update_profile()
-        @
 
     update_profile: ->
         ###
@@ -220,7 +216,6 @@ class ViewEventsDocument
     ###
     constructor: ->
         @click_document_group()
-        @
 
     click_document_group: ->
         ###
@@ -241,7 +236,6 @@ class ViewEvents
         new ViewEventsUser()
         new ViewEventsAccount()
         new ViewEventsDocument()
-        @
 
 
 $ ->
