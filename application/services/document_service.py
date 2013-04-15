@@ -17,11 +17,11 @@ class DocumentService(BaseService):
         """
         Get document groups by application id, search keyword and index
 
-        @param application_id application id
-        @param keyword search keywords
-        @param index pager index
-        @param document_model document type
-        @returns [document_group], total / [], 0
+        :param application_id: application id
+        :param keyword: search keywords
+        :param index: pager index
+        :param document_model: document type
+        :returns: [document_group], total / [], 0
         """
         if index is None: index = 0
         try:
@@ -106,10 +106,10 @@ class DocumentService(BaseService):
         """
         Get documents with application id and group tag
 
-        @param application_id application id
-        @param group_tag group tag
-        @param document_model document type (ExceptionModel / LogModel)
-        @returns [document] / []
+        :param application_id: application id
+        :param group_tag: group tag
+        :param document_model: document type (ExceptionModel / LogModel)
+        :return: [document] / []
         """
         try: application_id = long(application_id)
         except: return []
@@ -137,10 +137,10 @@ class DocumentService(BaseService):
         Get the last document with application id and group tag
         (result maybe from cache
 
-        @param application_id application id
-        @param group_tag group tag
-        @param document_model document type
-        @returns document / None
+        :param application_id: application id
+        :param group_tag: group tag
+        :param document_model: document type
+        :return: document / None
         """
         try: application_id = long(application_id)
         except: return None
@@ -173,34 +173,35 @@ class DocumentService(BaseService):
         """
         Add a document for web service
 
-        @param key application key
-        @param document log content
-        @param document_model document type
-        @returns True, None / False, error message
+        :param key: application key
+        :param document: log content
+        :param document_model: document type
+        :returns: True, None / False, error message
         """
         if key is None: return False, 'key is required'
-        if document_model == DocumentModel.crash:
+        if document_model is DocumentModel.crash:
             user = document.get('user')
             if user is None:
                 return False, 'user is missing'
             if user.get('name') is None:
                 return False, 'user.name is required'
         else:
-            if 'title' not in document or document['title'] is None:
+            if document.get('title') is None:
                 return False, 'title is required'
-            if 'name' not in document or document['name'] is None:
+            if document.get('name') is None:
                 return False, 'name is required'
 
         # check application is exist
         applications = db.GqlQuery('select * from ApplicationModel where app_key = :1 limit 1', key)
-        if applications.count(1) == 0:
+        if applications.count(1) is 0:
             return False, 'no match application'
+        application = applications[0]
 
         # select data store
-        if document_model == DocumentModel.exception:
+        if document_model is DocumentModel.exception:
             # add a exception document
             model = ExceptionModel()
-        elif document_model == DocumentModel.log:
+        elif document_model is DocumentModel.log:
             # add a log document
             model = LogModel()
         else:
@@ -208,7 +209,7 @@ class DocumentService(BaseService):
             model = CrashModel()
 
         # fixed input value
-        if document_model == DocumentModel.crash:
+        if document_model is DocumentModel.crash:
             model.report = document
             model.title = ['0x%s %s %s' % (('00000000' + (hex(x['backtrace']['contents'][0]['instruction_addr'])[2:]))[-8:], x['backtrace']['contents'][0]['object_name'], x['backtrace']['contents'][0]['symbol_name']) for x in document['crash']['threads'] if x['crashed']][0]
             # set user info
@@ -237,7 +238,7 @@ class DocumentService(BaseService):
                 # remove password=\w*&
                 model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
             # set create_time
-            if 'create_time' in document and document['create_time']:
+            if document.get('create_time') is not None:
                 try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
                 except:
                     try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M')
@@ -245,7 +246,7 @@ class DocumentService(BaseService):
                         try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%SZ')
                         except: pass
 
-        model.app_id = applications[0].key().id()
+        model.app_id = application.key().id()
         model.ip = os.environ["REMOTE_ADDR"]
         if 'User-Agent' in request.headers:
             model.user_agent = request.headers['User-Agent']
@@ -259,37 +260,17 @@ class DocumentService(BaseService):
 
         # post document to text search
         # text search schema name is same with data store name
-        if document_model == DocumentModel.exception:
+        if document_model is DocumentModel.exception:
             text_search_namespace = 'ExceptionModel'
-        elif document_model == DocumentModel.log:
+        elif document_model is DocumentModel.log:
             text_search_namespace = 'LogModel'
         else:
             text_search_namespace = 'CrashModel'
-        index = search.Index(namespace=text_search_namespace, name=str(applications[0].key().id()))
+        index = search.Index(namespace=text_search_namespace, name=str(application.key().id()))
 
         # update times field
         cache_key = MemcacheKey.document_add(model.app_id, model.group_tag, document_model)
-        exist = memcache.get(cache_key)
-        if exist is None:
-            # load times form data store
-            times = db.GqlQuery('select * from %s where group_tag = :1' % text_search_namespace, model.group_tag).count(100)
-            if times <= 0:
-                times = 1
-            memcache.incr(delta=0, key=cache_key, initial_value=times)
-        else:
-            # load times from memory cache
-            memcache.incr(key=cache_key, initial_value=0)
-            times = memcache.get(cache_key)
-
-        # delete text search document group_tag of that are same
-        try:
-            options = search.QueryOptions(returned_fields=['doc_id'])
-            query_string = 'group_tag=%s' % model.group_tag
-            query = search.Query(query_string=query_string, options=options)
-            items = index.search(query)
-            if items.number_found > 0:
-                index.delete([x.doc_id for x in items])
-        except: pass
+        times = memcache.incr(key=cache_key, initial_value=0)
 
         # insert to text search
         search_document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
@@ -301,6 +282,23 @@ class DocumentService(BaseService):
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
         index.put(search_document)
-        model.get(model.key())  # sync
+
+        # delete the text search document that have the same group_tag
+        try:
+            create_time_desc = search.SortExpression(
+                expression = 'create_time',
+                direction = search.SortExpression.DESCENDING,
+                default_value = 0)
+            options = search.QueryOptions(
+                offset = 1,
+                limit = 1000,
+                sort_options = search.SortOptions(expressions=[create_time_desc], limit=1000),
+                returned_fields = ['doc_id'])
+            query_string = 'group_tag=%s' % model.group_tag
+            query = search.Query(query_string=query_string, options=options)
+            documents = index.search(query)
+            if documents.number_found > 0:
+                index.delete([x.doc_id for x in documents])
+        except: pass
 
         return True, None
