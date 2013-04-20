@@ -78,7 +78,7 @@ class DocumentService(BaseService):
             return [], 0
 
         for document in documents:
-            result.append({'group_tag': document.field('group_tag').value,
+            result.append({'group_tag': document.doc_id,
                            'title': document.field('title').value,
                            'name': document.field('name').value,
                            'times': int(document.field('times').value),
@@ -94,10 +94,10 @@ class DocumentService(BaseService):
 
         # set memory cache for 12 hours
         if cache_value is None:
-            cache_value = { keyword + str(index): { 'result': result, 'count': count } }
+            cache_value = {keyword + str(index): {'result': result, 'count': count}}
             memcache.set(key=cache_key, value=cache_value, time=43200)
         else:
-            cache_value[keyword + str(index)] = { 'result': result, 'count': count }
+            cache_value[keyword + str(index)] = {'result': result, 'count': count}
             memcache.set(key=cache_key, value=cache_value, time=43200)
 
         return result, count
@@ -273,8 +273,8 @@ class DocumentService(BaseService):
         times = memcache.incr(key=cache_key, initial_value=0)
 
         # insert to text search
-        search_document = search.Document(fields=[search.TextField(name='group_tag', value=model.group_tag),
-                                           search.TextField(name='description', value=model.description),
+        search_document = search.Document(doc_id=model.group_tag,
+                                          fields=[search.TextField(name='description', value=model.description),
                                            search.TextField(name='email', value=model.email),
                                            search.TextField(name='name', value=model.name),
                                            search.TextField(name='title', value=model.title),
@@ -282,23 +282,5 @@ class DocumentService(BaseService):
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
         index.put(search_document)
-
-        # delete the text search document that have the same group_tag
-        try:
-            create_time_desc = search.SortExpression(
-                expression = 'create_time',
-                direction = search.SortExpression.DESCENDING,
-                default_value = 0)
-            options = search.QueryOptions(
-                offset = 1,
-                limit = 1000,
-                sort_options = search.SortOptions(expressions=[create_time_desc], limit=1000),
-                returned_fields = ['doc_id'])
-            query_string = 'group_tag=%s' % model.group_tag
-            query = search.Query(query_string=query_string, options=options)
-            documents = index.search(query)
-            if documents.number_found > 0:
-                index.delete([x.doc_id for x in documents])
-        except: pass
 
         return True, None
