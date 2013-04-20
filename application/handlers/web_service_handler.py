@@ -1,5 +1,5 @@
 
-from flask import request, jsonify, jsonpify
+from flask import request, jsonify, jsonpify, abort
 from application.services.document_service import *
 import json
 
@@ -22,12 +22,11 @@ def crash_document_add(key=None):
                 result, msg = ds.add_document(key, document, DocumentModel.crash)
                 if not result:
                     # error
-                    return jsonify({ 'success': False, 'message': msg })
-
+                    return abort(417, {'message': msg})
         # success
-        return jsonify({ 'success': True, 'message': None })
+        return jsonify({'success': True, 'message': None})
     # no reports
-    return jsonify({ 'success': False, 'message': 'input error' })
+    return abort(400, {'message': 'input error'})
 
 
 def exception_document_add_jsonp(key=None):
@@ -46,12 +45,15 @@ def exception_document_add(key=None, is_jsonp=False):
     if document:
         ds = DocumentService()
         result, msg = ds.add_document(key, document, DocumentModel.exception)
-        result = { 'success': result, 'message': msg }
-    else:
-        result = { 'success': False, 'message': 'input error' }
-
-    if is_jsonp: return jsonpify(result)
-    else: return jsonify(result)
+        if result:  # successful
+            if is_jsonp:    # jsonp
+                return jsonpify({'success': result, 'message': msg})
+            else:   # json
+                return jsonify({'success': result, 'message': msg})
+        else:   # failed
+            return abort(417, {'message': msg})
+    else:   # bad request
+        return abort(400, {'message': 'input error'})
 
 
 def log_document_add_jsonp(key=None):
@@ -70,12 +72,15 @@ def log_document_add(key=None, is_jsonp=False):
     if document:
         ds = DocumentService()
         result, msg = ds.add_document(key, document, DocumentModel.log)
-        result = { 'success': result, 'message': msg }
-    else:
-        result = { 'success': False, 'message': 'input error' }
-
-    if is_jsonp: return jsonpify(result)
-    else: return jsonify(result)
+        if result:  # successful
+            if is_jsonp:    # jsonp
+                return jsonpify({'success': result, 'message': msg})
+            else:   # json
+                return jsonify({'success': result, 'message': msg})
+        else:   # failed
+            return abort(417, {'message': msg})
+    else:   # bad request
+        return abort(400, {'message': 'input error'})
 
 
 def __get_request_document(is_jsonp=False):
@@ -93,7 +98,9 @@ def __get_request_document(is_jsonp=False):
         pars = request.form
     else:
         # data format: application/json
-        try: pars = json.loads(request.data)
-        except: return None
+        try:
+            pars = json.loads(request.data)
+        except:
+            return None
 
     return pars
