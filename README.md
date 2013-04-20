@@ -99,51 +99,16 @@ https://developers.google.com/appengine/downloads
 
 
 ##iOS example code
-https://github.com/kelp404/Takanashi-iOS
+
+###https://github.com/kelp404/Takanashi-iOS
+
+
 
 
 ##RESTful Web Service
-**Crash (only for iOS)**  
-`POST` your-domain/api/v1/crash/{ application key }  
-> Content-Type:`multipart/form-data`  
-  
-**send crash reports:**  
-> send reports by KSCrash  
-> https://github.com/kelp404/KSCrash  
 
----
-**Handled Exception**  
-`GET` your-domain/api/v1/exception/{ application key } **(for JSONP)**  
-`POST` your-domain/api/v1/exception/{ application key }  
-> Content-Type:`application/x-www-form-urlencoded` / `application/json`  
-  
-**Log**  
-`GET` your-domain/api/v1/log/{ application key } **(for JSONP)**  
-`POST` your-domain/api/v1/log/{ application key }  
-> Content-Type:`application/x-www-form-urlencoded` / `application/json`  
+###http://docs.takanashi.apiary.io/
 
-**send handled exception, log reports:**  
-```JavaScript
-{
-    "name": "User Name", // required
-    "title": "log title", // required
-    "description": "log description",
-    "email": "User's email",
-
-    "version": "application version",
-    "device": "device machine name",
-    "os_version": "device os version",
-
-    "access_token": "oauth access token",
-    "timeout": "timeout of http request",
-    "method": "method of http request",
-    "url": "url of http request",
-    "parameters": "parameters of http request",
-    "status": "status of http response",
-
-    "create_time": "yyyy-MM-ddTHH:mm:ss"
-}
-```
 
 
 ##Unittest
