@@ -1,0 +1,162 @@
+HOST: https://takanashi-demo.appspot.com/api/v1/
+
+--- Takanashi ---
+
+---
+[Takanashi](https://github.com/kelp404/Takanashi) is an error reporting server. It runs on Google App Engine.  
+You could download this project and then deploy to GAE with free plan.  
+Your app could send error information to Takanashi with RESTful API.  
+---
+
+
+
+
+--
+Crash
+Just for iOS.  
+Send crash information with [KSCrash](https://github.com/kstenerud/KSCrash).
+--
+
+#Send crash informations to server.
+POST /crash/{application_key}
+> Content-Type: multipart/form-data; boundary=xxx
+> Content-Encoding: gzip
+{
+    input-name: reports
+}
+< 200
+< Content-Type: application/json
+{
+    "message": null,
+    "success": true
+}
+
+
+
+
+--
+Handled Exception
+--
+
+#Send the handled exception data to server (JSONP).
+GET /exception/{application_key}
+{
+    "name": "User Name",  // required
+    "title": "log title", // required
+    // others arguments are optional
+    "description": "log description",
+    "email": "User's email",
+    "version": "application version",
+    "device": "device machine name",
+    "os_version": "device os version",
+    "access_token": "oauth access token",
+    "timeout": "timeout of http request",
+    "method": "method of http request",
+    "url": "url of http request",
+    "parameters": "parameters of http request",
+    "status": "status of http response",
+    "create_time": "yyyy-MM-ddTHH:mm:ss"
+}
+< 200
+{
+    "message": null,
+    "success": true
+}
+
+#Send the handled exception data to server.
+POST /exception/{application_key}
+> Content-Type: application/json
+{
+    "name": "User Name",  // required
+    "title": "log title", // required
+    // others arguments are optional
+    "description": "log description",
+    "email": "User's email",
+    "version": "application version",
+    "device": "device machine name",
+    "os_version": "device os version",
+    "access_token": "oauth access token",
+    "timeout": "timeout of http request",
+    "method": "method of http request",
+    "url": "url of http request",
+    "parameters": "parameters of http request",
+    "status": "status of http response",
+    "create_time": "yyyy-MM-ddTHH:mm:ss"
+}
+< 200
+< Content-Type: application/json
+{
+    "message": null,
+    "success": true
+}
+
+
+
+
+--
+Log
+--
+
+#Send the log information to server (JSONP).
+GET /exception/{application_key}
+{
+    "name": "User Name",  // required
+    "title": "log title", // required
+    // others arguments are optional
+    "description": "log description",
+    "email": "User's email",
+    "version": "application version",
+    "device": "device machine name",
+    "os_version": "device os version",
+    "access_token": "oauth access token",
+    "timeout": "timeout of http request",
+    "method": "method of http request",
+    "url": "url of http request",
+    "parameters": "parameters of http request",
+    "status": "status of http response",
+    "create_time": "yyyy-MM-ddTHH:mm:ss"
+}
+< 200
+{
+    "message": null,
+    "success": true
+}
+
+#Send the log information to server.
+POST /exception/{application_key}
+> Content-Type: application/json
+{
+    "name": "User Name",  // required
+    "title": "log title", // required
+    // others arguments are optional
+    "description": "log description",
+    "email": "User's email",
+    "version": "application version",
+    "device": "device machine name",
+    "os_version": "device os version",
+    "access_token": "oauth access token",
+    "timeout": "timeout of http request",
+    "method": "method of http request",
+    "url": "url of http request",
+    "parameters": "parameters of http request",
+    "status": "status of http response",
+    "create_time": "yyyy-MM-ddTHH:mm:ss"
+}
+< 200
+< Content-Type: application/json
+{
+    "message": null,
+    "success": true
+}
+
+
+
+
+--
+Datetime
+>time zone of datetime is UTC(GMT+0).  
+All datetime will be converted to local timezone on the web site.  
+formate is **yyyy-MM-ddTHH:mm:ss** (ex: 2013-01-02T13:00:00)
+
+--
+
