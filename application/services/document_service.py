@@ -61,7 +61,7 @@ class DocumentService(BaseService):
             offset = config.page_size * index,
             limit = config.page_size,
             sort_options = search.SortOptions(expressions=[create_time_desc], limit=1000),
-            returned_fields = ['title', 'name', 'times', 'description', 'email', 'create_time', 'group_tag'])
+            returned_fields = ['title', 'name', 'times', 'description', 'email', 'create_time'])
         query = search.Query(query_string=query_string, options=options)
         try:
             if document_model == DocumentModel.exception:
