@@ -7,6 +7,15 @@ core =
     is_ie: false
     is_safari: false
 
+    setup: ->
+        ###
+        setup core
+        ###
+        @setup_nav()
+        @setup_link()
+        @setup_enter_submit()
+        window.onpopstate = (e) -> @pop_state(e.state)
+
     pop_state: (state) ->
         ###
         pop state
@@ -164,6 +173,9 @@ core =
         ###
         setup hyper links and forms to ajax and push history.
         ###
+
+        # ie not supports high level code
+        return if @is_ie
 
         # link
         $(document).on 'click', 'a:not([href*="#"])', (e) ->

@@ -239,12 +239,10 @@ class ViewEvents
 
 
 $ ->
-    core.setup_nav()
-    core.setup_link()
-    core.setup_enter_submit()
-    window.onpopstate = (e) -> core.pop_state(e.state)
+    # setup core
+    core.setup()
 
-    # set up events of views
+    # setup events of views
     new ViewEvents()
 
     # that will be execute after miko call
