@@ -14,7 +14,7 @@ core =
         @setup_nav()
         @setup_link()
         @setup_enter_submit()
-        window.onpopstate = (e) -> @pop_state(e.state)
+        window.onpopstate = (e) -> core.pop_state(e.state)
 
     pop_state: (state) ->
         ###
