@@ -46,7 +46,7 @@ handlers:
 - url: /gae_mini_profiler/.*
   script: gae_mini_profiler.main.application
 
-# corn jobs
+# cron jobs
 - url: /cron_jobs/.*
   script: cron_jobs.app
   login: admin
