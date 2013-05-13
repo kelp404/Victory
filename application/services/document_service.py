@@ -84,7 +84,7 @@ class DocumentService(BaseService):
                            'times': int(document.field('times').value),
                            'description': document.field('description').value,
                            'email': document.field('email').value,
-                           'create_time': document.field('create_time').value.strftime('%Y-%m-%dT%H:%M:%S.%fZ')})
+                           'create_time': document.field('create_time').value.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'})
 
         # if number of documents over maximum then return the maximum
         if documents.number_found > 1000 + config.page_size:

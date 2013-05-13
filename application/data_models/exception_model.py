@@ -39,6 +39,6 @@ class ExceptionModel(db.Model):
             'title': self.title,
             'version': self.version,
             'ip': self.ip,
-            'create_time': self.create_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            'create_time': self.create_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
         }
         return result

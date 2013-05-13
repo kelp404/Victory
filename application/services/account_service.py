@@ -128,7 +128,7 @@ class AccountService(BaseService):
                 is_deletable= user.level != UserLevel.root,
                 name= user.name,
                 email= user.email,
-                create_time= user.create_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                create_time= user.create_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
             ))
         return result
 
