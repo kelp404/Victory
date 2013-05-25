@@ -46,7 +46,7 @@
         <table class="table table-bordered table-hover table-content table-pointer">
             {% if document_model != 'crash' %}<!-- exception, log -->
                 <thead>
-                <tr><th class="span2">User Name</th><th class="span2">Title</th><th class="span6">Description</th><th class="span2">Last Occurred</th><th style="width: 60px; text-align: right;">Times/Day</th></tr>
+                <tr><th class="span2">User Name</th><th class="span3">Title</th><th class="span6">Description</th><th class="span2">Last Occurred</th><th style="width: 60px; text-align: right;">Times/Day</th></tr>
                 </thead>
                 <tbody>
                 {% for item in page['items'] %}
