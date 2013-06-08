@@ -6,3 +6,7 @@
 	path = tests/bs4
 	url = git://github.com/kelp404/bs4.git
 	ignore = dirty
+[submodule "tests/requests-src"]
+	path = tests/requests-src
+	url = git://github.com/kennethreitz/requests.git
+	ignore = dirty
