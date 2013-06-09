@@ -1,5 +1,5 @@
 
-from flask import request, jsonify, jsonpify, abort
+from flask import request, jsonify, Response, abort
 from application.services.document_service import *
 import json
 
@@ -47,7 +47,8 @@ def exception_document_add(key=None, is_jsonp=False):
         result, msg = ds.add_document(key, document, DocumentModel.exception)
         if result:  # successful
             if is_jsonp:    # jsonp
-                return jsonpify({'success': result, 'message': msg})
+                json_string = json.dumps({'success': result, 'message': msg})
+                return Response('%s(%s)' % (request.args.get('callback'), json_string), mimetype='application/json')
             else:   # json
                 return jsonify({'success': result, 'message': msg})
         else:   # failed
@@ -74,7 +75,8 @@ def log_document_add(key=None, is_jsonp=False):
         result, msg = ds.add_document(key, document, DocumentModel.log)
         if result:  # successful
             if is_jsonp:    # jsonp
-                return jsonpify({'success': result, 'message': msg})
+                json_string = json.dumps({'success': result, 'message': msg})
+                return Response('%s(%s)' % (request.args.get('callback'), json_string), mimetype='application/json')
             else:   # json
                 return jsonify({'success': result, 'message': msg})
         else:   # failed
