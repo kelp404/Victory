@@ -10,3 +10,7 @@
 	path = submodules/requests
 	url = git://github.com/kennethreitz/requests.git
 	ignore = dirty
+[submodule "submodules/jinja2"]
+	path = submodules/jinja2
+	url = git://github.com/mitsuhiko/jinja2.git
+	ignore = dirty
