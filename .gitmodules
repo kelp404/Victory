@@ -18,3 +18,7 @@
 	path = submodules/flask
 	url = git://github.com/mitsuhiko/flask.git
 	ignore = dirty
+[submodule "submodules/werkzeug"]
+	path = submodules/werkzeug
+	url = git://github.com/mitsuhiko/werkzeug.git
+	ignore = dirty
