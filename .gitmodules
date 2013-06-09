@@ -14,3 +14,7 @@
 	path = submodules/jinja2
 	url = git://github.com/mitsuhiko/jinja2.git
 	ignore = dirty
+[submodule "submodules/flask"]
+	path = submodules/flask
+	url = git://github.com/mitsuhiko/flask.git
+	ignore = dirty
