@@ -101,9 +101,9 @@ class AccountService(BaseService):
         user.put()
 
         # send a invite email
-        message = mail.EmailMessage(sender=config.gae_account, subject="%s has invited you to join Takanashi." % g.user.name)
+        message = mail.EmailMessage(sender=config.gae_account, subject="%s has invited you to join Victory." % g.user.name)
         message.to = email
-        message.body = 'Takanashi https://%s\n\nAccount: %s' % (config.domain, email)
+        message.body = 'Victory https://%s\n\nAccount: %s' % (config.domain, email)
         message.send()
 
         user.get(user.key())    #sync
