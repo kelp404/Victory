@@ -3,7 +3,7 @@ from google.appengine.ext import db
 import json
 
 class CrashModel(db.Model):
-    # takanashi
+    # victory
     app_id = db.IntegerProperty()
     group_tag = db.StringProperty()
     # app uuid in crash report

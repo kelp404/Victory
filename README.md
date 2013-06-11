@@ -1,24 +1,24 @@
-#Takanashi
+#Victory
 
 Kelp https://twitter.com/kelp404  
 [MIT License][mit]  
 [MIT]: http://www.opensource.org/licenses/mit-license.php
 
 
-Takanashi is an error reporting server. It runs on Google App Engine.  
+Victory is an error reporting server. It runs on Google App Engine.
 You could download this project and then deploy to GAE with free plan.  
-Your app could send error information to Takanashi with RESTful API.  
+Your app could send error information to Victory with RESTful API.
 
 
-<img src='https://raw.github.com/kelp404/Takanashi/master/_images/screenshot00.png' height='488px' width='850px' />
+<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot00.png' height='488px' width='850px' />
 
 
 ##Demo
-url: https://takanashi-demo.appspot.com  
+url: https://victory-demo.appspot.com
   
 **post handled exception**  
 go to application page then get application key:  
-https://takanashi-demo.appspot.com/settings/applications  
+https://victory-demo.appspot.com/settings/applications
 ```JavaScript
 // post test data with jQuery.
 $.ajax({
@@ -42,12 +42,12 @@ $.ajax({
     })
 })
 ```
-<img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot02.png' height='599px' width='850px' />
+<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot02.png' height='599px' width='850px' />
 
 
 ##Clone
 ```
-$ git clone --recursive git://github.com/kelp404/Takanashi.git
+$ git clone --recursive git://github.com/kelp404/Victory.git
 ```
 
 
@@ -57,23 +57,23 @@ https://appengine.google.com
   
 ###update `app.yaml`
 ```Python
-application: takanashi-demo
-'takanashi-demo' should replace to your Application Identifier.
+application: victory-demo
+'victory-demo' should replace to your Application Identifier.
 ```
 
 
 ###update `config.py`
 ```Python
 # web site domain. your gae application domain.
-domain = 'takanashi-demo.appspot.com'
+domain = 'victory-demo.appspot.com'
 
 # this account is for sending email. it should be your gae account.
 gae_account = 'your-name@gmail.com'
 
 
-# Takanashi use Google Account API
+# Victory use Google Account API
 # The first signing in user is root.
-# if allow_register is true, every one could use Google Account to sign in Takanashi.
+# if allow_register is true, every one could use Google Account to sign in Victory.
 allow_register = True
 ```
 
@@ -82,12 +82,12 @@ allow_register = True
 Upload files with SDK.  
 **deploy**
 ```Python
-appcfg.py update Takanashi/
-* Takanashi is the folder name of the project
+appcfg.py update Victory/
+* Victory is the folder name of the project
 ```
 **deploy backends**
 ```
-appcfg.py backends Takanashi/ update
+appcfg.py backends Victory/ update
 ```
 
 ref:  
@@ -95,26 +95,26 @@ https://developers.google.com/appengine/docs/python/gettingstartedpython27/uploa
 https://developers.google.com/appengine/downloads  
 
 *First deploy you should wait GAE building indexes.  
-<img src='https://raw.github.com/Kelp404/Takanashi/master/_images/screenshot01.png' height='425px' width='850px' />
+<img src='https://raw.github.com/Kelp404/Victory/master/_images/screenshot01.png' height='425px' width='850px' />
 
 
 ##iOS example code
 
-###https://github.com/kelp404/Takanashi-iOS
+###https://github.com/kelp404/Victory-iOS
 
 
 
 
 ##RESTful Web Service
 
-###http://docs.takanashi.apiary.io/
+###http://docs.victory.apiary.io/
 
 
 
 ##Unittest
-Before test, you should run GAE local server, and clear datastore, text search, and update url in function `TestTakanashiFunctions.setUp()`.
+Before test, you should run GAE local server, and clear datastore, text search, and update url in function `TestVictoryFunctions.setUp()`.
 ```Python
-class TestTakanashiFunctions(unittest.TestCase):
+class TestVictoryFunctions(unittest.TestCase):
     def setUp(self):
         self.url = 'http://localhost:8080'
         self.email = 'kelp@phate.org'
@@ -125,7 +125,7 @@ clear datastore & text search:
 --clear_datastore=yes --clear_search_indexes=yes
 ```
 ```
-$ cd Takanashi
+$ cd Victory
 $ python tests
 ```
 References:  
@@ -159,7 +159,7 @@ If you would to send email on localhost with GAE SDK, you should change applicat
 INFO     2013-01-30 03:28:17,547 mail_stub.py:138] MailService.Send
   From: kelp[at]phate.org
   To: email@gmail.com
-  Subject: Kelp has invited you to join Takanashi.
+  Subject: Kelp has invited you to join Victory.
   Body:
     Content-type: text/plain
     Data length: 131

@@ -1,11 +1,11 @@
-app_name = 'Takanashi'
+app_name = 'Victory'
 
 # web site domain. your gae application domain.
-domain = 'takanashi-demo.appspot.com'
+domain = 'victory-demo.appspot.com'
 
-# Takanashi use Google Account API
+# Victory use Google Account API
 # The first signing in user is root.
-# if allow_register is true, every one could use Google Account to sign in Takanashi.
+# if allow_register is true, every one could use Google Account to sign in Victory.
 allow_register = True
 
 # this account is for send email. it should be your gae account.

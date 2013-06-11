@@ -1,10 +1,10 @@
 """
     Before test, you should run GAE local server, and clear datastore, text search,
-     and update url in function TestTakanashiFunctions.setUp().
+     and update url in function TestVictoryFunctions.setUp().
     --clear_datastore=yes --clear_search_indexes=yes
 
     unittest:
-        $ cd Takanashi
+        $ cd Victory
         $ python tests
 """
 
@@ -13,7 +13,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-class TestTakanashiFunctions(unittest.TestCase):
+class TestVictoryFunctions(unittest.TestCase):
     def setUp(self):
         self.url = 'http://localhost:8080'
         self.email = 'kelp@phate.org'
@@ -122,7 +122,7 @@ class TestTakanashiFunctions(unittest.TestCase):
             "os_version": "6.1",
             "access_token": "oauth access token",
             "method": "method of http request",
-            "url": "http://takanashi-demo.appspot.com",
+            "url": "http://victory-demo.appspot.com",
             "parameters": "parameters of http request",
             "status": "500"
         })
@@ -162,7 +162,7 @@ class TestTakanashiFunctions(unittest.TestCase):
             "os_version": "6.1",
             "access_token": "oauth access token",
             "method": "method of http request",
-            "url": "http://takanashi-demo.appspot.com",
+            "url": "http://victory-demo.appspot.com",
             "parameters": "parameters of http request",
             "status": "500"
         })
