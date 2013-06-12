@@ -6,7 +6,7 @@ Kelp https://twitter.com/kelp404
 
 
 Victory is an error reporting server. It runs on Google App Engine.
-You could download this project and then deploy to GAE with free plan.  
+You could download this project and then deploy to GAE with free plan.
 Your app could send error information to Victory with RESTful API.
 
 
