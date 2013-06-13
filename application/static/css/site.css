@@ -139,7 +139,7 @@ body
     font-size: 13px;
     font-family: CustomFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: #232323;
-    background: url(/css/dust.png);
+    background: url(/img/template/dust.png);
 }
 a { text-decoration: none; }
 a:link { text-decoration: none; color: #0b5394; }
@@ -261,7 +261,7 @@ a:hover { text-decoration: underline; color: #3d85c6; }
 #footer
 {
     background-color: #f2f2f2;
-    background: url(/css/dust.png);
+    background: url(/img/template/dust.png);
     box-shadow: 0 -10px 12px #f2f2f2;
     padding: 40px 0;
     width: 100%;

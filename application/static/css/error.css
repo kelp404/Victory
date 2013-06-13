@@ -1,21 +1,20 @@
 
-/* 小鳥遊 */
 @font-face {
     font-family: 'EngraversMT';
     font-style: normal;
     font-weight: normal;
-    src: local('Engravers MT'), local('EngraversMT'), url('/css/engraversmt.ttf');
+    src: local('Engravers MT'), local('EngraversMT'), url('/font/engraversmt.ttf');
 }
 @font-face {
     font-family: 'Optima';
     font-style: normal;
     font-weight: normal;
-    src: local('Optima'), url('/css/optima.ttf');
+    src: local('Optima'), url('/font/optima.ttf');
 }
 
 body
 {
-    background: url(/css/whitey.png);
+    background: url(/img/template/whitey.png);
 }
 .warning
 {

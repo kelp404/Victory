@@ -19,26 +19,34 @@ skip_files:
 - ^\.git/.*
 - ^\.idea/.*
 - ^_images/.*
-- ^application/static/jc/.*
-- ^application/static/coffees/.*
+- ^application/static/binding.py
+- ^(.*/)?.*\.coffee
+- ^(.*/)?.*\.scss
+- ^(.*/)?.*\.rb
 
 handlers:
-# icon / robots.txt
+# icon
 - url: /favicon\.ico
   mime_type: image/vnd.microsoft.icon
   static_files: application/static/icon/favicon.ico
   upload: application/static/icon/favicon.ico
+
+# robots.txt
 - url: /robots\.txt
   static_files: application/static/robots.txt
   upload: application/static/robots.txt
 
-# javascript / css / image
-- url: /javascripts/
-  static_dir: application/static/javascripts
+# CoffeeScript / JavaScript / CSS / image / font
+- url: /coffeescript/
+  static_dir: application/static/coffeescript
+- url: /javascript/
+  static_dir: application/static/javascript
 - url: /css/
   static_dir: application/static/css
-- url: /imgs/
-  static_dir: application/static/imgs
+- url: /img/
+  static_dir: application/static/img
+- url: /font/
+  static_dir: application/static/font
 
 # mini profiler
 - url: /gae_mini_profiler/static
