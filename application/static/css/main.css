@@ -24,7 +24,7 @@
   font-family: 'Segoe Print';
   font-style: normal;
   font-weight: normal;
-  src: local("Segoe Print"), local("SegoePrint"), url("/css/segoepr.ttf");
+  src: local("Segoe Print"), local("SegoePrint"), url("/font/segoepr.ttf");
 }
 
 /* line 35, main.scss */
