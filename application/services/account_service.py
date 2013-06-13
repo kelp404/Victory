@@ -1,13 +1,17 @@
 
+# flask
 from flask import g
-from application.data_models.user_model import *
-from application.models.user_view_model import *
-from application.services.base_service import BaseService
+
+# google
 from google.appengine.ext import db
 from google.appengine.api import mail
 from google.appengine.api import users
+
+# victory
+from ..models.datastore.user_model import *
+from ..models.view_model.user_view_model import *
+from base_service import BaseService
 from application import config
-import logging
 
 
 class AccountService(BaseService):

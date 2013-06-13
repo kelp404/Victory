@@ -6,6 +6,7 @@ from handlers.settings_handler import *
 from handlers.web_service_handler import *
 
 
+
 # Home
 app.add_url_rule('/', 'crash_group_home', view_func=document_view, methods=['GET'])
 

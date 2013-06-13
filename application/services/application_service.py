@@ -1,12 +1,20 @@
 
+# python
+import uuid
+
+# flask
 from flask import g
-from application.data_models.application_model import *
-from application.data_models.user_model import *
-from application.services.base_service import *
+
+# google
 from google.appengine.ext import db
 from google.appengine.api import search
-import uuid
-import logging
+
+# victory
+from ..models.datastore.application_model import *
+from ..models.datastore.user_model import *
+from base_service import *
+
+
 
 class ApplicationService(BaseService):
     def get_applications(self, with_members=False):

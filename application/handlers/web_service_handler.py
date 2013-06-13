@@ -1,7 +1,13 @@
 
-from flask import request, jsonify, Response, abort
-from application.services.document_service import *
+# python
 import json
+
+# flask
+from flask import request, jsonify, Response, abort
+
+# victory
+from application.services.document_service import *
+
 
 
 def crash_document_add(key=None):

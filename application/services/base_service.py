@@ -1,6 +1,8 @@
 
-from application.data_models.count_model import *
-import logging
+# victory
+from ..models.datastore.count_model import *
+
+
 
 class DocumentModel(object):
     exception = 1

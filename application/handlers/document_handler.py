@@ -1,7 +1,11 @@
 
+# flask
+from flask import request, render_template, g, abort
+
+# victory
 from application.services.document_service import *
 from application import config
-from flask import request, render_template, g, abort
+
 
 
 def document_view(application_id=None, group_tag=None):

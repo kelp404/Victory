@@ -1,16 +1,25 @@
 
-from flask import request
-from application.data_models.exception_model import *
-from application.data_models.log_model import *
-from application.data_models.crash_model import *
-from application.services.base_service import *
-from application.services.application_service import *
-from application.utilities.dict_mapping import *
-from google.appengine.api import search
-from application.models.memcache_key import *
-from google.appengine.api import memcache
+# python
 import os, re, datetime, hashlib
+
+# flask
+from flask import request
+
+# google
+from google.appengine.api import search
+from google.appengine.api import memcache
+
+# victory
+from ..models.datastore.exception_model import *
+from ..models.datastore.log_model import *
+from ..models.datastore.crash_model import *
+from ..models.key.memcache_key import *
+from base_service import *
+from application_service import *
+from application.utilities.dict_mapping import *
 from application import config
+
+
 
 class DocumentService(BaseService):
     def get_document_groups(self, application_id, keyword, index, document_model):

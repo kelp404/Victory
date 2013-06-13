@@ -1,8 +1,11 @@
 
-
+# flask
 from flask import redirect, render_template, jsonify, request, abort
+
+# victory
 from application.services.account_service import AccountService
 from application.services.application_service import *
+
 
 
 def redirect_to_application():

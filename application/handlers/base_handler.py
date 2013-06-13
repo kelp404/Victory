@@ -1,11 +1,17 @@
 
-from google.appengine.api import users
+# flask
 from flask import render_template, g, request, redirect
-import gae_mini_profiler
-from gae_mini_profiler.templatetags import profiler_includes
+
+# google
+from google.appengine.api import users
+
+# victory
 from application import app, config
 from application.services.account_service import *
-import logging
+
+import gae_mini_profiler
+from gae_mini_profiler.templatetags import profiler_includes
+
 
 
 @app.before_request
