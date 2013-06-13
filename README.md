@@ -13,6 +13,8 @@ Your app could send error information to Victory with RESTful API.
 <img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot00.png' height='488px' width='850px' />
 
 
+
+
 ##Demo
 url: https://victory-demo.appspot.com
   
@@ -98,16 +100,31 @@ https://developers.google.com/appengine/downloads
 <img src='https://raw.github.com/Kelp404/Victory/master/_images/screenshot01.png' height='425px' width='850px' />
 
 
-##iOS example code
 
-###https://github.com/kelp404/Victory-iOS
+
+##iOS example code
+https://github.com/kelp404/Victory-iOS
 
 
 
 
 ##RESTful Web Service
+http://docs.victory.apiary.io/
 
-###http://docs.victory.apiary.io/
+
+
+
+##<a href="https://github.com/chriseppstein/compass" target="_blank">Compass</a>
+###PyCharm settings
+`File Watchers` >> add `SCSS`
+
+  Watcher Settings  |  value 
+:---------:|:---------:
+Program | /Users/Kelp/.rvm/gems/ruby-1.9.3-p392/bin/compass
+Arguments | compile
+Environment variables | GEM_PATH: `/Users/Kelp/.rvm/gems/ruby-1.9.3-p392`
+Output paths | $FileNameWithoutExtension$.css
+
 
 
 

@@ -18,3 +18,7 @@ xcuserdata
 
 # osx noise
 .DS_Store
+
+# compass
+.sass-cache
+compass

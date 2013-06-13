@@ -11,6 +11,7 @@ import logging
 @app.before_request
 def before_request():
     g.view_model = {
+        'compressed': config.compressed_resource,
         'profiler_includes': gae_mini_profiler.templatetags.profiler_includes(),
         'title': '',
         'title_prefix': config.app_name
