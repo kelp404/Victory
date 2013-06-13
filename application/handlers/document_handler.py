@@ -1,6 +1,6 @@
 
 from application.services.document_service import *
-import config
+from application import config
 from flask import request, render_template, g, abort
 
 

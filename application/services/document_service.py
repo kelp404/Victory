@@ -10,7 +10,7 @@ from google.appengine.api import search
 from application.models.memcache_key import *
 from google.appengine.api import memcache
 import os, re, datetime, hashlib
-import config
+from application import config
 
 class DocumentService(BaseService):
     def get_document_groups(self, application_id, keyword, index, document_model):

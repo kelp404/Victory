@@ -3,7 +3,7 @@ import webapp2
 from google.appengine.ext import db
 from google.appengine.api import search
 import datetime
-import config
+from application import config
 
 
 # clear document data
