@@ -128,6 +128,23 @@ Output paths | $FileNameWithoutExtension$.css
 
 
 
+##Compress
+###PyCharm settings
+Add the plugin "Assets Compressor".
+> Compressing js and css files, go to Refactor > Compress
+
+
+
+
+##Binding JavaScript, CSS
+```
+$ cd application/static
+$ python binding.py
+```
+
+
+
+
 ##Unittest
 Before test, you should run GAE local server, and clear datastore, text search, and update url in function `TestVictoryFunctions.setUp()`.
 ```Python
