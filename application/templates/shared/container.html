@@ -1,4 +1,4 @@
-{% if not miko %}{% extends '_base.html' %}{% endif %}
+{% if not miko %}{% extends './shared/base.html' %}{% endif %}
 {% macro render_page(page, class='', arg='') -%}
     <div class="pagination {{ class }}">
         <ul>

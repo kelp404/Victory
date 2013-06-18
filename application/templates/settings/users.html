@@ -1,11 +1,11 @@
-{% extends '_container.html' %}
+{% extends './shared/container.html' %}
 
 {% block content %}
     <div class="row-fluid">
 
         <div class="span3 menu">
             {% set menu = 'users' %}
-            {% include 'menu_settings.html' %}
+            {% include './menu/settings.html' %}
         </div>
 
         <div class="span9" style="min-height: 200px;">

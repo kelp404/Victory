@@ -21,7 +21,7 @@ def profile():
     get profile
     """
     g.view_model['title'] = 'Profile - '
-    return render_template('settings_profile.html', **g.view_model)
+    return render_template('./settings/profile.html', **g.view_model)
 
 def profile_update():
     """
@@ -46,7 +46,7 @@ def applications():
 
     aps = ApplicationService()
     g.view_model['result'] = aps.get_applications(True)
-    return render_template('settings_applications.html', **g.view_model)
+    return render_template('./settings/applications.html', **g.view_model)
 
 def application_add():
     """
@@ -147,7 +147,7 @@ def users():
     acs = AccountService()
     g.view_model['result'] = acs.get_users()
 
-    return render_template('settings_users.html', **g.view_model)
+    return render_template('./settings/users.html', **g.view_model)
 
 def user_add():
     """
