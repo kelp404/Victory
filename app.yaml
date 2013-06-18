@@ -4,8 +4,6 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
-#inbound_services:
-#- warmup
 
 skip_files:
 - ^(.*/)?#.*#
@@ -19,6 +17,8 @@ skip_files:
 - ^\.git/.*
 - ^\.idea/.*
 - ^_images/.*
+- ^submodules/bs4/.*
+- ^submodules/requests/.*
 - ^application/static/binding.py
 - ^(.*/)?.*\.coffee
 - ^(.*/)?.*\.scss
