@@ -1,0 +1,60 @@
+@import "compass/css3";
+
+
+@font-face {
+    font-family: 'EngraversMT';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Engravers MT'), local('EngraversMT'), url('/font/engraversmt.ttf');
+}
+@font-face {
+    font-family: 'Optima';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Optima'), url('/font/optima.ttf');
+}
+
+body
+{
+    background: url(/img/template/whitey.png);
+}
+.warning
+{
+    color: #f0f0f0;
+    text-shadow:0 0 10px #f0f0f0;
+    text-align: center;
+    background-color: #c7c7c7;
+    font-family: Optima;
+    font-size: 600px;
+    line-height: 500px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    margin-top: -100px;
+    margin-right: -100px;
+    width: 500px;
+    @include rotate(23deg);
+    @include border-radius(400px);
+    @include box-shadow(0 0 15px #c7c7c7);
+}
+.status_background
+{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin-bottom: 160px;
+    margin-right: 120px;
+    font-family: EngraversMT;
+    text-align: center;
+    text-shadow:0 0 10px #555;
+    @include rotate(337deg);
+}
+.status
+{
+    font-size: 400px;
+    line-height: 400px;
+}
+.exception
+{
+    font-size: 30px;
+}

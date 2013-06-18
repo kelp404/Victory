@@ -1,74 +1,76 @@
+@font-face {
+  font-family: 'EngraversMT';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Engravers MT"), local("EngraversMT"), url("/font/engraversmt.ttf");
+}
 
 @font-face {
-    font-family: 'EngraversMT';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Engravers MT'), local('EngraversMT'), url('/font/engraversmt.ttf');
-}
-@font-face {
-    font-family: 'Optima';
-    font-style: normal;
-    font-weight: normal;
-    src: local('Optima'), url('/font/optima.ttf');
+  font-family: 'Optima';
+  font-style: normal;
+  font-weight: normal;
+  src: local("Optima"), url("/font/optima.ttf");
 }
 
-body
-{
-    background: url(/img/template/whitey.png);
+/* line 18, error.scss */
+body {
+  background: url(/img/template/whitey.png);
 }
-.warning
-{
-    color: #f0f0f0;
-    text-shadow:0 0 10px #f0f0f0;
-    text-align: center;
-    background-color: #c7c7c7;
-    font-family: Optima;
-    font-size: 600px;
-    line-height: 500px;
-    position: fixed;
-    right: 0;
-    top: 0;
-    margin-top: -100px;
-    margin-right: -100px;
-    width: 500px;
 
-    transform: rotate(23deg) scale(1) skew(1deg) translate(0px);
-    -webkit-transform: rotate(23deg) scale(1) skew(1deg) translate(0px);
-    -moz-transform: rotate(23deg) scale(1) skew(1deg) translate(0px);
-    -o-transform: rotate(23deg) scale(1) skew(1deg) translate(0px);
-    -ms-transform: rotate(23deg) scale(1) skew(1deg) translate(0px);
-
-    -moz-border-radius:400px;
-    -webkit-border-radius:400px;
-    border-radius:400px;
-
-    -moz-box-shadow:0 0 15px #c7c7c7;
-    -webkit-box-shadow:0 0 15px #c7c7c7;
-    box-shadow:0 0 15px #c7c7c7;
+/* line 22, error.scss */
+.warning {
+  color: #f0f0f0;
+  text-shadow: 0 0 10px #f0f0f0;
+  text-align: center;
+  background-color: #c7c7c7;
+  font-family: Optima;
+  font-size: 600px;
+  line-height: 500px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  margin-top: -100px;
+  margin-right: -100px;
+  width: 500px;
+  -webkit-transform: rotate(23deg);
+  -moz-transform: rotate(23deg);
+  -ms-transform: rotate(23deg);
+  -o-transform: rotate(23deg);
+  transform: rotate(23deg);
+  -webkit-border-radius: 400px;
+  -moz-border-radius: 400px;
+  -ms-border-radius: 400px;
+  -o-border-radius: 400px;
+  border-radius: 400px;
+  -webkit-box-shadow: 0 0 15px #c7c7c7;
+  -moz-box-shadow: 0 0 15px #c7c7c7;
+  box-shadow: 0 0 15px #c7c7c7;
 }
-.status_background
-{
-    transform: rotate(337deg) scale(1) skew(1deg) translate(0px);
-    -webkit-transform: rotate(337deg) scale(1) skew(1deg) translate(0px);
-    -moz-transform: rotate(337deg) scale(1) skew(1deg) translate(0px);
-    -o-transform: rotate(337deg) scale(1) skew(1deg) translate(0px);
-    -ms-transform: rotate(337deg) scale(1) skew(1deg) translate(0px);
 
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    margin-bottom: 160px;
-    margin-right: 120px;
-    font-family: EngraversMT;
-    text-align: center;
-    text-shadow:0 0 10px #555;
+/* line 41, error.scss */
+.status_background {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 160px;
+  margin-right: 120px;
+  font-family: EngraversMT;
+  text-align: center;
+  text-shadow: 0 0 10px #555;
+  -webkit-transform: rotate(337deg);
+  -moz-transform: rotate(337deg);
+  -ms-transform: rotate(337deg);
+  -o-transform: rotate(337deg);
+  transform: rotate(337deg);
 }
-.status
-{
-    font-size: 400px;
-    line-height: 400px;
+
+/* line 53, error.scss */
+.status {
+  font-size: 400px;
+  line-height: 400px;
 }
-.exception
-{
-    font-size: 30px;
+
+/* line 58, error.scss */
+.exception {
+  font-size: 30px;
 }
