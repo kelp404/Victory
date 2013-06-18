@@ -10,7 +10,7 @@ You could download this project and then deploy to GAE with free plan.
 Your app could send error information to Victory with RESTful API.
 
 
-<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot00.png' height='488px' width='850px' />
+<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot00.png'/>
 
 
 
@@ -44,7 +44,7 @@ $.ajax({
     })
 })
 ```
-<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot02.png' height='599px' width='850px' />
+<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot02.png'/>
 
 
 ##Clone
@@ -97,7 +97,7 @@ https://developers.google.com/appengine/docs/python/gettingstartedpython27/uploa
 https://developers.google.com/appengine/downloads  
 
 *First deploy you should wait GAE building indexes.  
-<img src='https://raw.github.com/Kelp404/Victory/master/_images/screenshot01.png' height='425px' width='850px' />
+<img src='https://raw.github.com/Kelp404/Victory/master/_images/screenshot01.png'/>
 
 
 
