@@ -26,3 +26,11 @@
 	path = submodules/itsdangerous
 	url = git://github.com/mitsuhiko/itsdangerous.git
 	ignore = dirty
+[submodule "submodules/compass"]
+	path = submodules/compass
+	url = git://github.com/chriseppstein/compass.git
+	ignore = dirty
+[submodule "submodules/bootstrap-sass"]
+	path = submodules/bootstrap-sass
+	url = git://github.com/thomas-mcdonald/bootstrap-sass.git
+	ignore = dirty
