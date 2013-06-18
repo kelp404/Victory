@@ -7,6 +7,11 @@
     bootstrap .modal: 1040
  */
 
+
+@import "compass/css3";
+@import "bootstrap/bootstrap";
+
+
 /* font-family */
 @font-face {
     font-family: CustomFont;
@@ -182,9 +187,7 @@ a:hover { text-decoration: underline; color: #3d85c6; }
     opacity: 0.8;
     background-color:#f5f5f5;
     border:1px solid #e3e3e3;
-    -webkit-border-radius:4px;
-    -moz-border-radius:4px;
-    border-radius:4px;
+    @include border-radius(4px);
     -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.05);
     -moz-box-shadow:inset 0 1px 1px rgba(0,0,0,0.05);
     box-shadow:inset 0 1px 1px rgba(0,0,0,0.05)

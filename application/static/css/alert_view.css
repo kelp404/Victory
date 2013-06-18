@@ -5,13 +5,13 @@
     bootstrap .modal: 1040
  */
 /* AlertView */
-/* line 15, alert_view.scss */
+/* line 14, alert_view.scss */
 #alert_view_center {
   position: fixed;
   z-index: 1600;
 }
 
-/* line 19, alert_view.scss */
+/* line 18, alert_view.scss */
 .alert_view {
   overflow: hidden;
   z-index: 1600;
@@ -34,7 +34,7 @@
   box-shadow: #999999 0 0 10px;
 }
 
-/* line 32, alert_view.scss */
+/* line 31, alert_view.scss */
 .alert_view_notification {
   padding: 0;
   position: fixed;
@@ -46,7 +46,7 @@
   box-shadow: #444444 0 0 10px;
 }
 
-/* line 40, alert_view.scss */
+/* line 39, alert_view.scss */
 .alert_view .av_title {
   font-size: 15px;
   line-height: 25px;
@@ -54,14 +54,14 @@
   color: #222;
 }
 
-/* line 46, alert_view.scss */
+/* line 45, alert_view.scss */
 .alert_view .av_message {
   margin-left: 10px;
   font-size: 13px;
   line-height: 20px;
 }
 
-/* line 52, alert_view.scss */
+/* line 51, alert_view.scss */
 .alert_view_notification .av_title {
   border-bottom: 1px solid #e3e3e3;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f0f0f0), color-stop(100%, #ffffff));
@@ -72,13 +72,13 @@
   padding: 0 10px;
 }
 
-/* line 58, alert_view.scss */
+/* line 57, alert_view.scss */
 .alert_view_notification .av_message {
   padding: 2px 10px;
   margin-left: 0;
 }
 
-/* line 62, alert_view.scss */
+/* line 61, alert_view.scss */
 .alert_view .av_close {
   line-height: 25px;
   float: right;
@@ -89,13 +89,13 @@
 }
 
 /* Template error */
-/* line 73, alert_view.scss */
+/* line 72, alert_view.scss */
 .alert_view_error {
   background-color: #f2dede;
   color: #b92a28;
 }
 
-/* line 77, alert_view.scss */
+/* line 76, alert_view.scss */
 .alert_view_notification.alert_view_error .av_title {
   color: white;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ee5f5b), color-stop(100%, #bd362f));
@@ -105,20 +105,20 @@
   background-image: linear-gradient(#ee5f5b, #bd362f);
 }
 
-/* line 81, alert_view.scss */
+/* line 80, alert_view.scss */
 .alert_view_error .av_title {
   color: #b92a28;
 }
 
 /* Template black */
-/* line 87, alert_view.scss */
+/* line 86, alert_view.scss */
 .alert_view_black {
   border: 1px solid #777;
   background-color: #222;
   color: #f6f6f6;
 }
 
-/* line 92, alert_view.scss */
+/* line 91, alert_view.scss */
 .alert_view_notification.alert_view_black .av_title {
   border-bottom: 1px solid #777;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #555555), color-stop(100%, #222222));
@@ -128,7 +128,7 @@
   background-image: linear-gradient(#555555, #222222);
 }
 
-/* line 96, alert_view.scss */
+/* line 95, alert_view.scss */
 .alert_view_black .av_title {
   color: white;
 }
