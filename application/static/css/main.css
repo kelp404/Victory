@@ -1,6 +1,6 @@
 /*
  z-index
-    #nav_bar: 1000
+    .cs_navigation: 1000
     .alert_view: 1600
     #loading: 1600
 
@@ -312,10 +312,13 @@ a:focus {
 }
 
 /* line 582, bootstrap/_mixins.scss */
-.container,
+.container, .cs_container,
 .navbar-static-top .container,
+.navbar-static-top .cs_container,
 .navbar-fixed-top .container,
-.navbar-fixed-bottom .container {
+.navbar-fixed-top .cs_container,
+.navbar-fixed-bottom .container,
+.navbar-fixed-bottom .cs_container {
   width: 940px;
 }
 
@@ -668,19 +671,19 @@ a:focus {
 }
 
 /* line 7, bootstrap/_layouts.scss */
-.container {
+.container, .cs_container {
   margin-right: auto;
   margin-left: auto;
   *zoom: 1;
 }
 /* line 15, bootstrap/_mixins.scss */
-.container:before, .container:after {
+.container:before, .cs_container:before, .container:after, .cs_container:after {
   display: table;
   content: "";
   line-height: 0;
 }
 /* line 22, bootstrap/_mixins.scss */
-.container:after {
+.container:after, .cs_container:after {
   clear: both;
 }
 
@@ -4842,7 +4845,7 @@ input[type="submit"].btn.btn-mini {
 }
 
 /* line 36, bootstrap/_navbar.scss */
-.navbar .container {
+.navbar .container, .navbar .cs_container {
   width: auto;
 }
 
@@ -5018,9 +5021,11 @@ input[type="submit"].btn.btn-mini {
 }
 
 /* line 198, bootstrap/_navbar.scss */
-.navbar-static-top .container,
+.navbar-static-top .container, .navbar-static-top .cs_container,
 .navbar-fixed-top .container,
-.navbar-fixed-bottom .container {
+.navbar-fixed-top .cs_container,
+.navbar-fixed-bottom .container,
+.navbar-fixed-bottom .cs_container {
   width: 940px;
 }
 
@@ -6832,7 +6837,7 @@ a.label:hover, a.label:focus, a.badge:hover, a.badge:focus {
   src: local("Segoe Print"), local("SegoePrint"), url("/font/segoepr.ttf");
 }
 
-/* line 40, main.scss */
+/* line 44, main.scss */
 body {
   font-size: 13px;
   font-family: CustomFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -6840,37 +6845,62 @@ body {
   background: url(/img/template/dust.png);
 }
 
-/* line 46, main.scss */
+/* line 50, main.scss */
 a {
   text-decoration: none;
 }
 
-/* line 47, main.scss */
+/* line 51, main.scss */
 a:link {
   text-decoration: none;
   color: #0b5394;
 }
 
-/* line 48, main.scss */
+/* line 52, main.scss */
 a:visited {
   text-decoration: none;
   color: #0b5394;
 }
 
-/* line 49, main.scss */
+/* line 53, main.scss */
 a:hover {
   text-decoration: underline;
   color: #3d85c6;
 }
 
-/* nav */
-/* line 53, main.scss */
-#nav_bar {
-  padding-right: 10px;
+/* line 55, main.scss */
+.cs_row {
+  margin-left: -20px;
+  *zoom: 1;
+}
+/* line 15, bootstrap/_mixins.scss */
+.cs_row:before, .cs_row:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+/* line 22, bootstrap/_mixins.scss */
+.cs_row:after {
+  clear: both;
+}
+
+/* line 57, main.scss */
+.cs_clear {
+  clear: both;
+}
+
+/* navigation */
+/* line 62, main.scss */
+.cs_navigation {
   background-color: #b5b5b5;
-  background: -moz-linear-gradient(10% 0% 270deg, #999999, #c3c3c3 100%);
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#999999), to(#c3c3c3));
-  background-color: -ms-linear-gradient(top, #c3c3c3 0%, #999999 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #c3c3c3));
+  background-image: -webkit-linear-gradient(#999999, #c3c3c3);
+  background-image: -moz-linear-gradient(#999999, #c3c3c3);
+  background-image: -o-linear-gradient(#999999, #c3c3c3);
+  background-image: linear-gradient(#999999, #c3c3c3);
+  -webkit-box-shadow: 0 0 12px #555555;
+  -moz-box-shadow: 0 0 12px #555555;
+  box-shadow: 0 0 12px #555555;
   height: 50px;
   position: fixed;
   top: 0;
@@ -6879,104 +6909,104 @@ a:hover {
   min-width: 1100px;
   z-index: 1000;
 }
-
-/* line 69, main.scss */
-#nav_bar > div {
+/* line 75, main.scss */
+.cs_navigation .cs_navigation_inner {
   width: 1100px;
   margin: 0 auto;
 }
-
-/* line 74, main.scss */
-#nav_bar .logo {
-  float: left;
-  height: 50px;
-}
-
 /* line 79, main.scss */
-#nav_bar .logo a {
-  display: block;
-  line-height: 50px;
-  margin: 0;
-  color: White;
-  font-size: 27px;
-  text-decoration: none;
-  font-family: "Segoe Print";
-  text-shadow: 0 0 3px #fff;
-}
-
-/* line 90, main.scss */
-#nav_bar .profile {
-  float: right;
-  color: White;
-  text-align: right;
-  line-height: 12px;
-  font-size: 10px;
-  padding: 7px 0 0 5px;
-  border-left: 1px solid #aaa;
-}
-
-/* line 100, main.scss */
-#nav_bar ul {
+.cs_navigation .cs_navigation_inner ul {
   display: inline;
   float: right;
 }
-
-/* line 105, main.scss */
-#nav_bar ul > li {
-  color: White;
+/* line 83, main.scss */
+.cs_navigation .cs_navigation_inner ul li.cs_top {
+  height: 42px;
+  position: absolute;
+  -webkit-box-shadow: 0 0 15px white inset;
+  -moz-box-shadow: 0 0 15px white inset;
+  box-shadow: 0 0 15px white inset;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+}
+/* line 90, main.scss */
+.cs_navigation .cs_navigation_inner ul li {
+  color: white;
   font-size: 19px;
   margin: 4px 3px 0 0;
   position: relative;
   display: inline-block;
   height: 50px;
 }
-
-/* line 114, main.scss */
-#nav_bar ul > li.top {
-  height: 42px;
-  position: absolute;
-  -moz-box-shadow: inset 0 0 15px #fff;
-  -webkit-box-shadow: inset 0 0 15px #fff;
-  box-shadow: inset 0 0 15px #fff;
-  -moz-border-radius: 7px;
-  -webkit-border-radius: 7px;
-  border-radius: 7px;
-}
-
-/* line 125, main.scss */
-#nav_bar ul > li > a {
+/* line 98, main.scss */
+.cs_navigation .cs_navigation_inner ul li a {
   line-height: 42px;
   padding: 0 16px 0 16px;
   display: block;
-  color: White;
+  color: white;
+  text-decoration: none;
+}
+/* line 99, main.scss */
+.cs_navigation .cs_navigation_inner ul li a:link {
+  color: white;
+  text-decoration: none;
+}
+/* line 100, main.scss */
+.cs_navigation .cs_navigation_inner ul li a:visited {
+  color: white;
+  text-decoration: none;
+}
+/* line 101, main.scss */
+.cs_navigation .cs_navigation_inner ul li a:hover {
+  color: white;
+  text-decoration: none;
+}
+/* line 105, main.scss */
+.cs_navigation .cs_navigation_inner .cs_logo {
+  float: left;
+  height: 50px;
+}
+/* line 109, main.scss */
+.cs_navigation .cs_navigation_inner .cs_logo a {
+  display: block;
+  line-height: 50px;
+  margin: 0;
+  color: white;
+  font-size: 27px;
+  text-decoration: none;
+  font-family: "Segoe Print";
+  text-shadow: 0 0 3px white;
+}
+/* line 121, main.scss */
+.cs_navigation .cs_navigation_inner .cs_profile {
+  float: right;
+  color: white;
+  text-align: right;
+  line-height: 12px;
+  font-size: 10px;
+  padding: 7px 0 0 5px;
+  border-left: 1px solid #aaa;
+}
+/* line 129, main.scss */
+.cs_navigation .cs_navigation_inner .cs_profile a {
+  color: white;
+  text-decoration: none;
+}
+/* line 130, main.scss */
+.cs_navigation .cs_navigation_inner .cs_profile a:hover {
+  color: white;
   text-decoration: none;
 }
 
-/* line 126, main.scss */
-#nav_bar a:link {
-  color: White;
-  text-decoration: none;
-}
-
-/* line 127, main.scss */
-#nav_bar a:visited {
-  color: White;
-  text-decoration: none;
-}
-
-/* line 128, main.scss */
-#nav_bar a:hover {
-  color: White;
-  text-decoration: none;
-}
-
-/* line 131, main.scss */
+/* menu */
+/* line 138, main.scss */
 .menu ul {
   width: 256px;
 }
 
 /* content */
-/* line 137, main.scss */
+/* line 144, main.scss */
 #content_background {
   background-color: #fff;
   padding: 70px 0 20px 0;
@@ -6984,57 +7014,57 @@ a:hover {
   min-width: 1100px;
 }
 
-/* line 144, main.scss */
+/* line 151, main.scss */
 #content {
   width: 1100px;
   margin: 0 auto;
 }
 
-/* line 149, main.scss */
+/* line 156, main.scss */
 .crash_info dl {
   margin: 0 0 3px 0;
 }
 
 /* table */
-/* line 153, main.scss */
+/* line 160, main.scss */
 .table {
   table-layout: fixed;
 }
 
-/* line 154, main.scss */
+/* line 161, main.scss */
 .table-content tbody td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* line 155, main.scss */
+/* line 162, main.scss */
 .table-pointer tbody tr {
   cursor: pointer;
 }
 
-/* line 156, main.scss */
+/* line 163, main.scss */
 .table > tbody > tr > td {
   vertical-align: middle;
 }
 
-/* line 157, main.scss */
+/* line 164, main.scss */
 .table pre {
   margin: 0;
 }
 
-/* line 158, main.scss */
+/* line 165, main.scss */
 .table td .control-group {
   margin-bottom: 0;
 }
 
-/* line 159, main.scss */
+/* line 166, main.scss */
 .table td input {
   margin-bottom: 0;
 }
 
 /* footer */
-/* line 164, main.scss */
+/* line 171, main.scss */
 #footer {
   background-color: #f2f2f2;
   background: url(/img/template/dust.png);
@@ -7049,7 +7079,7 @@ a:hover {
 }
 
 /* loading */
-/* line 180, main.scss */
+/* line 187, main.scss */
 #loading {
   position: fixed;
   right: 10px;
@@ -7067,7 +7097,7 @@ a:hover {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
-/* line 196, main.scss */
+/* line 203, main.scss */
 #loading .spin {
   float: left;
   height: 30px;
@@ -7075,27 +7105,7 @@ a:hover {
   margin: 5px 10px;
 }
 
-/* line 202, main.scss */
+/* line 209, main.scss */
 #loading .message {
   margin: 10px 10px 10px 50px;
-}
-
-/* shared */
-/* line 206, main.scss */
-.shadow {
-  -moz-box-shadow: 0 0 12px #555;
-  -webkit-box-shadow: 0 0 12px #555;
-  box-shadow: 0 0 12px #555;
-}
-
-/* line 212, main.scss */
-.radius {
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  border-radius: 10px;
-}
-
-/* line 218, main.scss */
-.clear {
-  clear: both;
 }

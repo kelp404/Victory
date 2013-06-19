@@ -1,6 +1,6 @@
 /*
  z-index
-    #nav_bar: 1000
+    .cs_navigation: 1000
     .alert_view: 1600
     #loading: 1600
 
@@ -10,6 +10,10 @@
 
 @import "compass/css3";
 @import "bootstrap/bootstrap";
+
+
+$navigation_height: 50px;
+$content_width: 1100px;
 
 
 /* font-family */
@@ -48,85 +52,88 @@ a:link { text-decoration: none; color: #0b5394; }
 a:visited { text-decoration: none; color: #0b5394; }
 a:hover { text-decoration: underline; color: #3d85c6; }
 
-/* nav */
-#nav_bar
-{
-    padding-right:10px;
-    background-color:#b5b5b5;
-    background:-moz-linear-gradient(10% 0% 270deg, #999, #c3c3c3 100%);
-    background:-webkit-gradient(linear, 50% 0%, 50% 100%, from(#999), to(#c3c3c3));
-    background-color:-ms-linear-gradient(top, #c3c3c3 0%,#999 100%);
-    height:50px;
-    position: fixed;
+.cs_row { @include makeRow(); }
+.cs_container { @extend .container; }
+.cs_clear { clear: both; }
 
+
+/* navigation */
+.cs_navigation
+{
+    background-color:#b5b5b5;
+    @include background-image(linear-gradient(#999, #c3c3c3));
+    @include box-shadow(0 0 12px #555);
+
+    height: $navigation_height;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    min-width: 1100px;
+    min-width: $content_width;
     z-index: 1000;
-}
-#nav_bar>div
-{
-    width: 1100px;
-    margin: 0 auto;
-}
-#nav_bar .logo
-{
-    float: left;
-    height:50px;
-}
-#nav_bar .logo a
-{
-    display:block;
-    line-height: 50px;
-    margin:0;
-    color:White;
-    font-size:27px;
-    text-decoration:none;
-    font-family:"Segoe Print";
-    text-shadow:0 0 3px #fff;
-}
-#nav_bar .profile
-{
-    float: right;
-    color:White;
-    text-align: right;
-    line-height: 12px;
-    font-size: 10px;
-    padding: 7px 0 0 5px;
-    border-left: 1px solid #aaa;
-}
-#nav_bar ul
-{
-    display: inline;
-    float: right;
-}
-#nav_bar ul>li
-{
-    color:White;
-    font-size:19px;
-    margin:4px 3px 0 0;
-    position:relative;
-    display: inline-block;
-    height: 50px;
-}
-#nav_bar ul>li.top
-{
-    height:42px;
-    position:absolute;
-    -moz-box-shadow:inset 0 0 15px #fff;
-    -webkit-box-shadow:inset 0 0 15px #fff;
-    box-shadow:inset 0 0 15px #fff;
 
-    -moz-border-radius: 7px;
-    -webkit-border-radius: 7px;
-    border-radius: 7px;
-}
-#nav_bar ul>li>a{ line-height:42px; padding:0 16px 0 16px; display:block; color:White;text-decoration: none;}
-#nav_bar a:link{ color:White;text-decoration: none;}
-#nav_bar a:visited{ color:White;text-decoration: none;}
-#nav_bar a:hover{ color:White;text-decoration: none; }
+    .cs_navigation_inner {
+        width: $content_width;
+        margin: 0 auto;
 
+        ul {
+            display: inline;
+            float: right;
+
+            li.cs_top {
+                height: $navigation_height - 8;
+                position: absolute;
+                @include box-shadow(0 0 15px white inset);
+                @include border-radius(7px);
+            }
+
+            li {
+                color: white;
+                font-size:19px;
+                margin: 4px 3px 0 0;
+                position: relative;
+                display: inline-block;
+                height: $navigation_height;
+
+                a { line-height:42px; padding:0 16px 0 16px; display:block; color:white; text-decoration: none;}
+                a:link { color: white; text-decoration: none;}
+                a:visited { color: white; text-decoration: none;}
+                a:hover { color: white; text-decoration: none; }
+            }
+        }
+
+        .cs_logo {
+            float: left;
+            height: $navigation_height;
+
+            a {
+                display:block;
+                line-height: $navigation_height;
+                margin:0;
+                color:white;
+                font-size:27px;
+                text-decoration:none;
+                font-family:"Segoe Print";
+                @include text-shadow(0 0 3px white);
+            }
+        }
+
+        .cs_profile {
+            float: right;
+            color: white;
+            text-align: right;
+            line-height: 12px;
+            font-size: 10px;
+            padding: 7px 0 0 5px;
+            border-left: 1px solid #aaa;
+            a { color: white; text-decoration: none; }
+            a:hover { color: white; text-decoration: none; }
+        }
+    }
+}
+
+
+/* menu */
 .menu ul
 {
     width: 256px;
@@ -200,19 +207,3 @@ a:hover { text-decoration: underline; color: #3d85c6; }
     margin: 5px 10px;
 }
 #loading .message { margin: 10px 10px 10px 50px; }
-
-/* shared */
-.shadow
-{
-    -moz-box-shadow: 0 0 12px #555;
-    -webkit-box-shadow: 0 0 12px #555;
-    box-shadow: 0 0 12px #555;
-}
-.radius
-{
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
-}
-
-.clear { clear:both; }

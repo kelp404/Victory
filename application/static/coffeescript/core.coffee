@@ -32,7 +32,7 @@ core =
         :param state: history.state
         :param push: true -> push into history, false do not push into history
         ###
-        before_index = $('#nav_bar li.active').index()
+        before_index = $('#js_navigation li.active').index()
         state.method ?= 'get'
         push = false if state.method != 'get'
         $.ajax
@@ -40,7 +40,7 @@ core =
             # fixed flash when pop state in safari
             async: !(core.is_safari and state.is_pop)
             beforeSend: (xhr) ->
-                index = if state.href == '/' then 0 else $('#nav_bar li a[href*="' + state.href + '"]').parent().index()
+                index = if state.href == '/' then 0 else $('#js_navigation li a[href*="' + state.href + '"]').parent().index()
                 core.nav_select index
                 xhr.setRequestHeader 'X-Miko', 'miko'
                 core.loading_on core.text_loading
@@ -54,7 +54,7 @@ core =
                 # push state
                 if push
                     if state.href != location.pathname or location.href.indexOf('?') >= 0
-                        state.nav_select_index = $('#nav_bar li.active').index()
+                        state.nav_select_index = $('#js_navigation li.active').index()
                         history.pushState(state, document.title, state.href)
                     $('html, body').animate scrollTop: 0, 500, 'easeOutExpo'
 
@@ -127,46 +127,46 @@ core =
 
     nav_select: (index, animate) ->
         ###
-        nav bar
+        navigation
         ###
         animate ?= true
 
-        if index > 0 and not $($('#nav_bar li')[index]).hasClass 'select'
-            $('#nav_bar li').removeClass 'select'
-            $($('#nav_bar li')[index]).addClass 'select'
+        if index > 0 and not $($('#js_navigation li')[index]).hasClass 'select'
+            $('#js_navigation li').removeClass 'select'
+            $($('#js_navigation li')[index]).addClass 'select'
 
             if animate
-                $($('#nav_bar li')[index]).mouseover()
+                $($('#js_navigation li')[index]).mouseover()
             else
-                $('#nav_bar li.top').each( -> $(@).dequeue()).animate(
-                    width: $('#nav_bar li.select').css 'width'
-                    left: $('#nav_bar li.select').position().left
+                $('#js_navigation li.cs_top').each( -> $(@).dequeue()).animate(
+                    width: $('#js_navigation li.select').css 'width'
+                    left: $('#js_navigation li.select').position().left
                     , 0)
     setup_nav: ->
         match = location.href.match /\w(\/\w*)/
         if match
-            index = if match[1] == '/' then 0 else $('#nav_bar li a[href*="' + match[1] + '"]').parent().index()
-            $('#nav_bar li').removeClass 'select'
-            $($('#nav_bar li')[index]).addClass 'select'
+            index = if match[1] == '/' then 0 else $('#js_navigation li a[href*="' + match[1] + '"]').parent().index()
+            $('#js_navigation li').removeClass 'select'
+            $($('#js_navigation li')[index]).addClass 'select'
 
-        $('#nav_bar li.select').parent().prepend $('<li class="top"></li>')
-        $('#nav_bar li.top').css
-            width: $('#nav_bar li.select').css('width')
-            left: $('#nav_bar li.select').position().left
-            top: $('#nav_bar li.select').position().top
+        $('#js_navigation li.select').parent().prepend $('<li class="cs_top"></li>')
+        $('#js_navigation li.cs_top').css
+            width: $('#js_navigation li.select').css('width')
+            left: $('#js_navigation li.select').position().left
+            top: $('#js_navigation li.select').position().top
 
         # mouse hover
         noop = -> return
-        $('#nav_bar li[class!=top]').hover( ->
-            $('#nav_bar li.top').each( -> $(@).dequeue()).animate(
+        $('#js_navigation li[class!=cs_top]').hover( ->
+            $('#js_navigation li.cs_top').each( -> $(@).dequeue()).animate(
                 width: @offsetWidth
                 left: @offsetLeft
                 , 420, "easeInOutCubic")
         , noop())
-        $('#nav_bar').hover noop(), ->
-            $('#nav_bar li.top').each( -> $(@).dequeue()).animate(
-                width: $('#nav_bar li.select').css 'width'
-                left: $('#nav_bar li.select').position().left
+        $('#js_navigation').hover noop(), ->
+            $('#js_navigation li.cs_top').each( -> $(@).dequeue()).animate(
+                width: $('#js_navigation li.select').css 'width'
+                left: $('#js_navigation li.select').position().left
                 , 420, "easeInOutCubic")
 
     setup_link: ->
