@@ -1,7 +1,7 @@
 {% extends './shared/container.html' %}
 
 {% block content %}
-    <div>
+    <div id="js_content" class="cs_content">
         <!-- switch applications -->
         <div class="pull-left">
             <div class="btn-group">
@@ -23,7 +23,7 @@
             <li class="active">{{ result.name }} - {{ result.title }}</li>
         </ul>
 
-        <div class="clear" style="height: 10px;"></div>
+        <div class="cs_clear" style="height: 10px;"></div>
 
         <!-- Information -->
         <legend>Information</legend>
@@ -134,5 +134,10 @@
             </table>
             {% endif %}
         {% endfor %}
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div id="js_menu" class="cs_menu">
     </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends './shared/container.html' %}
 
 {% block content %}
-    <div>
+    <div id="js_content" class="cs_content_full">
         <!-- search -->
         <form class="input-append pull-right" method="get" action="/{{ document_model }}_groups/{{ application_id }}">
             <input class="span3 focus" type="text" id="document_keyword" name="q" placeholder="search" value="{{ keyword }}"/>
@@ -40,7 +40,7 @@
             {% elif document_model == 'crash' %}<li class="active">Crashes</li>{% endif %}
         </ul>
 
-        <div class="clear" style="height: 10px;"></div>
+        <div class="cs_clear" style="height: 10px;"></div>
 
         <!-- content table -->
         <table class="table table-bordered table-hover table-content table-pointer">
@@ -115,5 +115,10 @@
         {% endfor %}
 
         {{ render_page(page, 'pull-right', 'q=' + keyword) }}
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div id="js_menu" class="cs_menu">
     </div>
 {% endblock %}

@@ -42,7 +42,7 @@ core =
             beforeSend: (xhr) ->
                 index = if state.href == '/' then 0 else $('#js_navigation li a[href*="' + state.href + '"]').parent().index()
                 core.nav_select index
-                xhr.setRequestHeader 'X-Miko', 'miko'
+                xhr.setRequestHeader 'X-ajax', 'ajax'
                 core.loading_on core.text_loading
             error: ->
                 core.loading_off()
@@ -58,18 +58,20 @@ core =
                         history.pushState(state, document.title, state.href)
                     $('html, body').animate scrollTop: 0, 500, 'easeOutExpo'
 
-                miko = r.match(/<!miko>/)
-                if !miko
+                is_ajax = r.match(/<!ajax>/)
+                if !is_ajax
                     location.reload()
                     return
 
-                title = r.match(/<title>(.*)<\/title>/)
-                r = r.replace(title[0], '')
-                document.title = title[1]
-                content = r.match(/\s@([#.]?\w+)/)
-                if content
-                    # update content
-                    $(content[1]).html r.replace(content[0], '')
+                r = r.replace(/<!ajax>/, '')
+                $ajax = $('<div id="js_root">' + r + '</div>')
+                document.title = $ajax.find('title').text()
+                window.cc = $ajax
+                $ajax.find('.js_ajax').each ->
+                    target = $(@).attr('data-ajax-target')
+                    $('#' + target).html $(@).find('#' + target).html()
+                    $('#' + target).attr 'class', $(@).find('#' + target).attr('class')
+
                 core.after_page_loaded()
         false
 

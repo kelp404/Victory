@@ -58,7 +58,7 @@
           var index;
           index = state.href === '/' ? 0 : $('#js_navigation li a[href*="' + state.href + '"]').parent().index();
           core.nav_select(index);
-          xhr.setRequestHeader('X-Miko', 'miko');
+          xhr.setRequestHeader('X-ajax', 'ajax');
           return core.loading_on(core.text_loading);
         },
         error: function() {
@@ -67,7 +67,7 @@
           return core.nav_select(before_index);
         },
         success: function(r) {
-          var content, miko, title;
+          var $ajax, is_ajax;
           core.loading_off();
           if (push) {
             if (state.href !== location.pathname || location.href.indexOf('?') >= 0) {
@@ -78,18 +78,21 @@
               scrollTop: 0
             }, 500, 'easeOutExpo');
           }
-          miko = r.match(/<!miko>/);
-          if (!miko) {
+          is_ajax = r.match(/<!ajax>/);
+          if (!is_ajax) {
             location.reload();
             return;
           }
-          title = r.match(/<title>(.*)<\/title>/);
-          r = r.replace(title[0], '');
-          document.title = title[1];
-          content = r.match(/\s@([#.]?\w+)/);
-          if (content) {
-            $(content[1]).html(r.replace(content[0], ''));
-          }
+          r = r.replace(/<!ajax>/, '');
+          $ajax = $('<div id="js_root">' + r + '</div>');
+          document.title = $ajax.find('title').text();
+          window.cc = $ajax;
+          $ajax.find('.js_ajax').each(function() {
+            var target;
+            target = $(this).attr('data-ajax-target');
+            $('#' + target).html($(this).find('#' + target).html());
+            return $('#' + target).attr('class', $(this).find('#' + target).attr('class'));
+          });
           return core.after_page_loaded();
         }
       });

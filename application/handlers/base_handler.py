@@ -37,11 +37,10 @@ def before_request():
     else:
         g.view_model['login_url'] = users.create_login_url()
 
-    # miko framework
-    # miko result
+    # ajax result
     # True: result content
     # False: result all page
-    g.view_model['miko'] = 'X-Miko' in request.headers
+    g.view_model['ajax'] = 'X-ajax' in request.headers
 
     # do not redirect without login
     if request.url_rule is not None and g.user is None \

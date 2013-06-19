@@ -1,4 +1,4 @@
-{% if not miko %}{% extends './shared/base.html' %}{% endif %}
+{% if not ajax %}{% extends './shared/base.html' %}{% endif %}
 {% macro render_page(page, class='', arg='') -%}
     <div class="pagination {{ class }}">
         <ul>
@@ -23,15 +23,19 @@
             {% endif %}
         </ul>
     </div>
+    <div class="cs_clear"></div>
 {%- endmacro %}
-{% macro render_datetime(datetime, format) -%}
-    <span datetime="{{ datetime }}" class="datetime" format="{{ format }}"></span>
-{%- endmacro %}
+{% macro render_datetime(datetime, format) -%}<span datetime="{{ datetime }}" class="datetime" format="{{ format }}"></span>{%- endmacro %}
 
-{% if miko %}
-<!miko>
+{% if ajax %}
+<!ajax>
 <title>{{ title }}{{ title_prefix }}</title>
-@#content
-    <div id="alert_view_center" class="span10" style="margin-left: 160px;"></div>
-    {% block content %}{% endblock %}
+<div class='js_ajax' data-ajax-target='js_content'>
+    {% block content %}
+    {% endblock %}
+</div>
+<div class='js_ajax' data-ajax-target='js_menu'>
+    {% block menu %}
+    {% endblock %}
+</div>
 {% endif %}

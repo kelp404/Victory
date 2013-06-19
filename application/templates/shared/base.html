@@ -59,9 +59,13 @@
     <!-- id="js_navigation" class="cs_navigation" -->
     {% include './shared/navigation.html' %}
 
-    <div id="content_background">
-        <div id="content" class="container">
-            <div id="alert_view_center" class="span10" style="margin-left: 160px;"></div>
+    <div class="cs_content_background">
+        <div class="cs_container">
+            <div id="alert_view_center"></div>
+
+            <!-- id="js_menu" class="cs_menu" -->
+            {% block menu %}{% endblock %}
+            <!-- id="js_content" class="cs_content" -->
             {% block content %}{% endblock %}
         </div>
     </div>
