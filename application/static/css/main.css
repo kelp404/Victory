@@ -6852,7 +6852,7 @@ body {
 }
 
 /* navigation */
-/* line 57, main.scss */
+/* line 58, main.scss */
 .cs_navigation {
   background-color: #b5b5b5;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #c3c3c3));
@@ -6871,17 +6871,17 @@ body {
   min-width: 1100px;
   z-index: 1000;
 }
-/* line 70, main.scss */
+/* line 71, main.scss */
 .cs_navigation .cs_navigation_inner {
   width: 1100px;
   margin: 0 auto;
 }
-/* line 74, main.scss */
+/* line 75, main.scss */
 .cs_navigation .cs_navigation_inner ul {
   display: inline;
   float: right;
 }
-/* line 78, main.scss */
+/* line 79, main.scss */
 .cs_navigation .cs_navigation_inner ul li.cs_top {
   height: 42px;
   position: absolute;
@@ -6892,7 +6892,7 @@ body {
   -moz-border-radius: 7px;
   border-radius: 7px;
 }
-/* line 85, main.scss */
+/* line 86, main.scss */
 .cs_navigation .cs_navigation_inner ul li {
   color: white;
   font-size: 19px;
@@ -6901,7 +6901,7 @@ body {
   display: inline-block;
   height: 50px;
 }
-/* line 93, main.scss */
+/* line 94, main.scss */
 .cs_navigation .cs_navigation_inner ul li a {
   line-height: 42px;
   padding: 0 16px 0 16px;
@@ -6909,27 +6909,27 @@ body {
   color: white;
   text-decoration: none;
 }
-/* line 94, main.scss */
+/* line 95, main.scss */
 .cs_navigation .cs_navigation_inner ul li a:link {
   color: white;
   text-decoration: none;
 }
-/* line 95, main.scss */
+/* line 96, main.scss */
 .cs_navigation .cs_navigation_inner ul li a:visited {
   color: white;
   text-decoration: none;
 }
-/* line 96, main.scss */
+/* line 97, main.scss */
 .cs_navigation .cs_navigation_inner ul li a:hover {
   color: white;
   text-decoration: none;
 }
-/* line 100, main.scss */
+/* line 101, main.scss */
 .cs_navigation .cs_navigation_inner .cs_logo {
   float: left;
   height: 50px;
 }
-/* line 104, main.scss */
+/* line 105, main.scss */
 .cs_navigation .cs_navigation_inner .cs_logo a {
   display: block;
   line-height: 50px;
@@ -6940,7 +6940,7 @@ body {
   font-family: "Segoe Print";
   text-shadow: 0 0 3px white;
 }
-/* line 116, main.scss */
+/* line 117, main.scss */
 .cs_navigation .cs_navigation_inner .cs_profile {
   float: right;
   color: white;
@@ -6950,19 +6950,19 @@ body {
   padding: 7px 0 0 5px;
   border-left: 1px solid #aaa;
 }
-/* line 124, main.scss */
+/* line 125, main.scss */
 .cs_navigation .cs_navigation_inner .cs_profile a {
   color: white;
   text-decoration: none;
 }
-/* line 125, main.scss */
+/* line 126, main.scss */
 .cs_navigation .cs_navigation_inner .cs_profile a:hover {
   color: white;
   text-decoration: none;
 }
 
 /* content */
-/* line 133, main.scss */
+/* line 135, main.scss */
 .cs_content_background {
   background-color: #fff;
   padding: 70px 0 20px 0;
@@ -6970,74 +6970,76 @@ body {
   min-width: 1100px;
   /* menu */
 }
-/* line 139, main.scss */
+/* line 141, main.scss */
 .cs_content_background .cs_content {
   width: 1100px;
 }
-/* line 142, main.scss */
+/* line 144, main.scss */
 .cs_content_background .cs_content_medium {
   margin-left: 270px;
   width: 830px;
 }
-/* line 148, main.scss */
+/* line 150, main.scss */
 .cs_content_background .cs_menu {
   width: 250px;
   float: left;
   /* menu */
 }
-/* line 153, main.scss */
+/* line 155, main.scss */
 .cs_content_background .cs_menu ul {
   width: 250px;
 }
 
-/* line 159, main.scss */
-.crash_info dl {
+/* line 162, main.scss */
+.cs_crash_info dl {
   margin: 0 0 3px 0;
 }
 
 /* table */
-/* line 163, main.scss */
+/* line 167, main.scss */
 .table {
   table-layout: fixed;
 }
 
-/* line 164, main.scss */
+/* line 168, main.scss */
 .table-content tbody td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* line 165, main.scss */
+/* line 169, main.scss */
 .table-pointer tbody tr {
   cursor: pointer;
 }
 
-/* line 166, main.scss */
+/* line 170, main.scss */
 .table > tbody > tr > td {
   vertical-align: middle;
 }
 
-/* line 167, main.scss */
+/* line 171, main.scss */
 .table pre {
   margin: 0;
 }
 
-/* line 168, main.scss */
+/* line 172, main.scss */
 .table td .control-group {
   margin-bottom: 0;
 }
 
-/* line 169, main.scss */
+/* line 173, main.scss */
 .table td input {
   margin-bottom: 0;
 }
 
 /* footer */
-/* line 174, main.scss */
-#footer {
+/* line 179, main.scss */
+.cs_footer {
   background-color: #f2f2f2;
   background: url(/img/template/dust.png);
+  -webkit-box-shadow: 0 -10px 12px #f2f2f2;
+  -moz-box-shadow: 0 -10px 12px #f2f2f2;
   box-shadow: 0 -10px 12px #f2f2f2;
   padding: 40px 0;
   width: 100%;
@@ -7049,7 +7051,7 @@ body {
 }
 
 /* loading */
-/* line 190, main.scss */
+/* line 197, main.scss */
 #loading {
   position: fixed;
   right: 10px;
@@ -7062,12 +7064,12 @@ body {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) inset;
+  -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) inset;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1) inset;
 }
 
-/* line 206, main.scss */
+/* line 211, main.scss */
 #loading .spin {
   float: left;
   height: 30px;
@@ -7075,13 +7077,13 @@ body {
   margin: 5px 10px;
 }
 
-/* line 212, main.scss */
+/* line 217, main.scss */
 #loading .message {
   margin: 10px 10px 10px 50px;
 }
 
 /* alert view */
-/* line 216, main.scss */
+/* line 222, main.scss */
 #alert_view_center {
   width: 780px;
   margin-left: 160px;
