@@ -22,6 +22,9 @@ from gae_mini_profiler.templatetags import profiler_includes
 
 @app.before_request
 def before_request():
+    if not config.DEBUG and request.scheme == 'http':
+        return redirect('https' + request.url[4:])
+
     g.view_model = {
         'compressed': config.compressed_resource,
         'profiler_includes': gae_mini_profiler.templatetags.profiler_includes(),
