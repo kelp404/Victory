@@ -184,10 +184,6 @@ core =
             # open in a new tab
             if e.metaKey then return
 
-            # menu
-            if $(@).closest('.active').length > 0 and $(@).closest('.menu').length > 0
-                return false
-
             href = $(@).attr 'href'
             if href and not $(@).attr 'target'
                 core.miko href: href, true

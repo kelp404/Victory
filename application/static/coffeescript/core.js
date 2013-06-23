@@ -254,9 +254,6 @@
         if (e.metaKey) {
           return;
         }
-        if ($(this).closest('.active').length > 0 && $(this).closest('.menu').length > 0) {
-          return false;
-        }
         href = $(this).attr('href');
         if (href && !$(this).attr('target')) {
           core.miko({

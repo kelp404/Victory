@@ -203,7 +203,7 @@ class ViewEventsAccount
                     if r.success
                         $.av.pop {title: 'Successful!', message: 'Data had be Saved.', mode: 'alert'}
                         $('#name').val r.name
-                        $($('.profile p')[0]).text r.name
+                        $($('#js_navigation .cs_profile p')[0]).text r.name
                     else
                         $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             false
