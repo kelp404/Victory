@@ -16,7 +16,7 @@ js_files.extend(['./coffeescript/' + f for f in os.listdir('./coffeescript/') if
 f = open('./javascript/site.min.js', 'w')
 for source in js_files:
     f.write(open(source).read())
-    f.write('\n')
+    f.write(';\n')
 f.close()
 
 
