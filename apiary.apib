@@ -98,7 +98,7 @@ Log
 --
 
 #Send the log information to server (JSONP).
-GET /exception/{application_key}
+GET /log/{application_key}
 {
     "name": "User Name",  // required
     "title": "log title", // required
@@ -123,7 +123,7 @@ GET /exception/{application_key}
 }
 
 #Send the log information to server.
-POST /exception/{application_key}
+POST /log/{application_key}
 > Content-Type: application/json
 {
     "name": "User Name",  // required
