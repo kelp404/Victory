@@ -1,5 +1,5 @@
 cron:
-- description: clear documents
+- description: clean documents
   target: backend-dynamic
   url: /cron_jobs/document
-  schedule: every 12 hours
+  schedule: every 6 hours
