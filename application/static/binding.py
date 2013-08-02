@@ -21,7 +21,7 @@ f.close()
 
 
 # binding css
-js_files = ['./css/' + f for f in os.listdir('./css/') if f.endswith(".min.css") and not f.endswith("site.min.css")]
+js_files = ['./css/' + f for f in os.listdir('./css/') if f.endswith(".css") and not f.endswith("site.min.css")]
 
 f = open('./css/site.min.css', 'w')
 for source in js_files:
