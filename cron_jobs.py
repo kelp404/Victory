@@ -36,9 +36,12 @@ class ClearDocumentsHandler(webapp2.RequestHandler):
         :param query:
         """
         index = search.Index(namespace=namespace, name=name)
-        # delete document in text search
-        document_ids = [x.doc_id for x in index.search(query)]
-        index.delete(document_ids)
+        try:
+            # delete document in text search
+            document_ids = [x.doc_id for x in index.search(query)]
+            index.delete(document_ids)
+        except Exception:
+            pass
 
     def __delete_data_store(self, model_name, date_tag):
         query = db.GqlQuery('select * from %s where create_time < :1' % model_name, date_tag)
