@@ -51,12 +51,6 @@ handlers:
 - url: /font/
   static_dir: application/static/font
 
-# mini profiler
-- url: /gae_mini_profiler/static
-  static_dir: gae_mini_profiler/static
-- url: /gae_mini_profiler/.*
-  script: gae_mini_profiler.main.application
-
 # cron jobs
 - url: /cron_jobs/.*
   script: cron_jobs.app
