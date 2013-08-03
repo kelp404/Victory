@@ -1,4 +1,4 @@
 backends:
 - name: backend-dynamic
   options: dynamic
-  class: B2
+  class: B1
