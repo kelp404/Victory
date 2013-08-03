@@ -41,20 +41,25 @@ def before_request():
     # False: result all page
     g.view_model['ajax'] = 'X-ajax' in request.headers
 
-    # do not redirect without login
-    if request.url_rule is not None and g.user is None \
-        and request.url_rule.endpoint != 'login' \
-        and request.url_rule.endpoint[:4] != 'api_':
-        return redirect('/login')
 
+@app.errorhandler(400)
+def error_400(e):
+    return render_template('./error/default.html', status=400, exception=e), 400
+
+@app.errorhandler(403)
+def error_403(e):
+    if g.user is None:
+        return redirect('/login')
+    else:
+        return render_template('./error/default.html', status=403, exception=e), 403
 
 @app.errorhandler(404)
 def error_404(e):
-    return render_template('/error/default.html', status=404, exception=e), 404
+    return render_template('./error/default.html', status=404, exception=e), 404
 
 @app.errorhandler(405)
 def error_405(e):
-    return render_template('/error/default.html', status=405, exception=e), 405
+    return render_template('./error/default.html', status=405, exception=e), 405
 
 @app.errorhandler(500)
 def error_500(e):
@@ -67,4 +72,4 @@ app.handle_exception = handle_exception
 
 @app.errorhandler(503)
 def error_503(e):
-    return render_template('/error/default.html', status=503, exception=e), 503
+    return render_template('./error/default.html', status=503, exception=e), 503

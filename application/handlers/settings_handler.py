@@ -1,8 +1,9 @@
 
 # flask
-from flask import redirect, render_template, jsonify, request, abort
+from flask import render_template, jsonify, request, abort
 
 # victory
+from application.decorator.auth_decorator import *
 from application.services.account_service import AccountService
 from application.services.application_service import *
 
@@ -10,11 +11,12 @@ from application.services.application_service import *
 
 def redirect_to_application():
     """
-    302: /settings/applications
+    GET /settings/applications
     """
-    return redirect('/settings/applications')
+    return applications()
 
 
+@authorization(UserLevel.normal)
 def profile():
     """
     GET: settings/profile
@@ -23,6 +25,7 @@ def profile():
     g.view_model['title'] = 'Profile - '
     return render_template('./settings/profile.html', **g.view_model)
 
+@authorization(UserLevel.normal)
 def profile_update():
     """
     PUT: settings/profile
@@ -37,6 +40,7 @@ def profile_update():
         return abort(417)
 
 
+@authorization(UserLevel.normal)
 def applications():
     """
     GET: settings/applications
@@ -48,6 +52,7 @@ def applications():
     g.view_model['result'] = aps.get_applications(True)
     return render_template('./settings/applications.html', **g.view_model)
 
+@authorization(UserLevel.normal)
 def application_add():
     """
     POST: settings/applications
@@ -59,6 +64,7 @@ def application_add():
     aps.add_application(name, description)
     return applications()
 
+@authorization(UserLevel.normal)
 def application_update(application_id):
     """
     PUT: settings/applications/<application_id>
@@ -77,6 +83,7 @@ def application_update(application_id):
     else:
         return abort(417)
 
+@authorization(UserLevel.normal)
 def application_delete(application_id):
     """
     DELETE: settings/applications/<application_id>
@@ -92,6 +99,7 @@ def application_delete(application_id):
     else:
         return abort(417)
 
+@authorization(UserLevel.normal)
 def application_invite(application_id):
     """
     POST: settings/application/<application_id>/invite
@@ -120,6 +128,7 @@ def application_invite(application_id):
     else:
         return abort(417)
 
+@authorization(UserLevel.normal)
 def application_member_delete(application_id, member_id):
     """
     DELETE: settings/applications/<application_id>/members/<member_id>
@@ -139,6 +148,7 @@ def application_member_delete(application_id, member_id):
         return abort(417)
 
 
+@authorization(UserLevel.root)
 def users():
     """
     GET: settings/users
@@ -149,6 +159,7 @@ def users():
 
     return render_template('./settings/users.html', **g.view_model)
 
+@authorization(UserLevel.root)
 def user_add():
     """
     POST: settings/users
@@ -162,6 +173,7 @@ def user_add():
     else:
         return abort(417)
 
+@authorization(UserLevel.root)
 def user_delete(user_id):
     """
     DELETE: settings/users/<user_id>

@@ -3,11 +3,13 @@
 from flask import request, render_template, g, abort
 
 # victory
+from application.decorator.auth_decorator import *
 from application.services.document_service import *
 from application import config
 
 
 
+@authorization(UserLevel.normal)
 def document_view(application_id=None, group_tag=None):
     try: index = int(request.args.get('index'))
     except: index = 0
