@@ -1,11 +1,14 @@
 
 from application import app
+from handlers.start_handler import *
 from handlers.account_handler import *
 from handlers.document_handler import *
 from handlers.settings_handler import *
 from handlers.web_service_handler import *
 
 
+# Start Handler
+app.add_url_rule('/_ah/start', 'start_handler', view_func=start_handler, methods=['GET'])
 
 # Home
 app.add_url_rule('/', 'crash_group_home', view_func=document_view, methods=['GET'])
