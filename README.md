@@ -48,7 +48,7 @@ $.ajax({
 
 
 ##Clone
-```
+```bash
 $ git clone --recursive git://github.com/kelp404/Victory.git
 ```
 
@@ -83,13 +83,12 @@ allow_register = True
 ###deploy project
 Upload files with SDK.  
 **deploy**
-```Python
-appcfg.py update Victory/
-* Victory is the folder name of the project
+```bash
+$ appcfg.py update Victory/
 ```
 **deploy backends**
-```
-appcfg.py backends Victory/ update
+```bash
+$ appcfg.py backends Victory/ update
 ```
 
 ref:  
@@ -120,10 +119,17 @@ http://docs.victory.apiary.io/
 
   Watcher Settings  |  value 
 :---------:|:---------:
-Program | /Users/Kelp/.rvm/gems/ruby-1.9.3-p392/bin/compass
+Program | /Users/Kelp/.rvm/gems/ruby-1.9.3-p448/bin/compass
 Arguments | compile
-Environment variables | GEM_PATH: `/Users/Kelp/.rvm/gems/ruby-1.9.3-p392`
+Environment variables | GEM_PATH: `/Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global`
 Output paths | $FileNameWithoutExtension$.css
+```bash
+$ which compass
+>> /Users/Kelp/.rvm/gems/ruby-1.9.3-p448/bin/compass
+
+$ echo $GEM_PATH
+>> /Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global
+```
 
 
 
