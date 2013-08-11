@@ -3,18 +3,18 @@
   var core, user_agent;
 
   core = {
-
     /*
     core JavaScript object.
     */
+
     text_loading: 'Loading...',
     is_ie: false,
     is_safari: false,
     setup: function() {
-
       /*
       setup core
       */
+
       this.setup_nav();
       this.setup_link();
       this.setup_enter_submit();
@@ -23,10 +23,10 @@
       };
     },
     pop_state: function(state) {
-
       /*
       pop state
       */
+
       if (state) {
         $('.modal.in').modal('hide');
         state.is_pop = true;
@@ -34,12 +34,12 @@
       }
     },
     miko: function(state, push) {
-
       /*
       みこ
       :param state: history.state
       :param push: true -> push into history, false do not push into history
       */
+
       var before_index;
       before_index = $('#js_navigation li.active').index();
       if (state.method == null) {
@@ -99,10 +99,10 @@
       return false;
     },
     error_message: function() {
-
       /*
       pop error message.
       */
+
       return $.av.pop({
         title: 'Error',
         message: 'Loading failed, please try again later.',
@@ -110,10 +110,10 @@
       });
     },
     validation: function($form) {
-
       /*
       validation
       */
+
       var success;
       success = true;
       $form.find('input, textarea').each(function() {
@@ -136,10 +136,10 @@
       return success;
     },
     loading_on: function(message) {
-
       /*
       loading
       */
+
       var loading, loading_height;
       $('body, a, .table-pointer tbody tr').css({
         cursor: 'wait'
@@ -187,10 +187,10 @@
       });
     },
     nav_select: function(index, animate) {
-
       /*
       navigation
       */
+
       if (animate == null) {
         animate = true;
       }
@@ -242,10 +242,10 @@
       });
     },
     setup_link: function() {
-
       /*
       setup hyper links and forms to ajax and push history.
       */
+
       if (this.is_ie) {
         return;
       }
@@ -286,10 +286,10 @@
       });
     },
     setup_enter_submit: function() {
-
       /*
       .enter-submit.keypress() Ctrl + Enter then submit the form
       */
+
       return $(document).on('keypress', '.enter-submit', function(e) {
         if (e.keyCode === 13 && e.ctrlKey) {
           $(this).closest('form').submit();
@@ -298,19 +298,19 @@
       });
     },
     after_page_loaded: function() {
-
       /*
       events of views
       */
+
       core.setup_datetime();
       core.setup_focus();
       return core.setup_tooltip();
     },
     setup_datetime: function() {
-
       /*
       datetime
       */
+
       return $('.datetime').each(function() {
         var date;
         try {
@@ -320,17 +320,17 @@
       });
     },
     setup_focus: function() {
-
       /*
       focus
       */
+
       return $('.focus').select();
     },
     setup_tooltip: function() {
-
       /*
       tool tip
       */
+
       return $('[rel="tooltip"]').tooltip();
     }
   };

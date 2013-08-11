@@ -3,10 +3,10 @@
   var ViewEvents, ViewEventsAccount, ViewEventsApplication, ViewEventsDocument, ViewEventsSwitchApplicationi, ViewEventsUser;
 
   ViewEventsApplication = (function() {
-
     /*
     event of views about applications.
     */
+
     function ViewEventsApplication() {
       this.show_modal_for_add_application();
       this.update_application();
@@ -16,10 +16,10 @@
     }
 
     ViewEventsApplication.prototype.show_modal_for_add_application = function() {
-
       /*
       show adding application modal.
       */
+
       $(document).on('keypress', 'input.appended_input_application', function(e) {
         if (e.keyCode === 13) {
           $(this).parent().find('a').click();
@@ -33,12 +33,12 @@
     };
 
     ViewEventsApplication.prototype.update_application = function() {
-
       /*
       update the application.
       :param url: $(this).attr('action')
       :param data: $(this).serialize()
       */
+
       return $(document).on('submit', 'form.form_application', function() {
         if (!core.validation($(this).find('.modal-body'))) {
           return false;
@@ -78,13 +78,13 @@
     };
 
     ViewEventsApplication.prototype.delete_application = function() {
-
       /*
       delete the application.
       :param url: $(this).attr('href')
       :param application_id: $(this).attr('application_id')
       :param application_name: $(this).attr('application_name')
       */
+
       return $(document).on('click', 'a.delete_application', function() {
         $.ajax({
           type: 'delete',
@@ -123,12 +123,12 @@
     };
 
     ViewEventsApplication.prototype.invite_user = function() {
-
       /*
       invite a user with the application.
       :param url: $(this).attr('href')
       :param email: $(this).closest('.input-append').find('input[type=text]')
       */
+
       $(document).on('click', 'a.invite', function() {
         var $application_form, $invite_email;
         if (!core.validation($(this).closest('.input-append'))) {
@@ -179,11 +179,11 @@
     };
 
     ViewEventsApplication.prototype.delete_viewer = function() {
-
       /*
       delete a viewer in an application.
       :param url: $(this).attr('href')
       */
+
       return $(document).on('click', 'a.delete_viewer', function() {
         var $member_div;
         $member_div = $(this).closest('div');
@@ -215,10 +215,10 @@
   })();
 
   ViewEventsSwitchApplicationi = (function() {
-
     /*
     switch application then update nav link href.
     */
+
     function ViewEventsSwitchApplicationi() {
       this.change_nav();
     }
@@ -238,20 +238,20 @@
   })();
 
   ViewEventsUser = (function() {
-
     /*
     event of views about users.
     */
+
     function ViewEventsUser() {
       this.delete_user();
     }
 
     ViewEventsUser.prototype.delete_user = function() {
-
       /*
       delete the user.
       :param url: $(this).attr('href')
       */
+
       return $(document).on('click', 'a.delete_user', function() {
         if (!core.validation($(this))) {
           return false;
@@ -291,21 +291,21 @@
   })();
 
   ViewEventsAccount = (function() {
-
     /*
     event of views about account.
     */
+
     function ViewEventsAccount() {
       this.update_profile();
     }
 
     ViewEventsAccount.prototype.update_profile = function() {
-
       /*
       update profile.
       :param url: $(this).attr('action')
       :param data: $(this).serialize()
       */
+
       return $(document).on('submit', 'form#form_profile', function() {
         if (!core.validation($(this))) {
           return false;
@@ -351,20 +351,20 @@
   })();
 
   ViewEventsDocument = (function() {
-
     /*
     event of views about documents.
     */
+
     function ViewEventsDocument() {
       this.click_document_group();
     }
 
     ViewEventsDocument.prototype.click_document_group = function() {
-
       /*
       click document group then go to documents view.
       :param url: $(this).attr('href')
       */
+
       return $(document).on('click', 'tr.document_group', function() {
         core.miko({
           href: $(this).attr('href')
