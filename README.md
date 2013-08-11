@@ -113,41 +113,82 @@ http://docs.victory.apiary.io/
 
 
 
-##<a href="https://github.com/chriseppstein/compass" target="_blank">Compass</a>
-###PyCharm settings
-`File Watchers` >> add `SCSS`
+##Development
+###[CoffeeScript](http://www.opensource.org/licenses/mit-license.php)
+```bash
+# install node.js with brew
+$ brew install node
+```
+```bash
+# install CoffeeScript
+$ git clon https://github.com/jashkenas/coffee-script.git
+$ cd coffee-script
+$ sudo bin/cake install
+```
 
-  Watcher Settings  |  value 
+**[File Watchers][File Watchers]:**  
+
+Watcher Settings  |  value 
+:---------:|:---------:
+Program | /usr/local/bin/coffee
+Arguments | --compile $FileName$
+Output paths | $FileNameWithoutExtension$.js
+---
+
+
+
+###[Closure Compiler](https://code.google.com/p/closure-compiler/)
+You could download compiler form [Google Code](https://code.google.com/p/closure-compiler/wiki/BinaryDownloads?tm=2).  
+
+**[File Watchers][File Watchers]:**  
+
+Watcher Settings  |  value 
+:---------:|:---------:
+Program | /Users/Kelp/tool/closure-compiler/compiler.jar
+Arguments | --compilation_level SIMPLE_OPTIMIZATIONS --js $FileName$
+Output paths | $FileNameWithoutExtension$.min.js<br/>(Create output file from stdout)
+---
+
+
+
+###[Compass](https://github.com/chriseppstein/compass)
+```bash
+# install compass with gem
+$ gem install compass
+```
+
+**[File Watchers][File Watchers]:**  
+
+Watcher Settings  |  value 
 :---------:|:---------:
 Program | /Users/Kelp/.rvm/gems/ruby-1.9.3-p448/bin/compass
 Arguments | compile
-Environment variables | GEM_PATH: `/Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global`
+Environment variables | GEM_PATH:<br/>/Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global
 Output paths | $FileNameWithoutExtension$.css
+
 ```bash
+# You could find compass path by `which`.
 $ which compass
 >> /Users/Kelp/.rvm/gems/ruby-1.9.3-p448/bin/compass
-
+```
+```bash
+# You could get gem_path by `echo $GEM_PATH`.
 $ echo $GEM_PATH
 >> /Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global
 ```
+---
+
+[File Watchers]: http://www.jetbrains.com/pycharm/webhelp/file-watchers.html
 
 
 
 
-##Compress
-###PyCharm settings
-Add the plugin "Assets Compressor".
-> Compressing js and css files, go to Refactor > Compress
-
-
-
-
-##Binding JavaScript, CSS
-```
+**Binding JavaScript, CSS**  
+```bash
 $ cd application/static
 $ python binding.py
 ```
-
+---
 
 
 
@@ -164,7 +205,7 @@ clear datastore & text search:
 ```
 --clear_datastore=yes --clear_search_indexes=yes
 ```
-```
+```bash
 $ cd Victory
 $ python tests
 ```
@@ -193,7 +234,7 @@ Open **GoogleAppEngineLauncher** >> Edit >> Application Settings (⌘ + I)
 add `--enable_sendmail` into Launch Settings >> Extra Flags.  
 
 Then open terminal.  
-```
-sudo ln -s /usr/sbin/sendmail /usr/bin/sendmail
+```bash
+$ sudo ln -s /usr/sbin/sendmail /usr/bin/sendmail
 ```
 ref: http://stackoverflow.com/questions/1900029/google-app-engine-sendmail-command-not-found
