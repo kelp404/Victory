@@ -3,9 +3,12 @@ core =
     ###
     core JavaScript object.
     ###
+    if_first_pop: true
     text_loading: 'Loading...'
-    is_ie: false
     is_safari: false
+    is_ie: false
+    socket: null
+    is_modal_pop: false
 
     setup: ->
         ###
@@ -14,22 +17,42 @@ core =
         @setup_nav()
         @setup_link()
         @setup_enter_submit()
-        window.onpopstate = (e) -> core.pop_state(e.state)
+        window.onpopstate = (e) => @pop_state(e.state)
 
     pop_state: (state) ->
         ###
         pop state
         ###
+        if @if_first_pop
+            # pop event after document loaded
+            @if_first_pop = false
+            return
+
+        if @is_modal_pop
+            @is_modal_pop = false
+            return
+
         if state
-            $('.modal.in').modal 'hide'
             state.is_pop = true
-            @miko state, false
+            @ajax state, false
+        else
+            state =
+                is_pop: true,
+                href: location.pathname
+            @ajax state, false
         return
 
-    miko: (state, push) ->
+    ajax: (state, push) ->
         ###
-        みこ
+        Load the page with ajax.
         :param state: history.state
+            {
+                method,     # ajax http method
+                href,       # ajax http url
+                data,       # ajax
+                is_pop,     # true: user click back or forward
+                is_modal    # true: show detail by modal. do not invoke ajax when history.back()
+            }
         :param push: true -> push into history, false do not push into history
         ###
         before_index = $('#js_navigation li.active').index()
@@ -40,23 +63,49 @@ core =
             # fixed flash when pop state in safari
             async: !(core.is_safari and state.is_pop)
             beforeSend: (xhr) ->
-                index = if state.href == '/' then 0 else $('#js_navigation li a[href*="' + state.href + '"]').parent().index()
+                index = if state.href == '/' then 1 else $("#js_navigation li a[href*='#{state.href}']").parent().index()
                 core.nav_select index
                 xhr.setRequestHeader 'X-ajax', 'ajax'
                 core.loading_on core.text_loading
-            error: ->
+            error: (r) ->
                 core.loading_off()
-                core.error_message()
+                core.error_message(r.status)
                 core.nav_select before_index
-            success: (r) ->
+            success: (r, status, xhr) ->
+                if r.__redirect
+                    # redirect
+                    core.ajax href: r.__redirect, true
+                    return
+
                 core.loading_off()
+
+                content_type = xhr.getResponseHeader("content-type")
+                if content_type.indexOf('json') >= 0 and r.__status == 400
+                    # input error
+                    for key in Object.keys(r)
+                        msg = r[key]
+                        $control = $("##{key}").closest '.control-group'
+                        $control.find('.help-inline').remove()
+                        if msg
+                            $control.addClass 'error'
+                            $control.find('.controls').append $("<label for='#{key}' class='help-inline'>#{msg}</label>")
+                        else
+                            $control.removeClass 'error'
+                    return
+
+                # hide modal
+                $('.modal.in').modal 'hide'
 
                 # push state
                 if push
                     if state.href != location.pathname or location.href.indexOf('?') >= 0
-                        state.nav_select_index = $('#js_navigation li.active').index()
-                        history.pushState(state, document.title, state.href)
+                        history.pushState state, document.title, state.href
                     $('html, body').animate scrollTop: 0, 500, 'easeOutExpo'
+                else
+                    # submit form at modal
+                    if history.state and history.state.is_modal
+                        core.is_modal_pop = true
+                        history.back()
 
                 is_ajax = r.match(/<!ajax>/)
                 if !is_ajax
@@ -64,13 +113,13 @@ core =
                     return
 
                 r = r.replace(/<!ajax>/, '')
-                $ajax = $('<div id="js_root">' + r + '</div>')
-                document.title = $ajax.find('title').text()
-                window.cc = $ajax
-                $ajax.find('.js_ajax').each ->
+                $content = $("<div id='js_root'>#{r}</div>")
+                document.title = $content.find('title').text()
+                $content.find('.js_ajax').each ->
                     target = $(@).attr('data-ajax-target')
-                    $('#' + target).html $(@).find('#' + target).html()
-                    $('#' + target).attr 'class', $(@).find('#' + target).attr('class')
+                    $("##{target}").html $(@).find("##{target}").html()
+                    $("##{target}").attr 'class', $(@).find("##{target}").attr('class')
+                    return
 
                 core.after_page_loaded()
         false
@@ -127,12 +176,10 @@ core =
         $('#loading').animate bottom: '-=' + loading_height , 400, 'easeInExpo', ->
             $(@).remove()
 
-    nav_select: (index, animate) ->
+    nav_select: (index, animate=true) ->
         ###
         navigation
         ###
-        animate ?= true
-
         if index > 0 and not $($('#js_navigation li')[index]).hasClass 'select'
             $('#js_navigation li').removeClass 'select'
             $($('#js_navigation li')[index]).addClass 'select'
@@ -175,34 +222,60 @@ core =
         ###
         setup hyper links and forms to ajax and push history.
         ###
-
         # ie not supports high level code
         return if @is_ie
 
-        # link
-        $(document).on 'click', 'a:not([href*="#"])', (e) ->
-            # open in a new tab
+        # detail modal toggle
+        $(document).on 'click', '.js_detail', (e) ->
             if e.metaKey then return
+
+            m = $(@).attr('data-detail-url').match(/(.*)#(.*)/)
+            if m
+                href = m[1]
+                target_id = m[2]
+                history.pushState href: href, is_modal: true, document.title, href
+                # register shown event
+                $("##{target_id}").on 'shown', ->
+                    $($(@).find('input')[0]).select()
+                    $(@).off 'shown'
+
+                # register hidden event
+                $("##{target_id}").on 'hidden', ->
+                    if history.state and history.state.is_modal
+                        core.is_modal_pop = true
+                        history.back()
+                    $(@).off 'hidden'
+
+                $("##{target_id}").modal()
+                return false
+
+        # link
+        $(document).on 'click', 'a:not([href*="#"]):not([href^="javascript:"])', (e) ->
+            # open in a new tab
+            return if e.metaKey
 
             href = $(@).attr 'href'
             if href and not $(@).attr 'target'
-                core.miko href: href, true
+                core.ajax href: href, true
                 return false
             return
 
         # form get
         $(document).on 'submit', 'form[method=get]:not([action*="#"])', ->
             href = $(@).attr('action') + '?' + $(@).serialize()
-            core.miko href: href, true
-            $('.modal.in').modal 'hide'
+            core.ajax href: href, true
             false
 
         # form post
         $(document).on 'submit', 'form[method=post]:not([action*="#"])', ->
-            if core.validation $(@)
-                href = $(@).attr 'action'
-                core.miko {href: href, data: $(@).serialize(), method: 'post'}
-                $('.modal.in').modal 'hide'
+            href = $(@).attr 'action'
+            core.ajax {href: href, data: $(@).serialize(), method: 'post'}
+            false
+
+        # form put
+        $(document).on 'submit', 'form[method=put]:not([action*="#"])', ->
+            href = $(@).attr 'action'
+            core.ajax {href: href, data: $(@).serialize(), method: 'put'}
             false
 
     setup_enter_submit: ->

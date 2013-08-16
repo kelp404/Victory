@@ -3,43 +3,67 @@
   var core, user_agent;
 
   core = {
+
     /*
     core JavaScript object.
     */
-
+    if_first_pop: true,
     text_loading: 'Loading...',
-    is_ie: false,
     is_safari: false,
+    is_ie: false,
+    socket: null,
+    is_modal_pop: false,
     setup: function() {
+
       /*
       setup core
       */
-
+      var _this = this;
       this.setup_nav();
       this.setup_link();
       this.setup_enter_submit();
       return window.onpopstate = function(e) {
-        return core.pop_state(e.state);
+        return _this.pop_state(e.state);
       };
     },
     pop_state: function(state) {
+
       /*
       pop state
       */
-
+      if (this.if_first_pop) {
+        this.if_first_pop = false;
+        return;
+      }
+      if (this.is_modal_pop) {
+        this.is_modal_pop = false;
+        return;
+      }
       if (state) {
-        $('.modal.in').modal('hide');
         state.is_pop = true;
-        this.miko(state, false);
+        this.ajax(state, false);
+      } else {
+        state = {
+          is_pop: true,
+          href: location.pathname
+        };
+        this.ajax(state, false);
       }
     },
-    miko: function(state, push) {
+    ajax: function(state, push) {
+
       /*
-      みこ
+      Load the page with ajax.
       :param state: history.state
+          {
+              method,     # ajax http method
+              href,       # ajax http url
+              data,       # ajax
+              is_pop,     # true: user click back or forward
+              is_modal    # true: show detail by modal. do not invoke ajax when history.back()
+          }
       :param push: true -> push into history, false do not push into history
       */
-
       var before_index;
       before_index = $('#js_navigation li.active').index();
       if (state.method == null) {
@@ -56,27 +80,55 @@
         async: !(core.is_safari && state.is_pop),
         beforeSend: function(xhr) {
           var index;
-          index = state.href === '/' ? 0 : $('#js_navigation li a[href*="' + state.href + '"]').parent().index();
+          index = state.href === '/' ? 1 : $("#js_navigation li a[href*='" + state.href + "']").parent().index();
           core.nav_select(index);
           xhr.setRequestHeader('X-ajax', 'ajax');
           return core.loading_on(core.text_loading);
         },
-        error: function() {
+        error: function(r) {
           core.loading_off();
-          core.error_message();
+          core.error_message(r.status);
           return core.nav_select(before_index);
         },
-        success: function(r) {
-          var $ajax, is_ajax;
+        success: function(r, status, xhr) {
+          var $content, $control, content_type, is_ajax, key, msg, _i, _len, _ref;
+          if (r.__redirect) {
+            core.ajax({
+              href: r.__redirect
+            }, true);
+            return;
+          }
           core.loading_off();
+          content_type = xhr.getResponseHeader("content-type");
+          if (content_type.indexOf('json') >= 0 && r.__status === 400) {
+            _ref = Object.keys(r);
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              key = _ref[_i];
+              msg = r[key];
+              $control = $("#" + key).closest('.control-group');
+              $control.find('.help-inline').remove();
+              if (msg) {
+                $control.addClass('error');
+                $control.find('.controls').append($("<label for='" + key + "' class='help-inline'>" + msg + "</label>"));
+              } else {
+                $control.removeClass('error');
+              }
+            }
+            return;
+          }
+          $('.modal.in').modal('hide');
           if (push) {
             if (state.href !== location.pathname || location.href.indexOf('?') >= 0) {
-              state.nav_select_index = $('#js_navigation li.active').index();
               history.pushState(state, document.title, state.href);
             }
             $('html, body').animate({
               scrollTop: 0
             }, 500, 'easeOutExpo');
+          } else {
+            if (history.state && history.state.is_modal) {
+              core.is_modal_pop = true;
+              history.back();
+            }
           }
           is_ajax = r.match(/<!ajax>/);
           if (!is_ajax) {
@@ -84,14 +136,13 @@
             return;
           }
           r = r.replace(/<!ajax>/, '');
-          $ajax = $('<div id="js_root">' + r + '</div>');
-          document.title = $ajax.find('title').text();
-          window.cc = $ajax;
-          $ajax.find('.js_ajax').each(function() {
+          $content = $("<div id='js_root'>" + r + "</div>");
+          document.title = $content.find('title').text();
+          $content.find('.js_ajax').each(function() {
             var target;
             target = $(this).attr('data-ajax-target');
-            $('#' + target).html($(this).find('#' + target).html());
-            return $('#' + target).attr('class', $(this).find('#' + target).attr('class'));
+            $("#" + target).html($(this).find("#" + target).html());
+            $("#" + target).attr('class', $(this).find("#" + target).attr('class'));
           });
           return core.after_page_loaded();
         }
@@ -99,10 +150,10 @@
       return false;
     },
     error_message: function() {
+
       /*
       pop error message.
       */
-
       return $.av.pop({
         title: 'Error',
         message: 'Loading failed, please try again later.',
@@ -110,10 +161,10 @@
       });
     },
     validation: function($form) {
+
       /*
       validation
       */
-
       var success;
       success = true;
       $form.find('input, textarea').each(function() {
@@ -136,10 +187,10 @@
       return success;
     },
     loading_on: function(message) {
+
       /*
       loading
       */
-
       var loading, loading_height;
       $('body, a, .table-pointer tbody tr').css({
         cursor: 'wait'
@@ -187,13 +238,13 @@
       });
     },
     nav_select: function(index, animate) {
-      /*
-      navigation
-      */
-
       if (animate == null) {
         animate = true;
       }
+
+      /*
+      navigation
+      */
       if (index > 0 && !$($('#js_navigation li')[index]).hasClass('select')) {
         $('#js_navigation li').removeClass('select');
         $($('#js_navigation li')[index]).addClass('select');
@@ -242,21 +293,49 @@
       });
     },
     setup_link: function() {
+
       /*
       setup hyper links and forms to ajax and push history.
       */
-
       if (this.is_ie) {
         return;
       }
-      $(document).on('click', 'a:not([href*="#"])', function(e) {
+      $(document).on('click', '.js_detail', function(e) {
+        var href, m, target_id;
+        if (e.metaKey) {
+          return;
+        }
+        m = $(this).attr('data-detail-url').match(/(.*)#(.*)/);
+        if (m) {
+          href = m[1];
+          target_id = m[2];
+          history.pushState({
+            href: href,
+            is_modal: true
+          }, document.title, href);
+          $("#" + target_id).on('shown', function() {
+            $($(this).find('input')[0]).select();
+            return $(this).off('shown');
+          });
+          $("#" + target_id).on('hidden', function() {
+            if (history.state && history.state.is_modal) {
+              core.is_modal_pop = true;
+              history.back();
+            }
+            return $(this).off('hidden');
+          });
+          $("#" + target_id).modal();
+          return false;
+        }
+      });
+      $(document).on('click', 'a:not([href*="#"]):not([href^="javascript:"])', function(e) {
         var href;
         if (e.metaKey) {
           return;
         }
         href = $(this).attr('href');
         if (href && !$(this).attr('target')) {
-          core.miko({
+          core.ajax({
             href: href
           }, true);
           return false;
@@ -265,31 +344,37 @@
       $(document).on('submit', 'form[method=get]:not([action*="#"])', function() {
         var href;
         href = $(this).attr('action') + '?' + $(this).serialize();
-        core.miko({
+        core.ajax({
           href: href
         }, true);
-        $('.modal.in').modal('hide');
         return false;
       });
-      return $(document).on('submit', 'form[method=post]:not([action*="#"])', function() {
+      $(document).on('submit', 'form[method=post]:not([action*="#"])', function() {
         var href;
-        if (core.validation($(this))) {
-          href = $(this).attr('action');
-          core.miko({
-            href: href,
-            data: $(this).serialize(),
-            method: 'post'
-          });
-          $('.modal.in').modal('hide');
-        }
+        href = $(this).attr('action');
+        core.ajax({
+          href: href,
+          data: $(this).serialize(),
+          method: 'post'
+        });
+        return false;
+      });
+      return $(document).on('submit', 'form[method=put]:not([action*="#"])', function() {
+        var href;
+        href = $(this).attr('action');
+        core.ajax({
+          href: href,
+          data: $(this).serialize(),
+          method: 'put'
+        });
         return false;
       });
     },
     setup_enter_submit: function() {
+
       /*
       .enter-submit.keypress() Ctrl + Enter then submit the form
       */
-
       return $(document).on('keypress', '.enter-submit', function(e) {
         if (e.keyCode === 13 && e.ctrlKey) {
           $(this).closest('form').submit();
@@ -298,19 +383,19 @@
       });
     },
     after_page_loaded: function() {
+
       /*
       events of views
       */
-
       core.setup_datetime();
       core.setup_focus();
       return core.setup_tooltip();
     },
     setup_datetime: function() {
+
       /*
       datetime
       */
-
       return $('.datetime').each(function() {
         var date;
         try {
@@ -320,17 +405,17 @@
       });
     },
     setup_focus: function() {
+
       /*
       focus
       */
-
       return $('.focus').select();
     },
     setup_tooltip: function() {
+
       /*
       tool tip
       */
-
       return $('[rel="tooltip"]').tooltip();
     }
   };

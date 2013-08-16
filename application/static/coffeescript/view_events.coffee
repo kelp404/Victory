@@ -45,7 +45,7 @@ class ViewEventsApplication
                         core.error_message()
                 success: ->
                     core.loading_off()
-                    core.miko href: location.href, false
+                    core.ajax href: location.href, false
             $($(@).closest('.modal')).modal 'hide'
             false
 
@@ -69,7 +69,7 @@ class ViewEventsApplication
                         core.error_message()
                 success: ->
                     core.loading_off()
-                    core.miko href: location.href, false
+                    core.ajax href: location.href, false
             $($(@).closest('.modal')).modal 'hide'
             false
 
@@ -99,7 +99,7 @@ class ViewEventsApplication
                     core.loading_off()
                     $application_form.modal 'hide'
                     $.av.pop {title: 'Successful!', message: $invite_email.val() + ' will get a invited email.'}
-                    core.miko href: location.href, false
+                    core.ajax href: location.href, false
             false
         # click entern in text box
         $(document).on 'keypress', 'input.invite', (e) ->
@@ -168,7 +168,7 @@ class ViewEventsUser
                     core.error_message()
                 success: (r) ->
                     if r.success
-                        core.miko href: location.href, false
+                        core.ajax href: location.href, false
                     else
                         $.av.pop {title: 'Error', message: 'Please check again.', template: 'error'}
             false
@@ -223,7 +223,7 @@ class ViewEventsDocument
         :param url: $(this).attr('href')
         ###
         $(document).on 'click', 'tr.document_group', ->
-            core.miko href: $(this).attr('href'), true
+            core.ajax href: $(this).attr('href'), true
             false
 
 
