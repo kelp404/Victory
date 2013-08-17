@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config.from_object('application.config')
 
 
-if config.DEBUG:
+if app.debug:
     # decompress gzip, gae developer tool do not support gzip
     class WSGIUngzipBody(object):
         def __init__(self, application):

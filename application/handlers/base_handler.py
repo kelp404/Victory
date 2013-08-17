@@ -19,7 +19,7 @@ from application.services.account_service import *
 
 @app.before_request
 def before_request():
-    if not config.DEBUG and request.scheme == 'http':
+    if not app.debug and request.scheme == 'http':
         return redirect('https' + request.url[4:])
 
     g.view_model = {
@@ -66,7 +66,7 @@ def error_500(e):
     return render_template('./error/default.html', status=500, exception=e), 500
 def handle_exception(e):
     traceback.print_exc(3, file=sys.stdout)
-    description = e if config.DEBUG else u'（˚ Д ˚ ）'
+    description = e if app.debug else u'（˚ Д ˚ ）'
     return render_template('./error/default.html', status=500, exception=description), 500
 app.handle_exception = handle_exception
 
