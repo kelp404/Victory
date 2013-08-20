@@ -9,6 +9,7 @@
     <meta http-equiv="cache-control" content="no-cache"/>
     <meta http-equiv="expires" content="0"/>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
     {% if compressed %}
         <link rel="stylesheet" type="text/css" href="/css/site.min.css"/>
         <script type="text/javascript" src="/javascript/site.min.js"></script>
@@ -18,8 +19,7 @@
         <link rel="stylesheet" type="text/css" href="/css/main.css"/>
         <script type="text/javascript" src="/javascript/base.min.js"></script>
         <script type="text/javascript" src="/javascript/bootstrap.min.js"></script>
-        <script type="text/javascript" src="/coffeescript/core.js"></script>
-        <script type="text/javascript" src="/coffeescript/view_events.js"></script>
+        <script type="text/javascript" src="/coffeescript/victory.js"></script>
     {% endif %}
 </head>
 <!--
@@ -56,7 +56,7 @@
                                 `++++.:++++:+;+++:#+'
                         ,++++++++,++++;'++++++++++++,`
 -->
-<body>
+<body ng-app>
     <!-- id="js_navigation" class="cs_navigation" -->
     {% include './shared/navigation.html' %}
 
