@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-app="victory">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -17,6 +17,7 @@
         <link rel="stylesheet" type="text/css" href="/css/alert_view.css"/>
         <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/css/main.css"/>
+        <script type="text/javascript" src="/javascript/angular-ui-router.min.js"></script>
         <script type="text/javascript" src="/javascript/base.min.js"></script>
         <script type="text/javascript" src="/javascript/bootstrap.min.js"></script>
         <script type="text/javascript" src="/coffeescript/victory.js"></script>
@@ -56,13 +57,21 @@
                                 `++++.:++++:+;+++:#+'
                         ,++++++++,++++;'++++++++++++,`
 -->
-<body ng-app>
+<body>
     <!-- id="js_navigation" class="cs_navigation" -->
     {% include './shared/navigation.html' %}
 
     <div class="cs_content_background">
         <div class="cs_container">
             <div class="alert_view_center"></div>
+
+
+            <div ui-view="viewA"></div>
+            <div ui-view="viewB"></div>
+            <!-- Also a way to navigate -->
+            <a href="#/route1">Route 1</a>
+            <a href="#/route2">Route 2</a>
+
 
             <!-- id="js_menu" class="cs_menu" -->
             {% block menu %}{% endblock %}
