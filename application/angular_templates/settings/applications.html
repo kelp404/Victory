@@ -1,0 +1,118 @@
+{% extends './shared/container.html' %}
+
+{% block content %}
+    <div id="js_content" class="cs_content_medium">
+        <legend>Applications</legend>
+
+        {# add button #}
+        <div class="input-append pull-right" style="margin: -5px 0 10px 0">
+            <input class="appended_input_application focus" type="text" />
+            <a href="#form_add_application" data-toggle="modal" class="btn">Add</a>
+        </div>
+
+        {# add an application form #}
+        <form id="form_add_application" action="/settings/applications" method="post" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>Add a new application</h3>
+            </div>
+            <div class="modal-body">
+                <div class="control-group">
+                    <label class="control-label">Name</label>
+                    <input id="name" name="name" validation=".+" msg="This field is required." class="input-xlarge" type="text"/>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Description</label>
+                    <input id="description" name="description" class="input-xlarge" style="width: 90%" type="text"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" class="btn" value="Submit"/>
+            </div>
+        </form>
+
+
+        {# applications content #}
+        <table class="table table-bordered table-hover table-content table-pointer">
+            <thead>
+                <tr><th class="span2">Name</th><th>Description</th><th class="span3">Create Time</th></tr>
+            </thead>
+            <tbody>
+                {% for item in result %}
+                    <tr data-toggle="modal" href="#application{{ item.id }}"><td>{{ item.name }}</td><td>{{ ''|default(item.description, item.description) }}</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {# application detail modal #}
+        {% for item in result %}
+            {% set description = item.description|default('', item.description == None) %}
+
+            <form id="application{{ item.id }}" action="/settings/applications/{{ item.id }}#" class="form_application modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3>Application {{ item.name }}</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr><td class="span2">Name</td><td>
+                            {% if item.is_owner %}
+                                <div class="control-group">
+                                    <input type="text" name="name" validation=".+" msg="This field is required." value="{{ item.name }}"/>
+                                </div>
+                            {% else %}
+                                {{ item.name }}
+                            {% endif %}
+                        </td></tr>
+                        <tr><td>Description</td><td>
+                            {% if item.is_owner %}
+                                <div class="control-group">
+                                    <input type="text" name="description" class="input-xlarge" value="{{ description }}"/>
+                                </div>
+                            {% else %}
+                                {{ description }}
+                            {% endif %}
+                        </td></tr>
+                        <tr><td>Key</td><td>{{ item.app_key }}</td></tr>
+                        <tr><td>Members</td><td>
+                            {% for member in item.members %}
+                                <div>
+                                    <span rel="tooltip" title="{{ member.name }}">{{ member.email }}</span>
+                                    {% if item.is_owner and not member.is_owner %}
+                                        {# if i am owner and the member(in loop) is not owner #}
+                                        <a href="/settings/applications/{{ item.id }}/members/{{ member.id }}#" class="delete_viewer" rel="tooltip" title="Remove from this application.">delete</a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </td></tr>
+                        <tr><td>Create Time</td><td>{{ render_datetime(item.create_time, 'yyyy-MM-dd hh:mm TT') }}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    {% if item.is_owner %}
+                        <div class="input-append pull-left">
+                            <div class="control-group" style="margin-bottom: 0">
+                                <input type="text" class="input-medium invite" validation="^.+\@(\[?)[a-zA-Z0-9\-\.]+\.([a-zA-Z]{2,3}|[0-9]{1,3})(\]?)$" placeholder="email@gmail.com" />
+                                <a class="btn invite" type="submit" href="/settings/applications/{{ item.id }}/invite#" >Invite</a>
+                            </div>
+                        </div>
+
+                        <a class="btn btn-danger delete_application" application_name="{{ item.name }}" style="color: #ffffff" href="/settings/applications/{{ item.id }}#" >Delete</a>
+                        <input type="submit" class="btn" value="Save"/>
+                    {% else %}
+                        <a class="btn" data-dismiss="modal">Close</a>
+                    {% endif %}
+                </div>
+            </form>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div id="js_menu" class="cs_menu">
+        {% set menu = 'applications' %}
+        {% include './menu/settings.html' %}
+    </div>
+{% endblock %}

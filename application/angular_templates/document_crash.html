@@ -1,0 +1,143 @@
+{% extends './shared/container.html' %}
+
+{% block content %}
+    <div id="js_content" class="cs_content">
+        <!-- switch applications -->
+        <div class="pull-left">
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    {{ selected_application|default('No Application') }}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    {% for item in applications %}
+                        <li><a tabindex="-1" href="/{{ document_model }}_groups/{{ item.id }}" class="change_nav" application_id="{{ item.id }}">{{ item.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <ul class="breadcrumb pull-left" style="background-color: #fff; margin-bottom: 0">
+            <li><a href="/{{ document_model }}_groups/{{ application_id }}">Crashes</a> <span class="divider">/</span></li>
+            <li class="active">{{ result.name }} - {{ result.title }}</li>
+        </ul>
+
+        <div class="cs_clear" style="height: 10px;"></div>
+
+        <!-- Information -->
+        <legend>Information</legend>
+
+        <div class="cs_crash_info">
+            <dl class="dl-horizontal pull-left span7">
+                <dt>App Version</dt>
+                <dd>{{ result.version }}</dd>
+            </dl>
+            <dl class="dl-horizontal pull-left span7">
+                <dt>OS Version</dt>
+                <dd>{{ result.os_version }}</dd>
+            </dl>
+            <dl class="dl-horizontal pull-left span7">
+                <dt>Hardware Model</dt>
+                <dd>{{ result.device }}</dd>
+            </dl>
+            {% if result.report.system.model %}<dl class="dl-horizontal pull-left span7">
+                <dt>Model</dt>
+                <dd>{{ result.report.system.model }}</dd>
+            </dl>{% endif %}
+            {% if result.report.system.cpu_arch %}<dl class="dl-horizontal pull-left span7">
+                <dt>CPU arch</dt>
+                <dd>{{ result.report.system.cpu_arch }}</dd>
+            </dl>{% endif %}
+            <dl class="dl-horizontal pull-left span7">
+                <dt>User</dt>
+                <dd>{{ result.name }}{% if result.email %} &lt;{{ result.email }}&gt;{% endif %}</dd>
+            </dl>
+            <dl class="dl-horizontal pull-left span7">
+                <dt>App uuid</dt>
+                <dd>{{ result.app_uuid }}</dd>
+            </dl>
+            {% if result.report.system.device_app_hash %}<dl class="dl-horizontal pull-left span7">
+                <dt>Device App Hash</dt>
+                <dd>{{ result.report.system.device_app_hash }}</dd>
+            </dl>{% endif %}
+            {% if result.report.system.parent_process_name %}<dl class="dl-horizontal pull-left span7">
+                <dt>Parent Process Name</dt>
+                <dd>{{ result.report.system.parent_process_name }}</dd>
+            </dl>{% endif %}
+            {% if result.report.system.CFBundleIdentifier %}<dl class="dl-horizontal pull-left span7">
+                <dt>Bundle Identifier</dt>
+                <dd>{{ result.report.system.CFBundleIdentifier }}</dd>
+            </dl>{% endif %}
+            {% if result.report.system.memory and result.report.system.memory.free %}<dl class="dl-horizontal pull-left span7">
+                <dt>Memory</dt>
+                <dd><span rel="tooltip" title="free / usable">{{ (result.report.system.memory.free / 1048576)|round|int }}/{{ (result.report.system.memory.usable / 1048576)|round|int }} MB</span></dd>
+            </dl>{% endif %}
+            <dl class="dl-horizontal pull-left span7">
+                <dt>IP Address</dt>
+                <dd>{{ result.ip }}</dd>
+            </dl>
+            <dl class="dl-horizontal pull-left span7">
+                <dt>Datetime</dt>
+                <dd>{{ render_datetime(result.create_time, 'yyyy-MM-dd hh:mm:ss TT') }}</dd>
+            </dl>
+            <dl class="dl-horizontal pull-left span7">
+                <dt>User-Agent</dt>
+                <dd>{{ result.user_agent }}</dd>
+            </dl>
+        </div>
+        <div class="clear" style="height: 30px;"></div>
+
+        <!-- Crashed Threads -->
+        {% for thread in crashed_threads %}
+            <legend>Thread {{ thread.index }} Crashed : {{ thread.dispatch_queue|default(thread.name) }}</legend>
+            {% if 'backtrace' in thread %}
+                <table class="table table-striped table-hover table-content">
+                    <thead><tr><th class="span1"></th><th class="span3">object name</th><th style="width: 90px;">address</th><th>symbol name</th></tr></thead>
+                    <tbody>
+                    {% set index = 0 %}
+                    {% for content in thread['backtrace']['contents'] %}
+                        <tr><td style="text-align: right;">{{ index }}</td><td>{{ content.object_name }}</td><td style="font-family: courier">{{ content.instruction_addr_hex }}</td><td>{{ content.symbol_name }} + {{ content.instruction_addr - content.symbol_addr }}</td></tr>
+                        {% set index = index + 1 %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+            {% if 'notable_addresses' in thread %}
+                <table class="table table-striped table-hover table-content">
+                    <thead><tr><th class="span3">notable addresses</th><th class="span2"></th><th></th></tr></thead>
+                    <tbody>
+                    {% for key in thread['notable_addresses'].keys() %}
+                        <tr>
+                            <td>{{ key }}</td><td>{{ thread['notable_addresses'][key]['contents'] }}</td>
+                            <td>{{ thread['notable_addresses'][key]['value']|default(thread['notable_addresses'][key]['class']) }} ({{ thread['notable_addresses'][key]['malloc_size'] }})</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Threads -->
+        {% for thread in threads %}
+            <legend>Thread {{ thread.index }} : {{ thread.dispatch_queue|default(thread.name) }}</legend>
+            {% if 'backtrace' in thread %}
+            <table class="table table-striped table-hover table-content">
+                <thead><tr><th class="span1"></th><th class="span3">object name</th><th style="width: 90px;">address</th><th>symbol name</th></tr></thead>
+                <tbody>
+                    {% set index = 0 %}
+                    {% for content in thread['backtrace']['contents'] %}
+                        <tr><td style="text-align: right;">{{ index }}</td><td>{{ content.object_name }}</td><td style="font-family: courier">{{ content.instruction_addr_hex }}</td><td>{{ content.symbol_name }} + {{ content.instruction_addr - content.symbol_addr }}</td></tr>
+                        {% set index = index + 1 %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <div id="js_menu" class="cs_menu">
+    </div>
+{% endblock %}
