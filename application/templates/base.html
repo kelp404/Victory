@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="victory">
+<html ng-app="victoryAngular">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -21,7 +21,17 @@
         <script type="text/javascript" src="/javascript/base.min.js"></script>
         <script type="text/javascript" src="/javascript/bootstrap.min.js"></script>
         <script type="text/javascript" src="/coffeescript/victory.js"></script>
+        <script type="text/javascript" src="/coffeescript/victory_angular.js"></script>
     {% endif %}
+    <script type="text/javascript">
+        {% if user %}
+            victory.user.isLogin = true;
+            victory.user.userId = {{ user.key().id() }};
+            victory.user.name = {{ user.name|tojson|safe }};
+            victory.user.email = {{ user.email|tojson|safe }};
+            victory.user.level = {{ user.level }};
+        {% endif %}
+    </script>
 </head>
 <!--
                                     ,'.
@@ -66,12 +76,18 @@
             <div class="alert_view_center"></div>
 
 
-            <div ui-view="viewA"></div>
+
+            <li ng-class="{ active: $state.includes('contacts') }"><a href="#/route1">Contacts</a></li>
+            <li ng-class="{ active: $state.includes('about') }"><a href="#/route1">About</a></li>
+            <div ui-view></div>
             <div ui-view="viewB"></div>
             <!-- Also a way to navigate -->
+            <a href="/">index</a>
             <a href="#/route1">Route 1</a>
             <a href="#/route2">Route 2</a>
-
+            {% raw %}
+                <p>{{ '2012-04-01T10:00' | date:'short' }}</p>
+            {% endraw %}
 
             <!-- id="js_menu" class="cs_menu" -->
             {% block menu %}{% endblock %}
