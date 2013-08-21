@@ -30,6 +30,8 @@
             victory.user.name = {{ user.name|tojson|safe }};
             victory.user.email = {{ user.email|tojson|safe }};
             victory.user.level = {{ user.level }};
+        {% else %}
+            victory.loginUrl = {{ login_url|tojson|safe }};
         {% endif %}
     </script>
 </head>
@@ -85,7 +87,7 @@
                     <li><a href="/log_groups">Logs</a></li>
                     <li><a href="/settings/applications">Settings</a></li>
                 {% else %}
-                    <li class="select"><a href="/login">Sign in</a></li>
+                    <li class="select"><a href="#/login">Sign in</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -93,31 +95,16 @@
     </div>
     <!-- navigation end -->
 
-
-
-
+    <!-- content begin -->
     <div class="cs_content_background">
         <div class="cs_container">
             <div class="alert_view_center"></div>
-
-
-
-
+            <div ui-view='viewMenu'></div>
+            <div ui-view='viewContent'></div>
             <div ui-view></div>
-            <!-- Also a way to navigate -->
-            <a href="/">index</a>
-            <a href="#/route1">Route 1</a>
-            <a href="#/route2">Route 2</a>
-            {% raw %}
-                <p>{{ '2012-04-01T10:00' | date:'short' }}</p>
-            {% endraw %}
-
-            <!-- id="js_menu" class="cs_menu" -->
-{#            {% block menu %}{% endblock %}#}
-            <!-- id="js_content" class="cs_content" -->
-{#            {% block content %}{% endblock %}#}
         </div>
     </div>
+    <!-- content end -->
 
     <div class="cs_footer">
         <p>

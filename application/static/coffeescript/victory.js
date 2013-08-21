@@ -7,6 +7,7 @@
       root: 0,
       normal: 1
     },
+    loginUrl: '',
     isIE: false,
     isSafari: false,
     user: {

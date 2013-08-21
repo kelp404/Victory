@@ -3,29 +3,45 @@
   var controllers, victoryAngular;
 
   controllers = {
-    settingProfile: function($scope, $state) {
-      $scope.something = $state;
-      return victory.setup.all();
+    index: function($scope, $state) {
+      /*
+      /
+      */
+
+      if (!victory.user.isLogin) {
+        return location.href = '#/login';
+      }
+    },
+    login: function($scope, $state) {
+      /*
+      /login
+      */
+
+      return $scope.loginUrl = victory.loginUrl;
     }
   };
 
   victoryAngular = angular.module('victoryAngular', ['ui.state']);
 
   victoryAngular.config(function($stateProvider) {
-    $stateProvider.state('route1', {
-      url: '/route1',
-      templateUrl: "/views/login.html",
-      controller: controllers.settingProfile
-    });
     $stateProvider.state('index', {
       url: '',
       templateUrl: "/views/login.html",
-      controller: controllers.settingProfile
+      controller: controllers.index
     });
-    return $stateProvider.state('index-2', {
+    $stateProvider.state('index-2', {
       url: '/',
       templateUrl: "/views/login.html",
-      controller: controllers.settingProfile
+      controller: controllers.index
+    });
+    return $stateProvider.state('login', {
+      url: '/login',
+      views: {
+        viewContent: {
+          templateUrl: '/views/login.html',
+          controller: controllers.login
+        }
+      }
     });
   });
 
