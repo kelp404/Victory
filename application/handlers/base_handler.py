@@ -17,6 +17,11 @@ from application.services.account_service import *
 
 
 
+@app.route('/_ah/start', methods=['GET'])
+def start_handler():
+    return abort(404)
+
+
 @app.before_request
 def before_request():
     if not app.debug and request.scheme == 'http':
@@ -35,16 +40,6 @@ def before_request():
         g.view_model['logout_url'] = users.create_logout_url('/')
     else:
         g.view_model['login_url'] = users.create_login_url()
-
-    # ajax result
-    # True: result content
-    # False: result all page
-    g.view_model['ajax'] = 'X-ajax' in request.headers
-
-
-@app.route('/_ah/start', methods=['GET'])
-def start_handler():
-    return abort(404)
 
 
 @app.route('/')

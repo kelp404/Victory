@@ -4,7 +4,8 @@
 
   controllers = {
     settingProfile: function($scope, $state) {
-      return $scope.something = $state;
+      $scope.something = $state;
+      return victory.setup.all();
     }
   };
 
@@ -16,8 +17,13 @@
       templateUrl: "/views/login.html",
       controller: controllers.settingProfile
     });
-    return $stateProvider.state('index', {
+    $stateProvider.state('index', {
       url: '',
+      templateUrl: "/views/login.html",
+      controller: controllers.settingProfile
+    });
+    return $stateProvider.state('index-2', {
+      url: '/',
       templateUrl: "/views/login.html",
       controller: controllers.settingProfile
     });

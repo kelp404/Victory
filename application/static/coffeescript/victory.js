@@ -38,65 +38,85 @@
         cache: args.ache,
         data: args.data,
         beforeSend: function(xhr) {
-          xhr.setRequestHeader('X-ajax', 'ajax');
-          victory.loading_on('Loading...');
+          victory.loading.on('Loading...');
           if (args.beforeSend) {
             return args.beforeSend();
           }
         },
-        success: function(r, status, xhr) {}
+        success: function(r, status, xhr) {
+          victory.loading.off();
+        }
       });
     },
-    loading_on: function(message) {
-      /*
-      loading
-      */
+    loading: {
+      on: function(message) {
+        /*
+        loading
+        */
 
-      var loading, loading_height;
-      $('body, a, .table-pointer tbody tr').css({
-        cursor: 'wait'
-      });
-      if (this.isIE) {
-        return;
+        var loading, loading_height;
+        $('body, a, .table-pointer tbody tr').css({
+          cursor: 'wait'
+        });
+        if (victory.isIE) {
+          return;
+        }
+        if ($('#loading').length > 0) {
+          $('#loading .message').html(message);
+          return;
+        }
+        loading = $('<div id="loading"><div class="spin"></div><div class="message">' + message + '</div><div class="clear"></div></div>');
+        $('body').append(loading);
+        loading_height = $('#loading').height();
+        $('#loading').css({
+          bottom: -loading_height
+        });
+        $('#loading').animate({
+          bottom: '+=' + (loading_height + 10)
+        }, 400, 'easeOutExpo');
+        return Spinner({
+          color: '#444',
+          width: 2,
+          length: 4,
+          radius: 4
+        }).spin($('#loading .spin')[0]);
+      },
+      off: function() {
+        var loading_height;
+        $('body').css({
+          cursor: 'default'
+        });
+        $('a, .table-pointer tbody tr').css({
+          cursor: 'pointer'
+        });
+        if (victory.isIE) {
+          return;
+        }
+        $('#loading').dequeue();
+        loading_height = $('#loading').height() + 10;
+        return $('#loading').animate({
+          bottom: '-=' + loading_height
+        }, 400, 'easeInExpo', function() {
+          return $(this).remove();
+        });
       }
-      if ($('#loading').length > 0) {
-        $('#loading .message').html(message);
-        return;
-      }
-      loading = $('<div id="loading"><div class="spin"></div><div class="message">' + message + '</div><div class="clear"></div></div>');
-      $('body').append(loading);
-      loading_height = $('#loading').height();
-      $('#loading').css({
-        bottom: -loading_height
-      });
-      $('#loading').animate({
-        bottom: '+=' + (loading_height + 10)
-      }, 400, 'easeOutExpo');
-      return Spinner({
-        color: '#444',
-        width: 2,
-        length: 4,
-        radius: 4
-      }).spin($('#loading .spin')[0]);
     },
-    loading_off: function() {
-      var loading_height;
-      $('body').css({
-        cursor: 'default'
-      });
-      $('a, .table-pointer tbody tr').css({
-        cursor: 'pointer'
-      });
-      if (this.isIE) {
-        return;
+    setup: {
+      all: function() {
+        var key;
+        for (key in this) {
+          if (key !== 'all') {
+            this[key]();
+          }
+        }
+      },
+      tooltip: function() {
+        /*
+        tool tip
+        */
+
+        return $('[rel="tooltip"]').tooltip();
       }
-      $('#loading').dequeue();
-      loading_height = $('#loading').height() + 10;
-      return $('#loading').animate({
-        bottom: '-=' + loading_height
-      }, 400, 'easeInExpo', function() {
-        return $(this).remove();
-      });
     },
     getUserProfile: function() {
       /*
@@ -110,6 +130,9 @@
         dataType: 'json',
         cache: false,
         async: false,
+        error: function(r) {
+          return _this.user.isLogin = false;
+        },
         success: function(r) {
           return _this.user = r;
         }
