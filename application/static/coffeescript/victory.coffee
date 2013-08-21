@@ -1,19 +1,74 @@
 
+victory =
+    userLevel:
+        root: 0
+        normal: 1
+    isIE: false
+    isSafari: false
+    user:
+        userId: 0
+        level: 1
+        name: null
+        email: null
+        isLogin: false
+        isRoot: ->
+            victory.user.level == victory.userLevel.root
 
-victory = angular.module('victory', ['ui.state'])
-victory.config ($stateProvider) ->
-    $stateProvider.state 'route1',
-        url: '/route1'
-        views:
-            viewA:
-                templateUrl: "index.viewA.html"
-            viewB:
-                templateUrl: "index.viewB.html"
+    ajax: (args={}) ->
+        args.type ?= 'get'
+        args.cache ?= false
+        args.data ?= ''
+        $.ajax
+            url: args.url, type: args.type, cache: args.ache, data: args.data
+            beforeSend: (xhr) ->
+#                index = if state.href == '/' then 1 else $("#js_navigation li a[href*='#{state.href}']").parent().index()
+#                core.nav_select index
+                xhr.setRequestHeader 'X-ajax', 'ajax'
+                victory.loading_on 'Loading...'
+                args.beforeSend() if args.beforeSend
+            success: (r, status, xhr) ->
+                return
 
-    $stateProvider.state 'index',
-        url: ''
-        views:
-            viewA:
-                templateUrl: "index.viewA.html"
-            viewB:
-                templateUrl: "index.viewB.html"
+    loading_on: (message) ->
+        ###
+        loading
+        ###
+        $('body, a, .table-pointer tbody tr').css cursor: 'wait'
+        return if @isIE
+
+        if $('#loading').length > 0
+            $('#loading .message').html message
+            return
+
+        loading = $('<div id="loading"><div class="spin"></div><div class="message">' + message + '</div><div class="clear"></div></div>')
+        $('body').append loading
+        loading_height = $('#loading').height()
+        $('#loading').css bottom: -loading_height
+        $('#loading').animate bottom: '+=' + (loading_height + 10) , 400, 'easeOutExpo'
+        Spinner({ color: '#444', width: 2, length: 4, radius: 4 }).spin $('#loading .spin')[0]
+    loading_off: ->
+        $('body').css cursor: 'default'
+        $('a, .table-pointer tbody tr').css cursor: 'pointer'
+        return if @isIE
+
+        $('#loading').dequeue()
+        loading_height = $('#loading').height() + 10
+        $('#loading').animate bottom: '-=' + loading_height , 400, 'easeInExpo', ->
+            $(@).remove()
+
+    getUserProfile: ->
+        ###
+        update login status
+        ###
+        $.ajax
+            url: '/me', type: 'get', dataType: 'json', cache: false, async: false
+            success: (r) =>
+                @user = r
+        @user
+
+
+window.victory = victory
+
+user_agent = navigator.userAgent.toLowerCase()
+victory.isIE = user_agent.indexOf('msie') != -1
+victory.isSafari = user_agent.indexOf('safari') != -1 and user_agent.indexOf('chrome') == -1

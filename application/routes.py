@@ -1,20 +1,29 @@
 
 from application import app
-from handlers.start_handler import *
 from handlers.account_handler import *
 from handlers.document_handler import *
 from handlers.settings_handler import *
 from handlers.web_service_handler import *
 
 
-# Start Handler
-app.add_url_rule('/_ah/start', 'start_handler', view_func=start_handler, methods=['GET'])
-
-# Home
-app.add_url_rule('/', 'crash_group_home', view_func=document_view, methods=['GET'])
 
 # Login
 app.add_url_rule('/login', 'login', view_func=login_page, methods=['GET'])
+
+# -------- AngularJS ---------
+# Get User Profile
+app.add_url_rule('/me', 'get_user_profile', view_func=get_user_profile, methods=['GET'])
+# ---------------------------
+
+
+# ----------- API -------------
+app.add_url_rule('/api/v1/exception/<key>', 'api_exception', view_func=exception_document_add, methods=['POST'])
+app.add_url_rule('/api/v1/exception/<key>', 'api_exception_jsonp', view_func=exception_document_add_jsonp, methods=['GET'])
+app.add_url_rule('/api/v1/log/<key>', 'api_log', view_func=log_document_add, methods=['POST'])
+app.add_url_rule('/api/v1/log/<key>', 'api_log_jsonp', view_func=log_document_add_jsonp, methods=['GET'])
+app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_add, methods=['POST'])
+# ---------------------------
+
 
 # Settings
 app.add_url_rule('/settings', 'settings_apps_home', view_func=redirect_to_application, methods=['GET'])
@@ -44,10 +53,3 @@ app.add_url_rule('/exception_groups', 'exception_group_default', view_func=docum
 app.add_url_rule('/log_groups/<application_id>/<group_tag>', 'log_list', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups/<application_id>', 'log_group', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups', 'log_group_default', view_func=document_view, methods=['GET'])
-
-# API
-app.add_url_rule('/api/v1/exception/<key>', 'api_exception', view_func=exception_document_add, methods=['POST'])
-app.add_url_rule('/api/v1/exception/<key>', 'api_exception_jsonp', view_func=exception_document_add_jsonp, methods=['GET'])
-app.add_url_rule('/api/v1/log/<key>', 'api_log', view_func=log_document_add, methods=['POST'])
-app.add_url_rule('/api/v1/log/<key>', 'api_log_jsonp', view_func=log_document_add_jsonp, methods=['GET'])
-app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_add, methods=['POST'])

@@ -6,7 +6,7 @@ import sys
 import traceback
 
 # flask
-from flask import render_template, g, request, redirect
+from flask import render_template, g, request, redirect, abort
 
 # google
 from google.appengine.api import users
@@ -42,34 +42,44 @@ def before_request():
     g.view_model['ajax'] = 'X-ajax' in request.headers
 
 
+@app.route('/_ah/start', methods=['GET'])
+def start_handler():
+    return abort(404)
+
+
+@app.route('/')
+def index():
+    return render_template('base.html', **g.view_model)
+
+
 @app.errorhandler(400)
 def error_400(e):
-    return render_template('./error/default.html', status=400, exception=e), 400
+    return render_template('error.html', status=400, exception=e), 400
 
 @app.errorhandler(403)
 def error_403(e):
     if g.user is None:
         return redirect('/login')
     else:
-        return render_template('./error/default.html', status=403, exception=e), 403
+        return render_template('error.html', status=403, exception=e), 403
 
 @app.errorhandler(404)
 def error_404(e):
-    return render_template('./error/default.html', status=404, exception=e), 404
+    return render_template('error.html', status=404, exception=e), 404
 
 @app.errorhandler(405)
 def error_405(e):
-    return render_template('./error/default.html', status=405, exception=e), 405
+    return render_template('error.html', status=405, exception=e), 405
 
 @app.errorhandler(500)
 def error_500(e):
-    return render_template('./error/default.html', status=500, exception=e), 500
+    return render_template('error.html', status=500, exception=e), 500
 def handle_exception(e):
     traceback.print_exc(3, file=sys.stdout)
     description = e if app.debug else u'（˚ Д ˚ ）'
-    return render_template('./error/default.html', status=500, exception=description), 500
+    return render_template('error.html', status=500, exception=description), 500
 app.handle_exception = handle_exception
 
 @app.errorhandler(503)
 def error_503(e):
-    return render_template('./error/default.html', status=503, exception=e), 503
+    return render_template('error.html', status=503, exception=e), 503
