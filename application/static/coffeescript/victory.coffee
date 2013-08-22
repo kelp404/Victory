@@ -64,11 +64,6 @@ victory =
                 if key != 'all'
                     @[key]()
             return
-        tooltip: ->
-            ###
-            tool tip
-            ###
-            $('[rel="tooltip"]').tooltip()
 
     getUserProfile: ->
         ###

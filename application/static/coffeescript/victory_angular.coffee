@@ -32,3 +32,11 @@ victoryAngular.config ($stateProvider) ->
             viewContent:
                 templateUrl: '/views/login.html'
                 controller: controllers.login
+
+# setup
+victoryAngular.directive 'relTooltip', ->
+    ###
+    setup tooltip
+    ###
+    (scope, element, attrs) ->
+        $(element).tooltip()

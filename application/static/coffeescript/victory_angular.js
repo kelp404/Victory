@@ -45,4 +45,14 @@
     });
   });
 
+  victoryAngular.directive('relTooltip', function() {
+    /*
+    setup tooltip
+    */
+
+    return function(scope, element, attrs) {
+      return $(element).tooltip();
+    };
+  });
+
 }).call(this);

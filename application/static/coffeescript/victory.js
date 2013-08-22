@@ -110,13 +110,6 @@
             this[key]();
           }
         }
-      },
-      tooltip: function() {
-        /*
-        tool tip
-        */
-
-        return $('[rel="tooltip"]').tooltip();
       }
     },
     getUserProfile: function() {
