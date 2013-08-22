@@ -137,20 +137,6 @@ Output paths | $FileNameWithoutExtension$.js
 
 
 
-###[Closure Compiler](https://code.google.com/p/closure-compiler/)
-You could download compiler form [Google Code](https://code.google.com/p/closure-compiler/wiki/BinaryDownloads?tm=2).  
-
-**[File Watchers][File Watchers]:**  
-
-Watcher Settings  |  value 
-:---------:|:---------:
-Program | /Users/Kelp/tool/closure-compiler/compiler.jar
-Arguments | --compilation_level SIMPLE_OPTIMIZATIONS --js $FileName$
-Output paths | $FileNameWithoutExtension$.min.js<br/>(Create output file from stdout)
----
-
-
-
 ###[Compass](https://github.com/chriseppstein/compass)
 ```bash
 # install compass with gem
@@ -182,8 +168,22 @@ $ echo $GEM_PATH
 
 
 
+###[Closure Compiler](https://code.google.com/p/closure-compiler/)
+You could download compiler form [Google Code](https://code.google.com/p/closure-compiler/wiki/BinaryDownloads?tm=2).  
 
-**Binding JavaScript, CSS**  
+**[External Tools](http://www.jetbrains.com/pycharm/webhelp/external-tools.html):**  
+
+Settings  |  value 
+:---------:|:---------:
+Program | java
+Parameters | -jar /Volumes/Data/tools/closure-compiler/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js $FileName$ --js_output_file $FileNameWithoutExtension$.min.$FileExt$
+Working directory | $FileDir$
+---
+
+
+
+
+###Binding JavaScript, CSS
 ```bash
 $ cd application/static
 $ python binding.py
