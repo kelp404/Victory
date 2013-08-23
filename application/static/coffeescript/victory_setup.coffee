@@ -1,9 +1,16 @@
 
-setup = angular.module 'victory.setup', []
-# setup
-setup.directive 'relTooltip', ->
+s = angular.module 'victory.setup', []
+
+s.directive 'vTooltip', ->
     ###
     setup tooltip
     ###
     (scope, element, attrs) ->
         $(element).tooltip()
+
+s.directive 'vFocus', ->
+    ###
+    setup focus
+    ###
+    (scope, element, attrs) ->
+        $(element).select()
