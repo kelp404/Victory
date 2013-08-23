@@ -73,7 +73,7 @@
 -->
 <body>
     <!-- navigation begin -->
-    <div id="js_navigation" class="cs_navigation">
+    <div id="js_navigation" class="cs_navigation" v-navigation>
         <div class="cs_navigation_inner">
             <div class="cs_logo"><a href="/">Victory</a></div>
             {% if user %}
@@ -84,10 +84,10 @@
             {% endif %}
             <ul>
                 {% if user %}
-                    <li class="select"><a href="/crash_groups">Crashes</a></li>
-                    <li><a href="/exception_groups">Handled Exceptions</a></li>
-                    <li><a href="/log_groups">Logs</a></li>
-                    <li><a href="/settings/applications">Settings</a></li>
+                    <li class="select"><a href="#/crash_groups">Crashes</a></li>
+                    <li><a href="#/exception_groups">Handled Exceptions</a></li>
+                    <li><a href="#/log_groups">Logs</a></li>
+                    <li><a href="#/settings/applications">Settings</a></li>
                 {% else %}
                     <li class="select"><a href="#/login">Sign in</a></li>
                 {% endif %}
