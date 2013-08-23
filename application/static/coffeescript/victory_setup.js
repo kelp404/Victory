@@ -2,7 +2,7 @@
 (function() {
   var setup;
 
-  setup = angular.module('victorySetup', []);
+  setup = angular.module('victory.setup', []);
 
   setup.directive('relTooltip', function() {
     /*

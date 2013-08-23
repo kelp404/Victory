@@ -1,5 +1,5 @@
 
-setup = angular.module 'victorySetup', []
+setup = angular.module 'victory.setup', []
 # setup
 setup.directive 'relTooltip', ->
     ###
