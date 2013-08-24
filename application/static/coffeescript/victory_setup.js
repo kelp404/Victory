@@ -24,9 +24,9 @@
     };
   });
 
-  s.directive('vAddedModal', function() {
+  s.directive('vModal', function() {
     /*
-    setup added modal show
+    setup modal show
     */
 
     return function(scope, element, attrs) {

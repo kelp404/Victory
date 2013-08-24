@@ -13,8 +13,10 @@ app.add_url_rule('/me', 'get_user_profile', view_func=get_user_profile, methods=
 
 # Settings
 # Applications
-app.add_url_rule('/settings/applications', 'settings_apps', view_func=get_applications, methods=['GET'])
-app.add_url_rule('/settings/applications', 'settings_apps_post', view_func=add_application, methods=['POST'])
+app.add_url_rule('/settings/applications', 'settings_applications', view_func=get_applications, methods=['GET'])
+app.add_url_rule('/settings/applications', 'settings_applications_post', view_func=add_application, methods=['POST'])
+app.add_url_rule('/settings/applications/<application_id>', 'settings_application_put', view_func=update_application, methods=['PUT'])
+app.add_url_rule('/settings/applications/<application_id>', 'settings_application_delete', view_func=delete_application, methods=['DELETE'])
 # ---------------------------
 
 
@@ -32,8 +34,6 @@ app.add_url_rule('/settings/profile', 'settings_profile', view_func=profile, met
 app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=profile_update, methods=['PUT'])
 
 # Applications
-app.add_url_rule('/settings/applications/<application_id>', 'settings_apps_put', view_func=application_update, methods=['PUT'])
-app.add_url_rule('/settings/applications/<application_id>', 'settings_apps_delete', view_func=application_delete, methods=['DELETE'])
 app.add_url_rule('/settings/applications/<application_id>/invite', 'settings_apps_invite', view_func=application_invite, methods=['POST'])
 app.add_url_rule('/settings/applications/<application_id>/members/<member_id>', 'settings_apps_member_delete', view_func=application_member_delete, methods=['DELETE'])
 

@@ -3,7 +3,7 @@
 import uuid
 
 # flask
-from flask import g
+from flask import g, abort
 
 # google
 from google.appengine.ext import db
@@ -75,21 +75,19 @@ class ApplicationService(BaseService):
         @param check_is_owner True: am I owner? / False: am I owner or viewer?
         @returns True / False
         """
-        try: application_id = long(application_id)
-        except: return False
+        try:
+            application_id = long(application_id)
+        except Exception:
+            return abort(400)
 
         # no id or no application
         if application_id is None or application_id == 0:
-            return False
-
-        # check auth
-        if g.user is None:
-            return False
+            return abort(400)
 
         # no application
         app = ApplicationModel().get_by_id(application_id)
         if app is None:
-            return False
+            return abort(404)
 
         # query by root
         if g.user.level == UserLevel.root:
@@ -119,14 +117,15 @@ class ApplicationService(BaseService):
         """
         Delete the application with application id
 
-        @param application_id application id
-        @returns True / False
+        :param application_id: application id
         """
         if not self.is_my_application(application_id, True):
-            return False
+            return abort(403)
 
         # delete the application
         app = ApplicationModel().get_by_id(application_id)
+        if app is None:
+            return abort(404)
         app.delete()
 
         # delete text search
@@ -135,7 +134,6 @@ class ApplicationService(BaseService):
         self.__clear_text_search(application_id, 'LogModel')
 
         app.get(app.key())  # sync
-        return True
 
     def __clear_text_search(self, application_id, namespace):
         """
@@ -156,29 +154,24 @@ class ApplicationService(BaseService):
         """
         Update the application
 
-        @param application_id application id
-        @param name the new application name
-        @param description the new application description
-        @returns True / False
+        :param application_id: application id
+        :param name: the new application name
+        :param description: the new application description
+        :return: ApplicationModel
         """
         # check auth
-        if not self.is_my_application(application_id, True): return False
-
-        # clear up input value
-        if name is None: return False
-        name = name.strip()
-        description = description.strip()
-        if len(name) == 0: return False
+        if not self.is_my_application(application_id, True):
+            return abort(403)
 
         app = ApplicationModel().get_by_id(application_id)
         if app:
             app.app_name = name
             app.description = description
             app.put()
-            app.get(app.key())  #sync
-            return True
+            app.get(app.key())  # sync
+            return app
 
-        return False
+        return abort(404)
 
     def add_user_to_application(self, user_id, application_id):
         """

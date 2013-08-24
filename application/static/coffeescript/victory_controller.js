@@ -92,6 +92,31 @@
         }
       });
     };
+    $scope.updateApplication = function(applicationId) {
+      return victory.ajax($http, {
+        method: 'put',
+        url: "/settings/applications/" + applicationId,
+        error: function(data, status) {
+          return console.log('error');
+        },
+        success: function() {
+          return console.log('success');
+        }
+      });
+    };
+    $scope.deleteApplication = function(applicationId) {
+      return victory.ajax($http, {
+        method: 'delete',
+        url: "/settings/applications/" + applicationId,
+        error: function(data, status) {
+          return console.log('error');
+        },
+        success: function() {
+          $('.modal.in').modal('hide');
+          return $scope.getApplications();
+        }
+      });
+    };
     return $scope.getApplications();
   });
 

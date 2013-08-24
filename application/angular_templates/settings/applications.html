@@ -8,7 +8,7 @@
     </form>
 
     <!-- add an application form -->
-    <form id="form_add_application" ng-submit="addApplication()" v-added-modal class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <form id="form_add_application" ng-submit="addApplication()" v-modal class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3>Add a new application</h3>
@@ -50,7 +50,7 @@
     </table>
 
     <!-- application detail modal -->
-    <form ng-repeat="item in items" id="application{{ item.id }}" action="/settings/applications/{{ item.id }}#" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <form ng-repeat="item in items" ng-submit="updateApplication(item.id)" id="application{{ item.id }}" v-modal class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3>Application {{ item.name }}</h3>
@@ -60,7 +60,7 @@
                 <tbody>
                 <tr><td class="span2">Name</td><td>
                     <div ng-if="item.is_owner" class="control-group">
-                        <input type="text" name="name" validation=".+" msg="This field is required." value="{{ item.name }}"/>
+                        <input type="text" name="name" value="{{ item.name }}"/>
                     </div>
                     <div ng-hide="item.is_owner">{{ item.name }}</div>
                 </td></tr>
@@ -93,7 +93,7 @@
                     </div>
                 </div>
 
-                <a class="btn btn-danger delete_application" style="color: #ffffff" href="/settings/applications/{{ item.id }}#" >Delete</a>
+                <a ng-click="deleteApplication(item.id)" class="btn btn-danger" style="color: #ffffff" >Delete</a>
                 <input type="submit" class="btn" value="Save"/>
             </span>
             <a class="btn" data-dismiss="modal">Close</a>

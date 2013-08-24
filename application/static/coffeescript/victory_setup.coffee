@@ -15,9 +15,9 @@ s.directive 'vFocus', ->
     (scope, element, attrs) ->
         $(element).select()
 
-s.directive 'vAddedModal', ->
+s.directive 'vModal', ->
     ###
-    setup added modal show
+    setup modal show
     ###
     (scope, element, attrs) ->
         $(element).on 'shown', ->

@@ -66,6 +66,23 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
             success: ->
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
+    $scope.updateApplication = (applicationId) ->
+        victory.ajax $http,
+            method: 'put'
+            url: "/settings/applications/#{applicationId}"
+            error: (data, status) ->
+                console.log 'error'
+            success: ->
+                console.log 'success'
+    $scope.deleteApplication = (applicationId) ->
+        victory.ajax $http,
+            method: 'delete'
+            url: "/settings/applications/#{applicationId}"
+            error: (data, status) ->
+                console.log 'error'
+            success: ->
+                $('.modal.in').modal 'hide'
+                $scope.getApplications()
     $scope.getApplications()
 
 c.controller 'SettingsUsersCtrl', ($scope, $state) ->

@@ -63,39 +63,39 @@ def add_application():
     return jsonify({'success': True})
 
 @authorization(UserLevel.normal)
-def application_update(application_id):
+def update_application(application_id):
     """
     PUT: settings/applications/<application_id>
     update the application
     """
     # check input
-    try: application_id = long(application_id)
-    except: return abort(400)
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
 
-    name = request.form.get('name')
-    description = request.form.get('description')
+    ap = ApplicationForm(**json.loads(request.data))
+    if not ap.validate():
+        return validated_failed(**ap.validated_messages())
+
     aps = ApplicationService()
-    success = aps.update_application(application_id, name, description)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    aps.update_application(application_id, ap.name.data, ap.description.data)
+    return jsonify({'success': True})
 
 @authorization(UserLevel.normal)
-def application_delete(application_id):
+def delete_application(application_id):
     """
     DELETE: settings/applications/<application_id>
     delete the application
     """
-    try: application_id = long(application_id)
-    except: return abort(400)
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
 
     aps = ApplicationService()
-    success = aps.delete_application(application_id)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    aps.delete_application(application_id)
+    return jsonify({'success': True})
 
 @authorization(UserLevel.normal)
 def application_invite(application_id):
