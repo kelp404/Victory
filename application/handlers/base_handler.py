@@ -90,7 +90,7 @@ def error_417(e):
 def error_500(e):
     return render_template('error.html', status=500, exception=e), 500
 def handle_exception(e):
-    traceback.print_exc(3, file=sys.stdout)
+    traceback.print_exc(10, file=sys.stdout)
     description = e if app.debug else u'（˚ Д ˚ ）'
     return render_template('error.html', status=500, exception=description), 500
 app.handle_exception = handle_exception

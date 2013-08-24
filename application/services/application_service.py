@@ -109,20 +109,7 @@ class ApplicationService(BaseService):
 
         @param name application name (required)
         @param description application description
-        @returns True / False
         """
-        # clear up input value
-        if name is None:
-            return False
-        if description is None:
-            description = ''
-        name = name.strip()
-        description = description.strip()
-        if len(name) == 0: return False
-
-        # check auth
-        if g.user is None: return False
-
         app = ApplicationModel()
         app.app_name = name
         app.description = description
@@ -130,7 +117,6 @@ class ApplicationService(BaseService):
         app.owner = g.user.key().id()
         app.put()
         app.get(app.key())  # sync
-        return True
 
     def delete_application(self, application_id):
         """
