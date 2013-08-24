@@ -64,6 +64,8 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 if status == 400 and data
                     $scope.errors = data
             success: ->
+                $scope.name = ''
+                $scope.description = ''
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
     $scope.updateApplication = (applicationId) ->

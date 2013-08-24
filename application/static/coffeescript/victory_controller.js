@@ -87,6 +87,8 @@
           }
         },
         success: function() {
+          $scope.name = '';
+          $scope.description = '';
           $('.modal.in').modal('hide');
           return $scope.getApplications();
         }
