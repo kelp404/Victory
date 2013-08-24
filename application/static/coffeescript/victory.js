@@ -57,6 +57,10 @@
       });
       return h.success(function(data, status, headers, config) {
         victory.loading.off();
+        if (data.__status__ === 302 && data.location) {
+          location.href = data.location;
+          return;
+        }
         return args.success(data, status, headers, config);
       });
     },
@@ -71,6 +75,12 @@
             return $.av.pop({
               title: 'Input Failed',
               message: 'Please check input values.',
+              template: 'error'
+            });
+          case 403:
+            return $.av.pop({
+              title: 'Permission denied',
+              message: 'Please check your permission.',
               template: 'error'
             });
           default:

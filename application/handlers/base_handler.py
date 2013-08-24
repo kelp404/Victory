@@ -63,6 +63,16 @@ def validated_failed(**kwargs):
     return response
 
 
+def json_redirect(location):
+    """
+    Return json redirect content.
+    :param location: redirect target url
+    :return: flask.response
+    """
+    result = {'__status__': 302, 'location': location}
+    return jsonify(result)
+
+
 @app.errorhandler(400)
 def error_400(e):
     return render_template('error.html', status=400, exception=e), 400
@@ -70,7 +80,7 @@ def error_400(e):
 @app.errorhandler(403)
 def error_403(e):
     if g.user is None:
-        return redirect('/login')
+        return json_redirect('#/login')
     else:
         return render_template('error.html', status=403, exception=e), 403
 

@@ -33,6 +33,10 @@ victory =
             args.error(data, status, headers, config)
         h.success (data, status, headers, config) ->
             victory.loading.off()
+            if data.__status__ == 302 and data.location
+                # redirect
+                location.href = data.location
+                return
             args.success(data, status, headers, config)
 
     message:
@@ -45,6 +49,11 @@ victory =
                     $.av.pop
                         title: 'Input Failed'
                         message: 'Please check input values.'
+                        template: 'error'
+                when 403
+                    $.av.pop
+                        title: 'Permission denied'
+                        message: 'Please check your permission.'
                         template: 'error'
                 else
                     $.av.pop
