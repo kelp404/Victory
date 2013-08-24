@@ -4,22 +4,98 @@
 
   c = angular.module('victory.controller', []);
 
-  c.controller('index', function($scope, $state) {
+  c.controller('NavigationCtrl', function($scope) {
+    /*
+    Navigation Controller
+    */
+
+    var delay;
+    delay = function(ms, func) {
+      return setTimeout(func, ms);
+    };
+    return $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      $scope.select = toState.name;
+      return delay(200, function() {
+        return $('#js_navigation li.select').mouseover();
+      });
+    });
+  });
+
+  c.controller('IndexCtrl', function($scope, $state) {
     /*
     /
     */
 
+    $scope.title = victory.titleSuffix;
     if (!victory.user.isLogin) {
       return location.href = '#/login';
     }
   });
 
-  c.controller('login', function($scope, $state) {
+  c.controller('LoginCtrl', function($scope, $state) {
     /*
     /login
     */
 
     return $scope.loginUrl = victory.loginUrl;
+  });
+
+  c.controller('SettingsMenuCtrl', function($scope, $state) {
+    /*
+    The controller of the settings menu
+    */
+
+    return $scope.active = $state.current.name;
+  });
+
+  c.controller('SettingsCtrl', function($scope, $state) {
+    /*
+    /settings
+    */
+
+    return location.href = '#/settings/applications';
+  });
+
+  c.controller('SettingsApplicationsCtrl', function($scope, $state) {
+    /*
+    /settings/applications
+    */
+
+  });
+
+  c.controller('SettingsUsersCtrl', function($scope, $state) {
+    /*
+    /settings/users
+    */
+
+  });
+
+  c.controller('SettingsProfileCtrl', function($scope, $state) {
+    /*
+    /settings/profile
+    */
+
+  });
+
+  c.controller('CrashGroupsCtrl', function($scope, $state) {
+    /*
+    /crash_groups
+    */
+
+  });
+
+  c.controller('ExceptionGroupsCtrl', function($scope, $state) {
+    /*
+    /exception_groups
+    */
+
+  });
+
+  c.controller('LogGroupsCtrl', function($scope, $state) {
+    /*
+    /log_groups
+    */
+
   });
 
 }).call(this);

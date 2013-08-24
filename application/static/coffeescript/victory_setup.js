@@ -31,11 +31,11 @@
 
     return function(scope, element, attrs) {
       var index, match, noop;
-      match = location.href.match(/\w(\/\w*)/);
+      match = location.href.match(/\w\/([/#\w]*)/);
       if (match) {
-        index = match[1] === '/' ? 0 : $(element).find('li a[href*="' + match[1] + '"]').parent().index();
+        index = match[1] === '' ? 0 : $(element).find('li a[href*="' + match[1] + '"]').parent().index();
         $(element).find('li').removeClass('select');
-        $($(element).find('li')[index]).addClass('select');
+        $(element).find('li').eq(index).addClass('select');
       }
       $(element).find('li.select').parent().prepend($('<li class="cs_top"></li>'));
       $(element).find('li.cs_top').css({

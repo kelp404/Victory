@@ -138,9 +138,11 @@ body
     min-width: $content_width;
 
     .cs_content {
+        min-height: 200px;
         width: $content_width;
     }
     .cs_content_medium {
+        min-height: 200px;
         margin-left: 270px;
         width: $content_width - 270;
     }

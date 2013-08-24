@@ -2,27 +2,112 @@
 (function() {
   var r;
 
-  r = angular.module('victory', ['victory.controller', 'victory.setup', 'ui.state']);
+  r = angular.module('victory', ['victory.controller', 'victory.setup', 'ui.router', 'ui.state']);
 
-  r.config(function($stateProvider) {
+  r.run(function($rootScope, $state, $stateParams) {
+    $rootScope.$state = $state;
+    return $rootScope.$stateParams = $stateParams;
+  });
+
+  r.config(function($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('/');
     $stateProvider.state('index', {
       url: '',
       templateUrl: '/views/empty.html',
-      controller: 'index'
+      controller: 'IndexCtrl'
     });
     $stateProvider.state('index-2', {
       url: '/',
       templateUrl: '/views/empty.html',
-      controller: 'index'
+      controller: 'IndexCtrl'
     });
-    return $stateProvider.state('login', {
+    $stateProvider.state('login', {
       url: '/login',
+      resolve: {
+        title: function() {
+          return 'Sign In - ';
+        }
+      },
       views: {
         viewContent: {
           templateUrl: '/views/login.html',
-          controller: 'login'
+          controller: 'LoginCtrl'
         }
       }
+    });
+    $stateProvider.state('settings', {
+      url: '/settings',
+      templateUrl: '/views/empty.html',
+      controller: 'SettingsCtrl'
+    });
+    $stateProvider.state('settings-applications', {
+      url: '/settings/applications',
+      resolve: {
+        title: function() {
+          return 'Applications - Settings - ';
+        }
+      },
+      views: {
+        viewContent: {
+          templateUrl: '/views/settings/applications.html',
+          controller: 'SettingsApplicationsCtrl'
+        },
+        viewMenu: {
+          templateUrl: '/views/menu/settings.html',
+          controller: 'SettingsMenuCtrl'
+        }
+      }
+    });
+    $stateProvider.state('settings-users', {
+      url: '/settings/users',
+      resolve: {
+        title: function() {
+          return 'Users - Settings - ';
+        }
+      },
+      views: {
+        viewContent: {
+          templateUrl: '/views/settings/applications.html',
+          controller: 'SettingsUsersCtrl'
+        },
+        viewMenu: {
+          templateUrl: '/views/menu/settings.html',
+          controller: 'SettingsMenuCtrl'
+        }
+      }
+    });
+    $stateProvider.state('settings-profile', {
+      url: '/settings/profile',
+      resolve: {
+        title: function() {
+          return 'Profile - Settings - ';
+        }
+      },
+      views: {
+        viewContent: {
+          templateUrl: '/views/settings/applications.html',
+          controller: 'SettingsProfileCtrl'
+        },
+        viewMenu: {
+          templateUrl: '/views/menu/settings.html',
+          controller: 'SettingsMenuCtrl'
+        }
+      }
+    });
+    $stateProvider.state('crash-groups', {
+      url: '/crash_groups',
+      templateUrl: '/views/document_groups.html',
+      controller: 'CrashGroupsCtrl'
+    });
+    $stateProvider.state('exception-groups', {
+      url: '/exception_groups',
+      templateUrl: '/views/document_groups.html',
+      controller: 'ExceptionGroupsCtrl'
+    });
+    return $stateProvider.state('log-groups', {
+      url: '/log_groups',
+      templateUrl: '/views/document_groups.html',
+      controller: 'LogGroupsCtrl'
     });
   });
 

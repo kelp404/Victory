@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>{{ title }}{{ title_prefix }}</title>
+    <title ng-bind="$state.current.resolve.title() + 'Victory'">Victory</title>
     <meta name="author" content="Kelp"/>
     <link rel="shortcut icon" href="/favicon.ico"/>
     <meta http-equiv="cache-control" content="no-cache"/>
@@ -73,7 +73,7 @@
 -->
 <body>
     <!-- navigation begin -->
-    <div id="js_navigation" class="cs_navigation" v-navigation>
+    <div id="js_navigation" class="cs_navigation" ng-controller="NavigationCtrl" v-navigation>
         <div class="cs_navigation_inner">
             <div class="cs_logo"><a href="/">Victory</a></div>
             {% if user %}
@@ -84,12 +84,12 @@
             {% endif %}
             <ul>
                 {% if user %}
-                    <li class="select"><a href="#/crash_groups">Crashes</a></li>
-                    <li><a href="#/exception_groups">Handled Exceptions</a></li>
-                    <li><a href="#/log_groups">Logs</a></li>
-                    <li><a href="#/settings/applications">Settings</a></li>
+                    <li ng-class="{ select: select.indexOf('crash') >= 0 }"><a href="#/crash_groups">Crashes</a></li>
+                    <li ng-class="{ select: select.indexOf('exception') >= 0 }"><a href="#/exception_groups">Handled Exceptions</a></li>
+                    <li ng-class="{ select: select.indexOf('log') >= 0 }"><a href="#/log_groups">Logs</a></li>
+                    <li ng-class="{ select: select.indexOf('settings') >= 0 }"><a href="#/settings/applications">Settings</a></li>
                 {% else %}
-                    <li class="select"><a href="#/login">Sign in</a></li>
+                    <li><a href="#/login">Sign in</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -101,7 +101,7 @@
     <div class="cs_content_background">
         <div class="cs_container">
             <div class="alert_view_center"></div>
-            <div ui-view='viewMenu'></div>
+            <div ui-view='viewMenu' id="js_menu" class="cs_menu"></div>
             <div ui-view='viewContent'></div>
             <div ui-view></div>
         </div>

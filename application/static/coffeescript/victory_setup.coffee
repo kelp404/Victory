@@ -20,11 +20,11 @@ s.directive 'vNavigation', ->
     setup navigation
     ###
     (scope, element, attrs) ->
-        match = location.href.match /\w(\/\w*)/
+        match = location.href.match /\w\/([/#\w]*)/
         if match
-            index = if match[1] == '/' then 0 else $(element).find('li a[href*="' + match[1] + '"]').parent().index()
+            index = if match[1] == '' then 0 else $(element).find('li a[href*="' + match[1] + '"]').parent().index()
             $(element).find('li').removeClass 'select'
-            $($(element).find('li')[index]).addClass 'select'
+            $(element).find('li').eq(index).addClass 'select'
 
         $(element).find('li.select').parent().prepend $('<li class="cs_top"></li>')
         $(element).find('li.cs_top').css
