@@ -45,6 +45,14 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
     ###
     /settings/applications
     ###
+
+    $scope.getApplications = ->
+        victory.ajax $http,
+            url: '/settings/applications'
+            error: ->
+                console.log 'error'
+            success: (data) ->
+                $scope.items = data.items
     $scope.addApplication = ->
         victory.ajax $http,
             method: 'post'
@@ -57,6 +65,8 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                     $scope.errors = data
             success: ->
                 $('.modal.in').modal 'hide'
+                $scope.getApplications()
+    $scope.getApplications()
 
 c.controller 'SettingsUsersCtrl', ($scope, $state) ->
     ###

@@ -10,8 +10,8 @@ from google.appengine.ext import db
 from google.appengine.api import search
 
 # victory
-from ..models.datastore.application_model import *
-from ..models.datastore.user_model import *
+from application.models.datastore.application_model import *
+from application.models.datastore.user_model import *
 from base_service import *
 
 
@@ -24,9 +24,6 @@ class ApplicationService(BaseService):
         @param with_members True: append application.members
         @returns [application] / []
         """
-        # check auth
-        if g.user is None: return []
-
         if g.user.level == UserLevel.root:
             owner_apps = db.GqlQuery('select * from ApplicationModel order by create_time')
             viewer_apps = []

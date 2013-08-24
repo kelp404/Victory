@@ -62,7 +62,18 @@
     /settings/applications
     */
 
-    return $scope.addApplication = function() {
+    $scope.getApplications = function() {
+      return victory.ajax($http, {
+        url: '/settings/applications',
+        error: function() {
+          return console.log('error');
+        },
+        success: function(data) {
+          return $scope.items = data.items;
+        }
+      });
+    };
+    $scope.addApplication = function() {
       return victory.ajax($http, {
         method: 'post',
         url: '/settings/applications',
@@ -76,10 +87,12 @@
           }
         },
         success: function() {
-          return $('.modal.in').modal('hide');
+          $('.modal.in').modal('hide');
+          return $scope.getApplications();
         }
       });
     };
+    return $scope.getApplications();
   });
 
   c.controller('SettingsUsersCtrl', function($scope, $state) {

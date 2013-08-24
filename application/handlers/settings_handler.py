@@ -44,11 +44,9 @@ def get_applications():
     GET: settings/applications
     get applications list
     """
-    g.view_model['title'] = 'Applications - '
-
     aps = ApplicationService()
     result = aps.get_applications(True)
-    return jsonify(result.__dict__)
+    return jsonify({'items': result})
 
 @authorization(UserLevel.normal)
 def add_application():

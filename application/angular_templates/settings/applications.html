@@ -34,4 +34,18 @@
             <input type="submit" class="btn" value="Submit"/>
         </div>
     </form>
+
+    <!-- applications content -->
+    <table class="table table-bordered table-hover table-content table-pointer">
+        <thead>
+            <tr><th class="span2">Name</th><th>Description</th><th class="span3">Create Time</th></tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in items" data-toggle="modal" href="#application{{ item.id }}">
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.create_time | date:'yyyy-MM-dd hh:mm a' }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
