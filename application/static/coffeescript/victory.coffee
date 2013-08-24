@@ -15,20 +15,42 @@ victory =
         isRoot: ->
             victory.user.level == victory.userLevel.root
 
-    ajax: (args={}) ->
-        args.type ?= 'get'
+    ajax: (http, args={}) ->
+        args.method ?= 'get'
         args.cache ?= false
         args.data ?= ''
-        $.ajax
-            url: args.url, type: args.type, cache: args.ache, data: args.data
-            beforeSend: (xhr) ->
-#                index = if state.href == '/' then 1 else $("#js_navigation li a[href*='#{state.href}']").parent().index()
-#                core.nav_select index
-                victory.loading.on 'Loading...'
-                args.beforeSend() if args.beforeSend
-            success: (r, status, xhr) ->
-                victory.loading.off()
-                return
+        args.error ?= ->
+        args.success ?= ->
+
+        victory.loading.on 'Loading...'
+        args.beforeSend() if args.beforeSend
+
+        h = http
+            url: args.url, method: args.method, cache: args.ache, data: args.data
+        h.error (data, status, headers, config) ->
+            victory.loading.off()
+            victory.message.error status
+            args.error(data, status, headers, config)
+        h.success (data, status, headers, config) ->
+            victory.loading.off()
+            args.success(data, status, headers, config)
+
+    message:
+        error: (status) ->
+            ###
+            pop error message.
+            ###
+            switch status
+                when 400
+                    $.av.pop
+                        title: 'Input Failed'
+                        message: 'Please check input values.'
+                        template: 'error'
+                else
+                    $.av.pop
+                        title: 'Error'
+                        message: 'Loading failed, please try again later.'
+                        template: 'error'
 
     loading:
         on: (message) ->

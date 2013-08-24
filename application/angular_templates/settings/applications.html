@@ -1,3 +1,37 @@
 <div id="js_content" class="cs_content_medium">
-    <h1>hello</h1>
+    <legend>Applications</legend>
+
+    <!-- add button -->
+    <form class="input-append pull-right cs_added_group">
+        <input v-focus type="text" ng-model="name" />
+        <input type="submit" href="#form_add_application" data-toggle="modal" class="btn" value="Add"/>
+    </form>
+
+    <!-- add an application form -->
+    <form id="form_add_application" ng-submit="addApplication()" v-added-modal class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Add a new application</h3>
+        </div>
+        <div class="modal-body">
+            <div ng-class="{ error: errors.name }" class="control-group">
+                <label class="control-label" for="name">Name</label>
+                <div class="controls">
+                    <input ng-model="name" id="name" name="name" class="input-xlarge" type="text"/>
+                    <label ng-show="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
+                </div>
+            </div>
+
+            <div ng-class="{ error: errors.description }" class="control-group">
+                <label class="control-label" for="description">Description</label>
+                <div class="controls">
+                    <input ng-model="description" id="description" name="description" class="span6" type="text"/>
+                    <label ng-show="errors.description" for="name" class="help-inline">{{ errors.description }}</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" class="btn" value="Submit"/>
+        </div>
+    </form>
 </div>

@@ -20,12 +20,13 @@
         return victory.user.level === victory.userLevel.root;
       }
     },
-    ajax: function(args) {
+    ajax: function(http, args) {
+      var h;
       if (args == null) {
         args = {};
       }
-      if (args.type == null) {
-        args.type = 'get';
+      if (args.method == null) {
+        args.method = 'get';
       }
       if (args.cache == null) {
         args.cache = false;
@@ -33,21 +34,53 @@
       if (args.data == null) {
         args.data = '';
       }
-      return $.ajax({
+      if (args.error == null) {
+        args.error = function() {};
+      }
+      if (args.success == null) {
+        args.success = function() {};
+      }
+      victory.loading.on('Loading...');
+      if (args.beforeSend) {
+        args.beforeSend();
+      }
+      h = http({
         url: args.url,
-        type: args.type,
+        method: args.method,
         cache: args.ache,
-        data: args.data,
-        beforeSend: function(xhr) {
-          victory.loading.on('Loading...');
-          if (args.beforeSend) {
-            return args.beforeSend();
-          }
-        },
-        success: function(r, status, xhr) {
-          victory.loading.off();
-        }
+        data: args.data
       });
+      h.error(function(data, status, headers, config) {
+        victory.loading.off();
+        victory.message.error(status);
+        return args.error(data, status, headers, config);
+      });
+      return h.success(function(data, status, headers, config) {
+        victory.loading.off();
+        return args.success(data, status, headers, config);
+      });
+    },
+    message: {
+      error: function(status) {
+        /*
+        pop error message.
+        */
+
+        switch (status) {
+          case 400:
+            return $.av.pop({
+              title: 'Input Failed',
+              message: 'Please check input values.',
+              template: 'error'
+            });
+          default:
+            return $.av.pop({
+              title: 'Error',
+              message: 'Loading failed, please try again later.',
+              template: 'error'
+            });
+        }
+      }
     },
     loading: {
       on: function(message) {

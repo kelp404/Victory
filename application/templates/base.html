@@ -78,7 +78,7 @@
             <div class="cs_logo"><a href="/">Victory</a></div>
             {% if user %}
                 <div class="cs_profile">
-                    <p rel="tooltip" title="{{ user.email }}" data-placement="bottom">{{ user.name }}</p>
+                    <p v-tooltip title="{{ user.email }}" data-placement="bottom">{{ user.name }}</p>
                     <p><a href="{{ logout_url }}#">Sign out</a></p>
                 </div>
             {% endif %}

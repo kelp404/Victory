@@ -24,24 +24,37 @@
     };
   });
 
+  s.directive('vAddedModal', function() {
+    /*
+    setup added modal show
+    */
+
+    return function(scope, element, attrs) {
+      return $(element).on('shown', function() {
+        return $(this).find('input:first').select();
+      });
+    };
+  });
+
   s.directive('vNavigation', function() {
     /*
     setup navigation
     */
 
     return function(scope, element, attrs) {
-      var index, match, noop;
-      match = location.href.match(/\w\/([/#\w]*)/);
-      if (match) {
+      var $selected, index, match, noop;
+      if ($(element).find('li.select').length > 0) {
+        $selected = $(element).find('li.select');
+      } else {
+        match = location.href.match(/\w\/([/#\w]*)/);
         index = match[1] === '' ? 0 : $(element).find('li a[href*="' + match[1] + '"]').parent().index();
-        $(element).find('li').removeClass('select');
-        $(element).find('li').eq(index).addClass('select');
+        $selected = $(element).find('li').eq(index);
       }
-      $(element).find('li.select').parent().prepend($('<li class="cs_top"></li>'));
+      $(element).find('li:first').parent().prepend($('<li class="cs_top"></li>'));
       $(element).find('li.cs_top').css({
-        width: $(element).find('li.select').css('width'),
-        left: $(element).find('li.select').position().left,
-        top: $(element).find('li.select').position().top
+        width: $selected.css('width'),
+        left: $selected.position().left,
+        top: $selected.position().top
       });
       noop = function() {};
       $(element).find('li[class!=cs_top]').hover(function() {

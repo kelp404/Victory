@@ -6,7 +6,7 @@ import sys
 import traceback
 
 # flask
-from flask import render_template, g, request, redirect, abort
+from flask import render_template, g, request, redirect, abort, jsonify
 
 # google
 from google.appengine.api import users
@@ -25,6 +25,7 @@ def start_handler():
 @app.before_request
 def before_request():
     if not app.debug and request.scheme == 'http':
+        # redirect to https
         return redirect('https' + request.url[4:])
 
     g.view_model = {
@@ -44,7 +45,22 @@ def before_request():
 
 @app.route('/')
 def index():
+    """
+    AngularJS base html.
+    :return: flask.response
+    """
     return render_template('base.html', **g.view_model)
+
+
+def validated_failed(**kwargs):
+    """
+    Return validated failed message with json.
+    :param kwargs: validated failed messages
+    :return: flask.response
+    """
+    response = jsonify(kwargs)
+    response.status_code = 400
+    return response
 
 
 @app.errorhandler(400)
@@ -65,6 +81,10 @@ def error_404(e):
 @app.errorhandler(405)
 def error_405(e):
     return render_template('error.html', status=405, exception=e), 405
+
+@app.errorhandler(417)
+def error_417(e):
+    return render_template('error.html', status=417, exception=e), 417
 
 @app.errorhandler(500)
 def error_500(e):

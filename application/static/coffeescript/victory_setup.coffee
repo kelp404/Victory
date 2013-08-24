@@ -15,22 +15,31 @@ s.directive 'vFocus', ->
     (scope, element, attrs) ->
         $(element).select()
 
+s.directive 'vAddedModal', ->
+    ###
+    setup added modal show
+    ###
+    (scope, element, attrs) ->
+        $(element).on 'shown', ->
+            $(@).find('input:first').select()
+
 s.directive 'vNavigation', ->
     ###
     setup navigation
     ###
     (scope, element, attrs) ->
-        match = location.href.match /\w\/([/#\w]*)/
-        if match
+        if $(element).find('li.select').length > 0
+            $selected = $(element).find('li.select')
+        else
+            match = location.href.match /\w\/([/#\w]*)/
             index = if match[1] == '' then 0 else $(element).find('li a[href*="' + match[1] + '"]').parent().index()
-            $(element).find('li').removeClass 'select'
-            $(element).find('li').eq(index).addClass 'select'
+            $selected = $(element).find('li').eq(index)
 
-        $(element).find('li.select').parent().prepend $('<li class="cs_top"></li>')
+        $(element).find('li:first').parent().prepend $('<li class="cs_top"></li>')
         $(element).find('li.cs_top').css
-            width: $(element).find('li.select').css('width')
-            left: $(element).find('li.select').position().left
-            top: $(element).find('li.select').position().top
+            width: $selected.css('width')
+            left: $selected.position().left
+            top: $selected.position().top
 
         # mouse hover
         noop = -> return

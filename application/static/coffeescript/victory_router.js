@@ -12,11 +12,6 @@
   r.config(function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/');
     $stateProvider.state('index', {
-      url: '',
-      templateUrl: '/views/empty.html',
-      controller: 'IndexCtrl'
-    });
-    $stateProvider.state('index-2', {
       url: '/',
       templateUrl: '/views/empty.html',
       controller: 'IndexCtrl'

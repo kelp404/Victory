@@ -112,7 +112,10 @@ class ApplicationService(BaseService):
         @returns True / False
         """
         # clear up input value
-        if name is None: return False
+        if name is None:
+            return False
+        if description is None:
+            description = ''
         name = name.strip()
         description = description.strip()
         if len(name) == 0: return False

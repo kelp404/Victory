@@ -9,6 +9,7 @@ c.controller 'NavigationCtrl', ($scope) ->
     # ui.router state change event
     $scope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
         $scope.select = toState.name
+        $('.modal.in').modal 'hide'
         delay 200, ->
             $('#js_navigation li.select').mouseover()
 
@@ -40,11 +41,23 @@ c.controller 'SettingsCtrl', ($scope, $state) ->
     /settings
     ###
     location.href = '#/settings/applications'
-c.controller 'SettingsApplicationsCtrl', ($scope, $state) ->
+c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
     ###
     /settings/applications
     ###
-    return
+    $scope.addApplication = ->
+        victory.ajax $http,
+            method: 'post'
+            url: '/settings/applications'
+            data:
+                name: $scope.name
+                description: $scope.description
+            error: (data, status) ->
+                if status == 400 and data
+                    $scope.errors = data
+            success: ->
+                $('.modal.in').modal 'hide'
+
 c.controller 'SettingsUsersCtrl', ($scope, $state) ->
     ###
     /settings/users

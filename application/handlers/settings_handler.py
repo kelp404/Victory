@@ -1,19 +1,16 @@
 
+# python
+import json
+
 # flask
 from flask import render_template, jsonify, request, abort
 
 # victory
+from base_handler import validated_failed
 from application.decorator.auth_decorator import *
 from application.services.account_service import AccountService
 from application.services.application_service import *
 
-
-
-def redirect_to_application():
-    """
-    GET /settings/applications
-    """
-    return applications()
 
 
 @authorization(UserLevel.normal)
@@ -41,7 +38,7 @@ def profile_update():
 
 
 @authorization(UserLevel.normal)
-def applications():
+def get_applications():
     """
     GET: settings/applications
     get applications list
@@ -49,20 +46,28 @@ def applications():
     g.view_model['title'] = 'Applications - '
 
     aps = ApplicationService()
-    g.view_model['result'] = aps.get_applications(True)
-    return render_template('./settings/applications.html', **g.view_model)
+    result = aps.get_applications(True)
+    return jsonify(result.__dict__)
 
 @authorization(UserLevel.normal)
-def application_add():
+def add_application():
     """
     POST: settings/applications
     add an application
     """
-    name = request.form.get('name')
-    description = request.form.get('description')
+    pars = json.loads(request.data)
+    name = pars.get('name')
+    description = pars.get('description')
+    if name is None or len(name) == 0:
+        import logging
+        logging.error(name)
+        return validated_failed(name='Field must be between 1 and 100 characters long.')
+
     aps = ApplicationService()
-    aps.add_application(name, description)
-    return applications()
+    success = aps.add_application(name, description)
+    if not success:
+        return abort(417)
+    return jsonify({'success': True})
 
 @authorization(UserLevel.normal)
 def application_update(application_id):

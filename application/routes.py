@@ -7,12 +7,14 @@ from handlers.web_service_handler import *
 
 
 
-# Login
-app.add_url_rule('/login', 'login', view_func=login_page, methods=['GET'])
-
 # -------- AngularJS ---------
 # Get User Profile
 app.add_url_rule('/me', 'get_user_profile', view_func=get_user_profile, methods=['GET'])
+
+# Settings
+# Applications
+app.add_url_rule('/settings/applications', 'settings_apps', view_func=get_applications, methods=['GET'])
+app.add_url_rule('/settings/applications', 'settings_apps_post', view_func=add_application, methods=['POST'])
 # ---------------------------
 
 
@@ -26,13 +28,10 @@ app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_ad
 
 
 # Settings
-app.add_url_rule('/settings', 'settings_apps_home', view_func=redirect_to_application, methods=['GET'])
 app.add_url_rule('/settings/profile', 'settings_profile', view_func=profile, methods=['GET'])
 app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=profile_update, methods=['PUT'])
 
 # Applications
-app.add_url_rule('/settings/applications', 'settings_apps', view_func=applications, methods=['GET'])
-app.add_url_rule('/settings/applications', 'settings_apps_post', view_func=application_add, methods=['POST'])
 app.add_url_rule('/settings/applications/<application_id>', 'settings_apps_put', view_func=application_update, methods=['PUT'])
 app.add_url_rule('/settings/applications/<application_id>', 'settings_apps_delete', view_func=application_delete, methods=['DELETE'])
 app.add_url_rule('/settings/applications/<application_id>/invite', 'settings_apps_invite', view_func=application_invite, methods=['POST'])

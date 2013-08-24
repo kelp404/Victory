@@ -15,6 +15,7 @@
     };
     return $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       $scope.select = toState.name;
+      $('.modal.in').modal('hide');
       return delay(200, function() {
         return $('#js_navigation li.select').mouseover();
       });
@@ -56,11 +57,29 @@
     return location.href = '#/settings/applications';
   });
 
-  c.controller('SettingsApplicationsCtrl', function($scope, $state) {
+  c.controller('SettingsApplicationsCtrl', function($scope, $http) {
     /*
     /settings/applications
     */
 
+    return $scope.addApplication = function() {
+      return victory.ajax($http, {
+        method: 'post',
+        url: '/settings/applications',
+        data: {
+          name: $scope.name,
+          description: $scope.description
+        },
+        error: function(data, status) {
+          if (status === 400 && data) {
+            return $scope.errors = data;
+          }
+        },
+        success: function() {
+          return $('.modal.in').modal('hide');
+        }
+      });
+    };
   });
 
   c.controller('SettingsUsersCtrl', function($scope, $state) {
