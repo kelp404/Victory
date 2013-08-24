@@ -8,7 +8,8 @@ from flask import render_template, jsonify, request, abort
 # victory
 from base_handler import validated_failed
 from application.decorator.auth_decorator import *
-from application.services.account_service import AccountService
+from application.models.form.application_form import *
+from application.services.account_service import *
 from application.services.application_service import *
 
 
@@ -55,18 +56,12 @@ def add_application():
     POST: settings/applications
     add an application
     """
-    pars = json.loads(request.data)
-    name = pars.get('name')
-    description = pars.get('description')
-    if name is None or len(name) == 0:
-        import logging
-        logging.error(name)
-        return validated_failed(name='Field must be between 1 and 100 characters long.')
+    ap = ApplicationForm(**json.loads(request.data))
+    if not ap.validate():
+        return validated_failed(**ap.validated_messages())
 
     aps = ApplicationService()
-    success = aps.add_application(name, description)
-    if not success:
-        return abort(417)
+    aps.add_application(ap.name.data, ap.description.data)
     return jsonify({'success': True})
 
 @authorization(UserLevel.normal)

@@ -26,3 +26,7 @@
 	path = submodules/ui-router
 	url = https://github.com/angular-ui/ui-router.git
 	ignore = dirty
+[submodule "submodules/wtforms"]
+	path = submodules/wtforms
+	url = https://github.com/kelp404/wtforms.git
+	ignore = dirty
