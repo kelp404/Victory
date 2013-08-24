@@ -48,4 +48,55 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- application detail modal -->
+    <form ng-repeat="item in items" id="application{{ item.id }}" action="/settings/applications/{{ item.id }}#" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Application {{ item.name }}</h3>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <tbody>
+                <tr><td class="span2">Name</td><td>
+                    <div ng-if="item.is_owner" class="control-group">
+                        <input type="text" name="name" validation=".+" msg="This field is required." value="{{ item.name }}"/>
+                    </div>
+                    <div ng-hide="item.is_owner">{{ item.name }}</div>
+                </td></tr>
+                <tr><td>Description</td><td>
+                    <div ng-if="item.is_owner" class="control-group">
+                        <input type="text" name="description" class="input-xlarge" value="{{ item.description }}"/>
+                    </div>
+                    <div ng-hide="item.is_owner">{{ item.description }}</div>
+                </td></tr>
+                <tr><td>Key</td><td>{{ item.app_key }}</td></tr>
+                <tr><td>Members</td><td>
+                    <div ng-repeat="member in item.members">
+                        <span v-tooltip title="{{ member.name }}">{{ member.email }}</span>
+                        <span ng-if="item.is_owner">
+                            <!-- if i am owner and the member(in loop) is not owner -->
+                            <a ng-hide="member.is_owner" href="/settings/applications/{{ item.id }}/members/{{ member.id }}#" class="delete_viewer" rel="tooltip" title="Remove from this application.">delete</a>
+                        </span>
+                    </div>
+                </td></tr>
+                <tr><td>Create Time</td><td>{{ item.create_time | date:'yyyy-MM-dd hh:mm a' }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <span ng-if="item.is_owner">
+                <div class="input-append pull-left">
+                    <div class="control-group" style="margin-bottom: 0">
+                        <input type="text" class="input-medium invite" placeholder="email@gmail.com" />
+                        <a class="btn invite" type="submit" href="/settings/applications/{{ item.id }}/invite#" >Invite</a>
+                    </div>
+                </div>
+
+                <a class="btn btn-danger delete_application" style="color: #ffffff" href="/settings/applications/{{ item.id }}#" >Delete</a>
+                <input type="submit" class="btn" value="Save"/>
+            </span>
+            <a class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </form>
 </div>
