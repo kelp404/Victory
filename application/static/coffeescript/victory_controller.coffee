@@ -138,7 +138,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
             url: '/settings/users'
             success: (data) ->
                 $scope.items = data.items
-    $scope.addUser = (email) ->
+    $scope.addUser = ->
         ###
         add an user
         ###
@@ -146,10 +146,19 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
             method: 'post'
             url: '/settings/users'
             data:
-                email: email
-            success: (data) ->
-                email = ''
-                $scope.items = data.items
+                email: $scope.email
+            success: ->
+                $scope.email = ''
+                $scope.getUsers()
+    $scope.deleteUser = (id) ->
+        ###
+        delete the user
+        ###
+        victory.ajax $http,
+            method: 'delete'
+            url: "/settings/users/#{id}"
+            success: ->
+                $scope.items = (x for x in $scope.items when x.id != id)
     $scope.getUsers()
 c.controller 'SettingsProfileCtrl', ($scope, $state) ->
     ###

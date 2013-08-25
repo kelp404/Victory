@@ -230,7 +230,7 @@
         }
       });
     };
-    $scope.addUser = function(email) {
+    $scope.addUser = function() {
       /*
       add an user
       */
@@ -239,11 +239,36 @@
         method: 'post',
         url: '/settings/users',
         data: {
-          email: email
+          email: $scope.email
         },
-        success: function(data) {
-          email = '';
-          return $scope.items = data.items;
+        success: function() {
+          $scope.email = '';
+          return $scope.getUsers();
+        }
+      });
+    };
+    $scope.deleteUser = function(id) {
+      /*
+      delete the user
+      */
+
+      return victory.ajax($http, {
+        method: 'delete',
+        url: "/settings/users/" + id,
+        success: function() {
+          var x;
+          return $scope.items = (function() {
+            var _i, _len, _ref, _results;
+            _ref = $scope.items;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              x = _ref[_i];
+              if (x.id !== id) {
+                _results.push(x);
+              }
+            }
+            return _results;
+          })();
         }
       });
     };

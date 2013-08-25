@@ -2,10 +2,10 @@
     <legend>Users</legend>
 
     <!-- invite user button -->
-    <form ng-submit="addUser(email)" class="input-append pull-right cs_added_group">
+    <form ng-submit="addUser()" class="input-append pull-right cs_added_group">
         <div class="control-group">
             <div class="controls">
-                <input ng-model="email" type="text" placeholder="email@gmail.com" />
+                <input ng-model="email" v-focus type="text" placeholder="email@gmail.com" />
                 <input type="submit" class="btn" value="Invite"/>
             </div>
         </div>
@@ -22,7 +22,7 @@
                 <td>{{ item.email }}</td>
                 <td>{{ item.create_time | date:'yyyy-MM-dd hh:mm a' }}</td>
                 <td>
-                    <a ng-if="item.is_deletable" href="/settings/users/{{ item.user_id }}#" class="delete_user">Delete</a>
+                    <a ng-if="item.is_deletable" ng-click="deleteUser(item.id)" href>Delete</a>
                 </td>
             </tr>
         </tbody>

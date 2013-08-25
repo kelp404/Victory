@@ -82,8 +82,8 @@ class AccountService(BaseService):
         """
         Invite user to join Takanash with email
 
-        @param email invited user's email
-        @returns UserModel(new user) / None
+        :param email: invited user's email
+        :return: UserModel(new user)
         """
         # clear up input value
         email = email.lower()
@@ -127,22 +127,15 @@ class AccountService(BaseService):
         """
         Delete user with id (for root)
 
-        @param user_id user id
-        @returns True / False
+        :param user_id: user id
         """
-        # clear input value
-        try: user_id = long(user_id)
-        except: return False
-
-        # check auth
-        if g.user is None: return False
-        if g.user.level != UserLevel.root: return False
-
         # delete self
-        if user_id == g.user.key().id(): return False
+        if user_id == g.user.key().id():
+            return abort(400)
 
         user = UserModel.get_by_id(user_id)
-        if user is None : return False
+        if user is None :
+            return abort(404)
 
         # delete relational from application
         applications = db.GqlQuery('select * from ApplicationModel where viewer in :1', [user_id])
@@ -155,4 +148,3 @@ class AccountService(BaseService):
 
         # delete user
         user.delete()
-        return True
