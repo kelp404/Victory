@@ -87,11 +87,7 @@ class AccountService(BaseService):
         @returns UserModel(new user) / None
         """
         # clear up input value
-        if email is None: return None
-        email = email.strip().lower()
-
-        # check auth
-        if g.user is None: return None
+        email = email.lower()
 
         user = db.GqlQuery('select * from UserModel where email = :1 limit 1', email)
         if user.count(1) > 0:

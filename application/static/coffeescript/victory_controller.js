@@ -156,6 +156,23 @@
         }
       });
     };
+    $scope.inviteUser = function(id, email) {
+      /*
+      invite an user into the application
+      */
+
+      return victory.ajax($http, {
+        method: 'post',
+        url: "/settings/applications/" + id + "/members",
+        data: {
+          email: email
+        },
+        success: function() {
+          $('.modal.in').modal('hide');
+          return $scope.getApplications();
+        }
+      });
+    };
     return $scope.getApplications();
   });
 

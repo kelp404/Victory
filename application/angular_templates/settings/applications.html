@@ -94,8 +94,8 @@
             <span ng-if="item.is_owner">
                 <div class="input-append pull-left">
                     <div class="control-group" style="margin-bottom: 0">
-                        <input type="text" class="input-medium invite" placeholder="email@gmail.com" />
-                        <a class="btn invite" type="submit" href="/settings/applications/{{ item.id }}/invite#" >Invite</a>
+                        <input ng-model="email" v-enter="inviteUser(item.id, email)" type="text" class="input-medium" placeholder="email@gmail.com" />
+                        <a ng-click="inviteUser(item.id, email)" class="btn">Invite</a>
                     </div>
                 </div>
 

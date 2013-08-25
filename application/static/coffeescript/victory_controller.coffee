@@ -102,6 +102,18 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
             success: ->
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
+    $scope.inviteUser = (id, email) ->
+        ###
+        invite an user into the application
+        ###
+        victory.ajax $http,
+            method: 'post'
+            url: "/settings/applications/#{id}/members"
+            data:
+                email: email
+            success: ->
+                $('.modal.in').modal 'hide'
+                $scope.getApplications()
     $scope.getApplications()
 
 c.controller 'SettingsUsersCtrl', ($scope, $state) ->

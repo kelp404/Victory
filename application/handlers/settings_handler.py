@@ -1,7 +1,4 @@
 
-# python
-import json
-
 # flask
 from flask import render_template, jsonify, request, abort
 
@@ -9,6 +6,7 @@ from flask import render_template, jsonify, request, abort
 from base_handler import validated_failed, success
 from application.decorator.auth_decorator import *
 from application.models.form.application_form import *
+from application.models.form.invite_user_form import *
 from application.services.account_service import *
 from application.services.application_service import *
 
@@ -54,7 +52,7 @@ def add_application():
     POST: settings/applications
     add an application
     """
-    ap = ApplicationForm(**json.loads(request.data))
+    ap = ApplicationForm(**request.json)
     if not ap.validate():
         return validated_failed(**ap.validated_messages())
 
@@ -74,7 +72,7 @@ def update_application(application_id):
     except Exception:
         return abort(400)
 
-    ap = ApplicationForm(**json.loads(request.data))
+    ap = ApplicationForm(**request.json)
     if not ap.validate():
         return validated_failed(**ap.validated_messages())
 
@@ -98,14 +96,18 @@ def delete_application(application_id):
     return success()
 
 @authorization(UserLevel.normal)
-def application_invite(application_id):
+def invite_user(application_id):
     """
-    POST: settings/application/<application_id>/invite
+    POST: settings/application/<application_id>/members
     invite user to join the application
     """
-    try: application_id = long(application_id)
-    except: return abort(400)
-    email = request.form.get('email')
+    try:
+        application_id = long(application_id)
+    except:
+        return abort(400)
+    user = InviteUserForm(**request.json)
+    if not user.validate():
+        return validated_failed(**user.validated_messages())
 
     acs = AccountService()
     aps = ApplicationService()
@@ -115,14 +117,14 @@ def application_invite(application_id):
         return abort(403)
 
     # invite user
-    user = acs.invite_user(email)
+    user = acs.invite_user(user.email.data)
     if user is None:
         return abort(417)
 
     # add the new user to the application
-    success = aps.add_user_to_application(user.key().id(), application_id)
-    if success:
-        return jsonify({ 'success': success })
+    is_success = aps.add_user_to_application(user.key().id(), application_id)
+    if is_success:
+        return success(201)
     else:
         return abort(417)
 
