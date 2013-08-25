@@ -39,6 +39,23 @@
     };
   });
 
+  s.directive('vEnter', function() {
+    /*
+    setup key enter derective
+    */
+
+    return function(scope, element, attrs) {
+      return element.bind("keydown keypress", function(event) {
+        if (event.which === 13) {
+          scope.$apply(function() {
+            return scope.$eval(attrs.vEnter);
+          });
+          return event.preventDefault();
+        }
+      });
+    };
+  });
+
   s.directive('vNavigation', function() {
     /*
     setup navigation

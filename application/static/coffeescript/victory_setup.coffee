@@ -25,6 +25,17 @@ s.directive 'vModal', ->
         $(element).on 'shown', ->
             $(@).find('input:first').select()
 
+s.directive 'vEnter', ->
+    ###
+    setup key enter derective
+    ###
+    (scope, element, attrs) ->
+        element.bind "keydown keypress", (event) ->
+            if event.which == 13
+                scope.$apply ->
+                    scope.$eval attrs.vEnter
+                event.preventDefault()
+
 s.directive 'vNavigation', ->
     ###
     setup navigation
