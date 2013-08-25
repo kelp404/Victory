@@ -126,11 +126,40 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 application.members = (x for x in application.members when x.id != memberId)
     $scope.getApplications()
 
-c.controller 'SettingsUsersCtrl', ($scope, $state) ->
+c.controller 'SettingsUsersCtrl', ($scope, $http) ->
     ###
     /settings/users
     ###
-    return
+    $scope.getUsers = ->
+        ###
+        get users
+        ###
+        victory.ajax $http,
+            url: '/settings/users'
+            success: (data) ->
+                $scope.items = data.items
+    $scope.addUser = ->
+        ###
+        add an user
+        ###
+        victory.ajax $http,
+            method: 'post'
+            url: '/settings/users'
+            data:
+                email: $scope.email
+            success: ->
+                $scope.email = ''
+                $scope.getUsers()
+    $scope.deleteUser = (id) ->
+        ###
+        delete the user
+        ###
+        victory.ajax $http,
+            method: 'delete'
+            url: "/settings/users/#{id}"
+            success: ->
+                $scope.items = (x for x in $scope.items when x.id != id)
+    $scope.getUsers()
 c.controller 'SettingsProfileCtrl', ($scope, $state) ->
     ###
     /settings/profile

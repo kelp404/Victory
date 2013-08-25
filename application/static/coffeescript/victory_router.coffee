@@ -40,7 +40,7 @@ r.config ($stateProvider, $urlRouterProvider) ->
         resolve: title: -> 'Users - Settings - '
         views:
             viewContent:
-                templateUrl: '/views/settings/applications.html'
+                templateUrl: '/views/settings/users.html'
                 controller: 'SettingsUsersCtrl'
             viewMenu:
                 templateUrl: '/views/menu/settings.html'

@@ -213,11 +213,66 @@
     return $scope.getApplications();
   });
 
-  c.controller('SettingsUsersCtrl', function($scope, $state) {
+  c.controller('SettingsUsersCtrl', function($scope, $http) {
     /*
     /settings/users
     */
 
+    $scope.getUsers = function() {
+      /*
+      get users
+      */
+
+      return victory.ajax($http, {
+        url: '/settings/users',
+        success: function(data) {
+          return $scope.items = data.items;
+        }
+      });
+    };
+    $scope.addUser = function() {
+      /*
+      add an user
+      */
+
+      return victory.ajax($http, {
+        method: 'post',
+        url: '/settings/users',
+        data: {
+          email: $scope.email
+        },
+        success: function() {
+          $scope.email = '';
+          return $scope.getUsers();
+        }
+      });
+    };
+    $scope.deleteUser = function(id) {
+      /*
+      delete the user
+      */
+
+      return victory.ajax($http, {
+        method: 'delete',
+        url: "/settings/users/" + id,
+        success: function() {
+          var x;
+          return $scope.items = (function() {
+            var _i, _len, _ref, _results;
+            _ref = $scope.items;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              x = _ref[_i];
+              if (x.id !== id) {
+                _results.push(x);
+              }
+            }
+            return _results;
+          })();
+        }
+      });
+    };
+    return $scope.getUsers();
   });
 
   c.controller('SettingsProfileCtrl', function($scope, $state) {

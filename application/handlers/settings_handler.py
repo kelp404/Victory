@@ -143,39 +143,43 @@ def delete_application_member(application_id, member_id):
 
 
 @authorization(UserLevel.root)
-def users():
+def get_users():
     """
     GET: settings/users
     get users list
     """
     acs = AccountService()
-    g.view_model['result'] = acs.get_users()
-
-    return render_template('./settings/users.html', **g.view_model)
+    result = acs.get_users()
+    return jsonify({'items': result})
 
 @authorization(UserLevel.root)
-def user_add():
+def add_user():
     """
     POST: settings/users
     add an user
     """
-    email = request.form.get('email')
+    user = InviteUserForm(**request.json)
+    if not user.validate():
+        return validated_failed(**user.validated_messages())
+
     acs = AccountService()
-    user = acs.invite_user(email)
+    user = acs.invite_user(user.email.data)
     if user:
-        return users()
+        return success(201)
     else:
         return abort(417)
 
 @authorization(UserLevel.root)
-def user_delete(user_id):
+def delete_user(user_id):
     """
     DELETE: settings/users/<user_id>
     delete the user
     """
+    try:
+        user_id = long(user_id)
+    except Exception:
+        return abort(400)
+
     acs = AccountService()
-    success = acs.delete_user(user_id)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    acs.delete_user(user_id)
+    return success()
