@@ -154,27 +154,6 @@
           }
         }
       }
-    },
-    getUserProfile: function() {
-      /*
-      update login status
-      */
-
-      var _this = this;
-      $.ajax({
-        url: '/me',
-        type: 'get',
-        dataType: 'json',
-        cache: false,
-        async: false,
-        error: function(r) {
-          return _this.user.isLogin = false;
-        },
-        success: function(r) {
-          return _this.user = r;
-        }
-      });
-      return this.user;
     }
   };
 
