@@ -275,11 +275,37 @@
     return $scope.getUsers();
   });
 
-  c.controller('SettingsProfileCtrl', function($scope, $state) {
+  c.controller('SettingsProfileCtrl', function($scope, $http) {
     /*
     /settings/profile
     */
 
+    $scope.getProfile = function() {
+      return victory.ajax($http, {
+        url: '/settings/profile',
+        success: function(data) {
+          return $scope.profile = data;
+        }
+      });
+    };
+    $scope.updateProfile = function() {
+      return victory.ajax($http, {
+        method: 'put',
+        url: '/settings/profile',
+        data: {
+          name: $scope.profile.name
+        },
+        error: function(data, status) {
+          if (status === 400 && data) {
+            return $scope.errors = data;
+          }
+        },
+        success: function() {
+          return $scope.getProfile();
+        }
+      });
+    };
+    return $scope.getProfile();
   });
 
   c.controller('CrashGroupsCtrl', function($scope, $state) {

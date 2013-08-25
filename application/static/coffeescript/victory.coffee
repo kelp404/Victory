@@ -96,18 +96,6 @@ victory =
                     @[key]()
             return
 
-    getUserProfile: ->
-        ###
-        update login status
-        ###
-        $.ajax
-            url: '/me', type: 'get', dataType: 'json', cache: false, async: false
-            error: (r) =>
-                @user.isLogin = false
-            success: (r) =>
-                @user = r
-        @user
-
 
 window.victory = victory
 

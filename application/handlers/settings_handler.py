@@ -7,33 +7,33 @@ from base_handler import validated_failed, success
 from application.decorator.auth_decorator import *
 from application.models.form.application_form import *
 from application.models.form.invite_user_form import *
+from application.models.form.profile_form import *
 from application.services.account_service import *
 from application.services.application_service import *
 
 
 
 @authorization(UserLevel.normal)
-def profile():
+def get_profile():
     """
     GET: settings/profile
     get profile
     """
-    g.view_model['title'] = 'Profile - '
-    return render_template('./settings/profile.html', **g.view_model)
+    return jsonify(g.user.dict())
 
 @authorization(UserLevel.normal)
-def profile_update():
+def update_profile():
     """
     PUT: settings/profile
     update profile
     """
-    name = request.form.get('name')
+    profile = ProfileForm(**request.json)
+    if not profile.validate():
+        return validated_failed(**profile.validated_messages())
+
     acs = AccountService()
-    success, result_name = acs.update_profile(name)
-    if success:
-        return jsonify({ 'success': success, 'name': result_name })
-    else:
-        return abort(417)
+    acs.update_profile(profile.name.data)
+    return success()
 
 
 @authorization(UserLevel.normal)

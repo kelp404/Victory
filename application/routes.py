@@ -1,6 +1,5 @@
 
 from application import app
-from handlers.account_handler import *
 from handlers.document_handler import *
 from handlers.settings_handler import *
 from handlers.web_service_handler import *
@@ -8,9 +7,6 @@ from handlers.web_service_handler import *
 
 
 # -------- AngularJS ---------
-# Get User Profile
-app.add_url_rule('/me', 'get_user_profile', view_func=get_user_profile, methods=['GET'])
-
 # Settings
 # Applications
 app.add_url_rule('/settings/applications', 'settings_applications', view_func=get_applications, methods=['GET'])
@@ -23,6 +19,9 @@ app.add_url_rule('/settings/applications/<application_id>/members/<member_id>', 
 app.add_url_rule('/settings/users', 'settings_users', view_func=get_users, methods=['GET'])
 app.add_url_rule('/settings/users', 'settings_user_post', view_func=add_user, methods=['POST'])
 app.add_url_rule('/settings/users/<user_id>', 'settings_user_delete', view_func=delete_user, methods=['DELETE'])
+# Profile
+app.add_url_rule('/settings/profile', 'settings_profile', view_func=get_profile, methods=['GET'])
+app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=update_profile, methods=['PUT'])
 # ---------------------------
 
 
@@ -34,10 +33,6 @@ app.add_url_rule('/api/v1/log/<key>', 'api_log_jsonp', view_func=log_document_ad
 app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_add, methods=['POST'])
 # ---------------------------
 
-
-# Settings
-app.add_url_rule('/settings/profile', 'settings_profile', view_func=profile, methods=['GET'])
-app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=profile_update, methods=['PUT'])
 
 # Document
 app.add_url_rule('/crash_groups/<application_id>/<group_tag>', 'crash_list', view_func=document_view, methods=['GET'])

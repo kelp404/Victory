@@ -50,7 +50,7 @@ r.config ($stateProvider, $urlRouterProvider) ->
         resolve: title: -> 'Profile - Settings - '
         views:
             viewContent:
-                templateUrl: '/views/settings/applications.html'
+                templateUrl: '/views/settings/profile.html'
                 controller: 'SettingsProfileCtrl'
             viewMenu:
                 templateUrl: '/views/menu/settings.html'
