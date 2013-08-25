@@ -213,11 +213,41 @@
     return $scope.getApplications();
   });
 
-  c.controller('SettingsUsersCtrl', function($scope, $state) {
+  c.controller('SettingsUsersCtrl', function($scope, $http) {
     /*
     /settings/users
     */
 
+    $scope.getUsers = function() {
+      /*
+      get users
+      */
+
+      return victory.ajax($http, {
+        url: '/settings/users',
+        success: function(data) {
+          return $scope.items = data.items;
+        }
+      });
+    };
+    $scope.addUser = function(email) {
+      /*
+      add an user
+      */
+
+      return victory.ajax($http, {
+        method: 'post',
+        url: '/settings/users',
+        data: {
+          email: email
+        },
+        success: function(data) {
+          email = '';
+          return $scope.items = data.items;
+        }
+      });
+    };
+    return $scope.getUsers();
   });
 
   c.controller('SettingsProfileCtrl', function($scope, $state) {

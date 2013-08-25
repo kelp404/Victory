@@ -149,9 +149,8 @@ def users():
     get users list
     """
     acs = AccountService()
-    g.view_model['result'] = acs.get_users()
-
-    return render_template('./settings/users.html', **g.view_model)
+    result = acs.get_users()
+    return jsonify({'items': result})
 
 @authorization(UserLevel.root)
 def user_add():

@@ -22,7 +22,7 @@ class ApplicationService(BaseService):
         Get all my applications
 
         @param with_members True: append application.members
-        @returns [application] / []
+        @returns [ApplicationModel.dict()] / []
         """
         if g.user.level == UserLevel.root:
             owner_apps = db.GqlQuery('select * from ApplicationModel order by create_time')

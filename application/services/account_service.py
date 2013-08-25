@@ -1,6 +1,6 @@
 
 # flask
-from flask import g
+from flask import g, abort
 
 # google
 from google.appengine.ext import db
@@ -8,8 +8,7 @@ from google.appengine.api import mail
 from google.appengine.api import users
 
 # victory
-from ..models.datastore.user_model import *
-from ..models.view_model.user_view_model import *
+from application.models.datastore.user_model import *
 from base_service import BaseService
 from application import config
 
@@ -113,23 +112,15 @@ class AccountService(BaseService):
         """
         Get all users (for root)
 
-        @returns [UserViewModel] / []
+        @returns [UserModel.dict()] / []
         """
-        # check auth
-        if g.user is None: return []
-        if g.user.level != UserLevel.root: return []
+        if g.user.level != UserLevel.root:
+            return abort(403)
 
         result = []
         members = db.GqlQuery('select * from UserModel order by create_time')
         for user in members:
-            result.append(UserViewModel(
-                user_id= user.key().id(),
-                is_root= user.level == UserLevel.root,
-                is_deletable= user.level != UserLevel.root,
-                name= user.name,
-                email= user.email,
-                create_time= user.create_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
-            ))
+            result.append(user.dict())
         return result
 
     def delete_user(self, user_id):

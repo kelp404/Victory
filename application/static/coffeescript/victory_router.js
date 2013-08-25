@@ -62,7 +62,7 @@
       },
       views: {
         viewContent: {
-          templateUrl: '/views/settings/applications.html',
+          templateUrl: '/views/settings/users.html',
           controller: 'SettingsUsersCtrl'
         },
         viewMenu: {
