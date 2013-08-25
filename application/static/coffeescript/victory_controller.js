@@ -22,7 +22,7 @@
     });
   });
 
-  c.controller('IndexCtrl', function($scope, $state) {
+  c.controller('IndexCtrl', function($scope) {
     /*
     /
     */
@@ -33,7 +33,7 @@
     }
   });
 
-  c.controller('LoginCtrl', function($scope, $state) {
+  c.controller('LoginCtrl', function($scope) {
     /*
     /login
     */
@@ -49,7 +49,7 @@
     return $scope.active = $state.current.name;
   });
 
-  c.controller('SettingsCtrl', function($scope, $state) {
+  c.controller('SettingsCtrl', function() {
     /*
     /settings
     */
@@ -69,9 +69,6 @@
 
       return victory.ajax($http, {
         url: '/settings/applications',
-        error: function() {
-          return console.log('error');
-        },
         success: function(data) {
           var item, _i, _len, _ref;
           _ref = data.items;
@@ -153,9 +150,6 @@
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/applications/" + id,
-        error: function(data, status) {
-          return console.log('error');
-        },
         success: function() {
           $('.modal.in').modal('hide');
           return $scope.getApplications();

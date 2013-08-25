@@ -15,7 +15,7 @@ c.controller 'NavigationCtrl', ($scope) ->
 
 
 # ----------- controllers for ui.router ----------------
-c.controller 'IndexCtrl', ($scope, $state) ->
+c.controller 'IndexCtrl', ($scope) ->
     ###
     /
     ###
@@ -23,7 +23,7 @@ c.controller 'IndexCtrl', ($scope, $state) ->
     if not victory.user.isLogin
         location.href = '#/login'
 
-c.controller 'LoginCtrl', ($scope, $state) ->
+c.controller 'LoginCtrl', ($scope) ->
     ###
     /login
     ###
@@ -36,7 +36,7 @@ c.controller 'SettingsMenuCtrl', ($scope, $state) ->
     ###
     $scope.active = $state.current.name
 
-c.controller 'SettingsCtrl', ($scope, $state) ->
+c.controller 'SettingsCtrl', ->
     ###
     /settings
     ###
@@ -45,15 +45,12 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
     ###
     /settings/applications
     ###
-
     $scope.getApplications = ->
         ###
         get applications
         ###
         victory.ajax $http,
             url: '/settings/applications'
-            error: ->
-                console.log 'error'
             success: (data) ->
                 for item in data.items
                     # for updating the application
@@ -102,8 +99,6 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         victory.ajax $http,
             method: 'delete'
             url: "/settings/applications/#{id}"
-            error: (data, status) ->
-                console.log 'error'
             success: ->
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()

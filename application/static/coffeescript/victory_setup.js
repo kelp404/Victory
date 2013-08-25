@@ -10,6 +10,9 @@
     */
 
     return function(scope, element, attrs) {
+      if (attrs.vTooltip) {
+        $(element).attr('title', scope.$eval(attrs.vTooltip));
+      }
       return $(element).tooltip();
     };
   });

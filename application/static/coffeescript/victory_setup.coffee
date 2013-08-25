@@ -6,6 +6,8 @@ s.directive 'vTooltip', ->
     setup tooltip
     ###
     (scope, element, attrs) ->
+        if attrs.vTooltip
+            $(element).attr 'title', scope.$eval(attrs.vTooltip)
         $(element).tooltip()
 
 s.directive 'vFocus', ->

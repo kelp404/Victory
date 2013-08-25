@@ -79,7 +79,7 @@
                 <tr><td>Key</td><td>{{ item.app_key }}</td></tr>
                 <tr><td>Members</td><td>
                     <div ng-repeat="member in item.members">
-                        <span v-tooltip title="{{ member.name }}">{{ member.email }}</span>
+                        <span v-tooltip="member.name">{{ member.email }}</span>
                         <span ng-if="item.is_owner">
                             <!-- if i am owner and the member(in loop) is not owner -->
                             <a ng-hide="member.is_owner" href="/settings/applications/{{ item.id }}/members/{{ member.id }}#" class="delete_viewer" rel="tooltip" title="Remove from this application.">delete</a>
