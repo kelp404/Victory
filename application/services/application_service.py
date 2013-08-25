@@ -177,12 +177,12 @@ class ApplicationService(BaseService):
         """
         Add a user to the application (viewer)
 
-        @param user_id user id
-        @param application_id application id
-        @returns True / False
+        :param user_id: user id
+        :param application_id: application id
         """
         # check input value
-        if user_id is None or application_id is None: return False
+        if user_id is None or application_id is None:
+            return abort(400)
 
         application = ApplicationModel.get_by_id(application_id)
         if self.is_my_application(application_id, True) and user_id not in application.viewer and user_id != application.owner:
