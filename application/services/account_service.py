@@ -59,24 +59,12 @@ class AccountService(BaseService):
         """
         Update user's profile
 
-        @param name user's name
-        @returns True, user name / False, None
+        :param name: user's name
         """
-        # clear up input value
-        if name is None: return False, None
-        name = name.strip()
-
-        # check auth
-        if g.user is None: return False, None
-
-        if len(name) > 0:
-            user = UserModel().get_by_id(g.user.key().id())
-            user.name = name
-            user.put()
-            user.get(user.key())    # sync
-            return True, name
-
-        return False, None
+        user = UserModel().get(g.user.key())
+        user.name = name
+        user.put()
+        user.get(user.key())    # sync
 
     def invite_user(self, email):
         """

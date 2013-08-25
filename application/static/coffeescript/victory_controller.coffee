@@ -160,11 +160,27 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
             success: ->
                 $scope.items = (x for x in $scope.items when x.id != id)
     $scope.getUsers()
-c.controller 'SettingsProfileCtrl', ($scope, $state) ->
+c.controller 'SettingsProfileCtrl', ($scope, $http) ->
     ###
     /settings/profile
     ###
-    return
+    $scope.getProfile = ->
+        victory.ajax $http,
+            url: '/settings/profile'
+            success: (data) ->
+                $scope.profile = data
+    $scope.updateProfile = ->
+        victory.ajax $http,
+            method: 'put'
+            url: '/settings/profile'
+            data:
+                name: $scope.profile.name
+            error: (data, status) ->
+                if status == 400 and data
+                    $scope.errors = data
+            success: ->
+                $scope.getProfile()
+    $scope.getProfile()
 
 # ----------- documents ----------------
 c.controller 'CrashGroupsCtrl', ($scope, $state) ->
