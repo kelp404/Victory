@@ -189,9 +189,8 @@ class ApplicationService(BaseService):
             application.viewer.append(user_id)
             application.put()
             application.get(application.key())  #sync
-            return True
         else:
-            return False
+            return abort(403)
 
     def delete_user_from_application(self, user_id, application_id):
         """
@@ -199,17 +198,15 @@ class ApplicationService(BaseService):
 
         @param user_id user id
         @param application_id application id
-        @returns True / False
         """
         # check input value
         if user_id is None or application_id is None:
-            return False
+            return abort(400)
 
         application = ApplicationModel.get_by_id(application_id)
         if self.is_my_application(application_id, True) and user_id in application.viewer:
             application.viewer.remove(user_id)
             application.put()
             application.get(application.key())  # sync
-            return True
         else:
-            return False
+            return abort(403)

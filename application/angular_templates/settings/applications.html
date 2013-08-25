@@ -82,7 +82,7 @@
                         <span v-tooltip="member.name">{{ member.email }}</span>
                         <span ng-if="item.is_owner">
                             <!-- if i am owner and the member(in loop) is not owner -->
-                            <a ng-hide="member.is_owner" href="/settings/applications/{{ item.id }}/members/{{ member.id }}#" class="delete_viewer" rel="tooltip" title="Remove from this application.">delete</a>
+                            <a ng-hide="member.is_owner" ng-click="deleteMenter(item.id, member.id)" v-tooltip href title="Remove from this application.">delete</a>
                         </span>
                     </div>
                 </td></tr>
@@ -94,8 +94,10 @@
             <span ng-if="item.is_owner">
                 <div class="input-append pull-left">
                     <div class="control-group" style="margin-bottom: 0">
-                        <input ng-model="email" v-enter="inviteUser(item.id, email)" type="text" class="input-medium" placeholder="email@gmail.com" />
-                        <a ng-click="inviteUser(item.id, email)" class="btn">Invite</a>
+                        <div class="controls">
+                            <input ng-model="email" v-enter="inviteUser(item.id, email)" type="text" class="input-medium" placeholder="email@gmail.com" />
+                            <a ng-click="inviteUser(item.id, email)" class="btn">Invite</a>
+                        </div>
                     </div>
                 </div>
 

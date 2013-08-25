@@ -173,6 +173,43 @@
         }
       });
     };
+    $scope.deleteMenter = function(applicationId, memberId) {
+      /*
+      delete the member from the application
+      */
+
+      return victory.ajax($http, {
+        method: 'delete',
+        url: "/settings/applications/" + applicationId + "/members/" + memberId,
+        success: function() {
+          var application, x;
+          application = ((function() {
+            var _i, _len, _ref, _results;
+            _ref = $scope.items;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              x = _ref[_i];
+              if (x.id === applicationId) {
+                _results.push(x);
+              }
+            }
+            return _results;
+          })())[0];
+          return application.members = (function() {
+            var _i, _len, _ref, _results;
+            _ref = application.members;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              x = _ref[_i];
+              if (x.id !== memberId) {
+                _results.push(x);
+              }
+            }
+            return _results;
+          })();
+        }
+      });
+    };
     return $scope.getApplications();
   });
 

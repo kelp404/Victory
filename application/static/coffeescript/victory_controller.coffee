@@ -114,6 +114,16 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
             success: ->
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
+    $scope.deleteMenter = (applicationId, memberId) ->
+        ###
+        delete the member from the application
+        ###
+        victory.ajax $http,
+            method: 'delete'
+            url: "/settings/applications/#{applicationId}/members/#{memberId}"
+            success: ->
+                application = (x for x in $scope.items when x.id == applicationId)[0]
+                application.members = (x for x in application.members when x.id != memberId)
     $scope.getApplications()
 
 c.controller 'SettingsUsersCtrl', ($scope, $state) ->

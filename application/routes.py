@@ -18,6 +18,7 @@ app.add_url_rule('/settings/applications', 'settings_applications_post', view_fu
 app.add_url_rule('/settings/applications/<application_id>', 'settings_application_put', view_func=update_application, methods=['PUT'])
 app.add_url_rule('/settings/applications/<application_id>', 'settings_application_delete', view_func=delete_application, methods=['DELETE'])
 app.add_url_rule('/settings/applications/<application_id>/members', 'settings_application_invite', view_func=invite_user, methods=['POST'])
+app.add_url_rule('/settings/applications/<application_id>/members/<member_id>', 'settings_application_member_delete', view_func=delete_application_member, methods=['DELETE'])
 # ---------------------------
 
 
@@ -33,9 +34,6 @@ app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_ad
 # Settings
 app.add_url_rule('/settings/profile', 'settings_profile', view_func=profile, methods=['GET'])
 app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=profile_update, methods=['PUT'])
-
-# Applications
-app.add_url_rule('/settings/applications/<application_id>/members/<member_id>', 'settings_apps_member_delete', view_func=application_member_delete, methods=['DELETE'])
 
 # Users
 app.add_url_rule('/settings/users', 'settings_users', view_func=users, methods=['GET'])

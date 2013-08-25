@@ -122,14 +122,11 @@ def invite_user(application_id):
         return abort(417)
 
     # add the new user to the application
-    is_success = aps.add_user_to_application(user.key().id(), application_id)
-    if is_success:
-        return success(201)
-    else:
-        return abort(417)
+    aps.add_user_to_application(user.key().id(), application_id)
+    return success(201)
 
 @authorization(UserLevel.normal)
-def application_member_delete(application_id, member_id):
+def delete_application_member(application_id, member_id):
     """
     DELETE: settings/applications/<application_id>/members/<member_id>
     delete a member in the application
@@ -141,11 +138,8 @@ def application_member_delete(application_id, member_id):
         return abort(400)
 
     aps = ApplicationService()
-    success = aps.delete_user_from_application(member_id, application_id)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    aps.delete_user_from_application(member_id, application_id)
+    return success()
 
 
 @authorization(UserLevel.root)
