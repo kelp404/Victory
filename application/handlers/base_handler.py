@@ -6,7 +6,7 @@ import sys
 import traceback
 
 # flask
-from flask import render_template, g, request, redirect, abort, jsonify
+from flask import render_template, g, request, redirect, abort, jsonify, make_response
 
 # google
 from google.appengine.api import users
@@ -62,6 +62,15 @@ def validated_failed(**kwargs):
     response.status_code = 400
     return response
 
+def success(status_code=204):
+    """
+    Return successful status code. Default is return 204.
+    :param status_code: 200 > ok, 201 > created, 204 > no content
+    :return: flask.response
+    """
+    response = make_response()
+    response.status_code = status_code
+    return response
 
 def json_redirect(location):
     """

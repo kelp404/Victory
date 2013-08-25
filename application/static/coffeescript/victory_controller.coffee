@@ -47,13 +47,23 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
     ###
 
     $scope.getApplications = ->
+        ###
+        get applications
+        ###
         victory.ajax $http,
             url: '/settings/applications'
             error: ->
                 console.log 'error'
             success: (data) ->
+                for item in data.items
+                    # for updating the application
+                    item.newName = item.name
+                    item.newDescription = item.description
                 $scope.items = data.items
     $scope.addApplication = ->
+        ###
+        add an application
+        ###
         victory.ajax $http,
             method: 'post'
             url: '/settings/applications'
@@ -68,18 +78,30 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 $scope.description = ''
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
-    $scope.updateApplication = (applicationId) ->
+    $scope.updateApplication = (id) ->
+        ###
+        update the application.
+        ###
+        updateItem = (x for x in $scope.items when x.id == id)[0]
         victory.ajax $http,
             method: 'put'
-            url: "/settings/applications/#{applicationId}"
+            url: "/settings/applications/#{id}"
+            data:
+                name: updateItem.newName
+                description: updateItem.newDescription
             error: (data, status) ->
-                console.log 'error'
+                if status == 400 and data
+                    updateItem.errors = data
             success: ->
-                console.log 'success'
-    $scope.deleteApplication = (applicationId) ->
+                $('.modal.in').modal 'hide'
+                $scope.getApplications()
+    $scope.deleteApplication = (id) ->
+        ###
+        delete the application
+        ###
         victory.ajax $http,
             method: 'delete'
-            url: "/settings/applications/#{applicationId}"
+            url: "/settings/applications/#{id}"
             error: (data, status) ->
                 console.log 'error'
             success: ->

@@ -63,17 +63,32 @@
     */
 
     $scope.getApplications = function() {
+      /*
+      get applications
+      */
+
       return victory.ajax($http, {
         url: '/settings/applications',
         error: function() {
           return console.log('error');
         },
         success: function(data) {
+          var item, _i, _len, _ref;
+          _ref = data.items;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            item = _ref[_i];
+            item.newName = item.name;
+            item.newDescription = item.description;
+          }
           return $scope.items = data.items;
         }
       });
     };
     $scope.addApplication = function() {
+      /*
+      add an application
+      */
+
       return victory.ajax($http, {
         method: 'post',
         url: '/settings/applications',
@@ -94,22 +109,50 @@
         }
       });
     };
-    $scope.updateApplication = function(applicationId) {
+    $scope.updateApplication = function(id) {
+      /*
+      update the application.
+      */
+
+      var updateItem, x;
+      updateItem = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = $scope.items;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          x = _ref[_i];
+          if (x.id === id) {
+            _results.push(x);
+          }
+        }
+        return _results;
+      })())[0];
       return victory.ajax($http, {
         method: 'put',
-        url: "/settings/applications/" + applicationId,
+        url: "/settings/applications/" + id,
+        data: {
+          name: updateItem.newName,
+          description: updateItem.newDescription
+        },
         error: function(data, status) {
-          return console.log('error');
+          if (status === 400 && data) {
+            return updateItem.errors = data;
+          }
         },
         success: function() {
-          return console.log('success');
+          $('.modal.in').modal('hide');
+          return $scope.getApplications();
         }
       });
     };
-    $scope.deleteApplication = function(applicationId) {
+    $scope.deleteApplication = function(id) {
+      /*
+      delete the application
+      */
+
       return victory.ajax($http, {
         method: 'delete',
-        url: "/settings/applications/" + applicationId,
+        url: "/settings/applications/" + id,
         error: function(data, status) {
           return console.log('error');
         },

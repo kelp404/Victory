@@ -6,7 +6,7 @@ import json
 from flask import render_template, jsonify, request, abort
 
 # victory
-from base_handler import validated_failed
+from base_handler import validated_failed, success
 from application.decorator.auth_decorator import *
 from application.models.form.application_form import *
 from application.services.account_service import *
@@ -60,7 +60,7 @@ def add_application():
 
     aps = ApplicationService()
     aps.add_application(ap.name.data, ap.description.data)
-    return jsonify({'success': True})
+    return success(201)
 
 @authorization(UserLevel.normal)
 def update_application(application_id):
@@ -80,7 +80,7 @@ def update_application(application_id):
 
     aps = ApplicationService()
     aps.update_application(application_id, ap.name.data, ap.description.data)
-    return jsonify({'success': True})
+    return success()
 
 @authorization(UserLevel.normal)
 def delete_application(application_id):
@@ -95,7 +95,7 @@ def delete_application(application_id):
 
     aps = ApplicationService()
     aps.delete_application(application_id)
-    return jsonify({'success': True})
+    return success()
 
 @authorization(UserLevel.normal)
 def application_invite(application_id):

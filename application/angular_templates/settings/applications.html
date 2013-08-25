@@ -14,7 +14,7 @@
             <h3>Add a new application</h3>
         </div>
         <div class="modal-body">
-            <div ng-class="{ error: errors.name }" class="control-group">
+            <div ng-class="{error: errors.name}" class="control-group">
                 <label class="control-label" for="name">Name</label>
                 <div class="controls">
                     <input ng-model="name" id="name" name="name" class="input-xlarge" type="text"/>
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div ng-class="{ error: errors.description }" class="control-group">
+            <div ng-class="{error: errors.description}" class="control-group">
                 <label class="control-label" for="description">Description</label>
                 <div class="controls">
                     <input ng-model="description" id="description" name="description" class="span6" type="text"/>
@@ -59,14 +59,20 @@
             <table class="table table-bordered">
                 <tbody>
                 <tr><td class="span2">Name</td><td>
-                    <div ng-if="item.is_owner" class="control-group">
-                        <input type="text" name="name" value="{{ item.name }}"/>
+                    <div ng-if="item.is_owner" ng-class="{error: item.errors.name}" class="control-group">
+                        <div class="controls">
+                            <input ng-model="item.newName" type="text" name="name"/>
+                            <label ng-show="item.errors.name" class="help-inline">{{ item.errors.name }}</label>
+                        </div>
                     </div>
                     <div ng-hide="item.is_owner">{{ item.name }}</div>
                 </td></tr>
                 <tr><td>Description</td><td>
-                    <div ng-if="item.is_owner" class="control-group">
-                        <input type="text" name="description" class="input-xlarge" value="{{ item.description }}"/>
+                    <div ng-if="item.is_owner" ng-class="{error: item.errors.description}" class="control-group">
+                        <div class="controls">
+                            <input ng-model="item.newDescription" type="text" name="description" class="input-xlarge"/>
+                            <label ng-show="item.errors.description" class="help-inline">{{ item.errors.description }}</label>
+                        </div>
                     </div>
                     <div ng-hide="item.is_owner">{{ item.description }}</div>
                 </td></tr>
