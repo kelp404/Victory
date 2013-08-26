@@ -10,7 +10,7 @@ c.controller 'NavigationCtrl', ($scope) ->
     $scope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
         $scope.select = toState.name
         $('.modal.in').modal 'hide'
-        delay 200, ->
+        delay 0, ->
             $('#js_navigation li.select').mouseover()
 
 

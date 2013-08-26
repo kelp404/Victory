@@ -5,10 +5,10 @@
   c = angular.module('victory.controller', []);
 
   c.controller('NavigationCtrl', function($scope) {
+
     /*
     Navigation Controller
     */
-
     var delay;
     delay = function(ms, func) {
       return setTimeout(func, ms);
@@ -16,17 +16,17 @@
     return $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
       $scope.select = toState.name;
       $('.modal.in').modal('hide');
-      return delay(200, function() {
+      return delay(0, function() {
         return $('#js_navigation li.select').mouseover();
       });
     });
   });
 
   c.controller('IndexCtrl', function($scope) {
+
     /*
     /
     */
-
     $scope.title = victory.titleSuffix;
     if (!victory.user.isLogin) {
       return location.href = '#/login';
@@ -34,39 +34,39 @@
   });
 
   c.controller('LoginCtrl', function($scope) {
+
     /*
     /login
     */
-
     return $scope.loginUrl = victory.loginUrl;
   });
 
   c.controller('SettingsMenuCtrl', function($scope, $state) {
+
     /*
     The controller of the settings menu
     */
-
     return $scope.active = $state.current.name;
   });
 
   c.controller('SettingsCtrl', function() {
+
     /*
     /settings
     */
-
     return location.href = '#/settings/applications';
   });
 
   c.controller('SettingsApplicationsCtrl', function($scope, $http) {
+
     /*
     /settings/applications
     */
-
     $scope.getApplications = function() {
+
       /*
       get applications
       */
-
       return victory.ajax($http, {
         url: '/settings/applications',
         success: function(data) {
@@ -82,10 +82,10 @@
       });
     };
     $scope.addApplication = function() {
+
       /*
       add an application
       */
-
       return victory.ajax($http, {
         method: 'post',
         url: '/settings/applications',
@@ -107,10 +107,10 @@
       });
     };
     $scope.updateApplication = function(id) {
+
       /*
       update the application.
       */
-
       var updateItem, x;
       updateItem = ((function() {
         var _i, _len, _ref, _results;
@@ -143,10 +143,10 @@
       });
     };
     $scope.deleteApplication = function(id) {
+
       /*
       delete the application
       */
-
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/applications/" + id,
@@ -157,10 +157,10 @@
       });
     };
     $scope.inviteUser = function(id, email) {
+
       /*
       invite an user into the application
       */
-
       return victory.ajax($http, {
         method: 'post',
         url: "/settings/applications/" + id + "/members",
@@ -174,10 +174,10 @@
       });
     };
     $scope.deleteMenter = function(applicationId, memberId) {
+
       /*
       delete the member from the application
       */
-
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/applications/" + applicationId + "/members/" + memberId,
@@ -214,15 +214,15 @@
   });
 
   c.controller('SettingsUsersCtrl', function($scope, $http) {
+
     /*
     /settings/users
     */
-
     $scope.getUsers = function() {
+
       /*
       get users
       */
-
       return victory.ajax($http, {
         url: '/settings/users',
         success: function(data) {
@@ -231,10 +231,10 @@
       });
     };
     $scope.addUser = function() {
+
       /*
       add an user
       */
-
       return victory.ajax($http, {
         method: 'post',
         url: '/settings/users',
@@ -248,10 +248,10 @@
       });
     };
     $scope.deleteUser = function(id) {
+
       /*
       delete the user
       */
-
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/users/" + id,
@@ -276,10 +276,10 @@
   });
 
   c.controller('SettingsProfileCtrl', function($scope, $http) {
+
     /*
     /settings/profile
     */
-
     $scope.getProfile = function() {
       return victory.ajax($http, {
         url: '/settings/profile',
@@ -309,24 +309,24 @@
   });
 
   c.controller('CrashGroupsCtrl', function($scope, $state) {
+
     /*
     /crash_groups
     */
-
   });
 
   c.controller('ExceptionGroupsCtrl', function($scope, $state) {
+
     /*
     /exception_groups
     */
-
   });
 
   c.controller('LogGroupsCtrl', function($scope, $state) {
+
     /*
     /log_groups
     */
-
   });
 
 }).call(this);
