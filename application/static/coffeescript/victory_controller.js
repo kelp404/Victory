@@ -5,10 +5,12 @@
   c = angular.module('victory.controller', []);
 
   c.controller('NavigationCtrl', function($scope) {
-
     /*
     Navigation Controller
+    
+    :scope select: selected ui-router node name
     */
+
     var delay;
     delay = function(ms, func) {
       return setTimeout(func, ms);
@@ -23,10 +25,10 @@
   });
 
   c.controller('IndexCtrl', function($scope) {
-
     /*
     /
     */
+
     $scope.title = victory.titleSuffix;
     if (!victory.user.isLogin) {
       return location.href = '#/login';
@@ -34,39 +36,45 @@
   });
 
   c.controller('LoginCtrl', function($scope) {
-
     /*
     /login
     */
+
     return $scope.loginUrl = victory.loginUrl;
   });
 
   c.controller('SettingsMenuCtrl', function($scope, $state) {
-
     /*
     The controller of the settings menu
     */
+
     return $scope.active = $state.current.name;
   });
 
   c.controller('SettingsCtrl', function() {
-
     /*
     /settings
     */
+
     return location.href = '#/settings/applications';
   });
 
   c.controller('SettingsApplicationsCtrl', function($scope, $http) {
-
     /*
     /settings/applications
+    
+    :scope name: new application name
+    :scope description: new application description
+    :scope items: [{id, name, newName, description, newDescription
+                        app_key, create_time, is_owner, members:[{id, name, email, is_owner}]
+                        }]
     */
-    $scope.getApplications = function() {
 
+    $scope.getApplications = function() {
       /*
       get applications
       */
+
       return victory.ajax($http, {
         url: '/settings/applications',
         success: function(data) {
@@ -82,10 +90,10 @@
       });
     };
     $scope.addApplication = function() {
-
       /*
       add an application
       */
+
       return victory.ajax($http, {
         method: 'post',
         url: '/settings/applications',
@@ -107,10 +115,10 @@
       });
     };
     $scope.updateApplication = function(id) {
-
       /*
       update the application.
       */
+
       var updateItem, x;
       updateItem = ((function() {
         var _i, _len, _ref, _results;
@@ -143,10 +151,10 @@
       });
     };
     $scope.deleteApplication = function(id) {
-
       /*
       delete the application
       */
+
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/applications/" + id,
@@ -157,10 +165,10 @@
       });
     };
     $scope.inviteUser = function(id, email) {
-
       /*
       invite an user into the application
       */
+
       return victory.ajax($http, {
         method: 'post',
         url: "/settings/applications/" + id + "/members",
@@ -174,10 +182,10 @@
       });
     };
     $scope.deleteMenter = function(applicationId, memberId) {
-
       /*
       delete the member from the application
       */
+
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/applications/" + applicationId + "/members/" + memberId,
@@ -214,15 +222,15 @@
   });
 
   c.controller('SettingsUsersCtrl', function($scope, $http) {
-
     /*
     /settings/users
     */
-    $scope.getUsers = function() {
 
+    $scope.getUsers = function() {
       /*
       get users
       */
+
       return victory.ajax($http, {
         url: '/settings/users',
         success: function(data) {
@@ -231,10 +239,10 @@
       });
     };
     $scope.addUser = function() {
-
       /*
       add an user
       */
+
       return victory.ajax($http, {
         method: 'post',
         url: '/settings/users',
@@ -248,10 +256,10 @@
       });
     };
     $scope.deleteUser = function(id) {
-
       /*
       delete the user
       */
+
       return victory.ajax($http, {
         method: 'delete',
         url: "/settings/users/" + id,
@@ -276,10 +284,10 @@
   });
 
   c.controller('SettingsProfileCtrl', function($scope, $http) {
-
     /*
     /settings/profile
     */
+
     $scope.getProfile = function() {
       return victory.ajax($http, {
         url: '/settings/profile',
@@ -308,25 +316,74 @@
     return $scope.getProfile();
   });
 
-  c.controller('CrashGroupsCtrl', function($scope, $state) {
-
+  c.controller('GroupedDocumentsCtrl', function($scope, $state, $http) {
     /*
-    /crash_groups
+    /crashes/grouped
+    /exceptions/grouped
+    /logs/grouped
+    
+    :scope documentMode: <crashes/exceptions/logs>
+    :scope selectedApplicationId: application id
+    :scope applications: [{id, name, description,
+                        app_key, create_time, is_owner}]
     */
-  });
 
-  c.controller('ExceptionGroupsCtrl', function($scope, $state) {
+    switch ($state.name) {
+      case 'grouped-exceptions':
+        $scope.documentMode = 'exceptions';
+        break;
+      case 'grouped-logs':
+        $scope.documentMode = 'logs';
+        break;
+      default:
+        $scope.documentMode = 'crashes';
+    }
+    if (sessionStorage.selectedApplication) {
+      $scope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
+    }
+    $scope.getApplications = function() {
+      /*
+      get applications
+      */
 
-    /*
-    /exception_groups
-    */
-  });
+      return victory.ajax($http, {
+        url: '/applications',
+        hideLoadingAfterDone: false,
+        success: function(data) {
+          var x, _ref;
+          $scope.applications = data.items;
+          if (data.items.length > 0) {
+            if (!$scope.selectedApplication || ((_ref = $scope.selectedApplication.id) !== (function() {
+              var _i, _len, _ref1, _results;
+              _ref1 = data.items;
+              _results = [];
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                x = _ref1[_i];
+                _results.push(x.id);
+              }
+              return _results;
+            })())) {
+              $scope.selectedApplication = data.items[0];
+              sessionStorage.selectedApplication = JSON.stringify($scope.selectedApplication);
+            }
+            return $scope.getGroupedDocuments($scope.selectedApplication.id);
+          }
+        }
+      });
+    };
+    $scope.getGroupedDocuments = function(id) {
+      /*
+      get grouped documents by application id
+      */
 
-  c.controller('LogGroupsCtrl', function($scope, $state) {
-
-    /*
-    /log_groups
-    */
+      return victory.ajax($http, {
+        url: "/applications/" + id + "/exceptions/grouped",
+        success: function(data) {
+          return $scope.documentGroups = data.items;
+        }
+      });
+    };
+    return $scope.getApplications();
   });
 
 }).call(this);

@@ -40,6 +40,9 @@
       if (args.success == null) {
         args.success = function() {};
       }
+      if (args.hideLoadingAfterDone == null) {
+        args.hideLoadingAfterDone = true;
+      }
       victory.loading.on('Loading...');
       if (args.beforeSend) {
         args.beforeSend();
@@ -51,12 +54,16 @@
         data: args.data
       });
       h.error(function(data, status, headers, config) {
-        victory.loading.off();
+        if (args.hideLoadingAfterDone) {
+          victory.loading.off();
+        }
         victory.message.error(status);
         return args.error(data, status, headers, config);
       });
       return h.success(function(data, status, headers, config) {
-        victory.loading.off();
+        if (args.hideLoadingAfterDone) {
+          victory.loading.off();
+        }
         if (data.__status__ === 302 && data.location) {
           location.href = data.location;
           return;
@@ -143,16 +150,6 @@
         }, 400, 'easeInExpo', function() {
           return $(this).remove();
         });
-      }
-    },
-    setup: {
-      all: function() {
-        var key;
-        for (key in this) {
-          if (key !== 'all') {
-            this[key]();
-          }
-        }
       }
     }
   };

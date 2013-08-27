@@ -57,17 +57,18 @@ r.config ($stateProvider, $urlRouterProvider) ->
                 controller: 'SettingsMenuCtrl'
 
     # ---------- documents ----------------
-    $stateProvider.state 'crash-groups',
-        url: '/crash_groups'
-        templateUrl: '/views/document_groups.html'
-        controller: 'CrashGroupsCtrl'
+    $stateProvider.state 'grouped-crashes',
+        url: '/crashes/grouped'
+        templateUrl: '/views/documents/grouped.html'
+        controller: 'GroupedDocumentsCtrl'
 
-    $stateProvider.state 'exception-groups',
-        url: '/exception_groups'
-        templateUrl: '/views/document_groups.html'
-        controller: 'ExceptionGroupsCtrl'
+    $stateProvider.state 'grouped-exceptions',
+        url: '/exceptions/grouped'
+        resolve: title: -> 'Exceptions - '
+        templateUrl: '/views/documents/grouped.html'
+        controller: 'GroupedDocumentsCtrl'
 
-    $stateProvider.state 'log-groups',
-        url: '/log_groups'
-        templateUrl: '/views/document_groups.html'
-        controller: 'LogGroupsCtrl'
+    $stateProvider.state 'grouped-logs',
+        url: '/logs/grouped'
+        templateUrl: '/views/documents/grouped.html'
+        controller: 'GroupedDocumentsCtrl'

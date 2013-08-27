@@ -1,12 +1,35 @@
 
 # flask
-from flask import request, render_template, g, abort
+from flask import request, render_template, g, abort, jsonify
 
 # victory
 from application.decorator.auth_decorator import *
 from application.services.document_service import *
 from application import config
 
+
+
+@authorization(UserLevel.normal)
+def get_grouped_documents(application_id=None):
+    """
+    GET applications/<application_id>/<crashes/exceptions/logs>/grouped
+    """
+    # check value
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
+    try:
+        index = int(request.args.get('index'))
+    except Exception:
+        index = 0
+    keyword = request.args.get('q')
+    if keyword is None:
+        keyword = ''
+
+    ds = DocumentService()
+    docs, total = ds.get_document_groups(application_id, keyword, index, DocumentModel.exception)
+    return jsonify({'items': docs})
 
 
 @authorization(UserLevel.normal)

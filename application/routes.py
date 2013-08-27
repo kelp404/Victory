@@ -1,27 +1,33 @@
 
 from application import app
+from handlers.application_handler import *
 from handlers.document_handler import *
-from handlers.settings_handler import *
+from handlers import settings_handler
 from handlers.web_service_handler import *
 
 
 
 # -------- AngularJS ---------
+# Applications
+app.add_url_rule('/applications', 'applications', view_func=get_applications, methods=['GET'])
+# Exception Documents
+app.add_url_rule('/applications/<application_id>/exceptions/grouped', 'application_exception_groups', view_func=get_grouped_documents, methods=['GET'])
+
 # Settings
 # Applications
-app.add_url_rule('/settings/applications', 'settings_applications', view_func=get_applications, methods=['GET'])
-app.add_url_rule('/settings/applications', 'settings_applications_post', view_func=add_application, methods=['POST'])
-app.add_url_rule('/settings/applications/<application_id>', 'settings_application_put', view_func=update_application, methods=['PUT'])
-app.add_url_rule('/settings/applications/<application_id>', 'settings_application_delete', view_func=delete_application, methods=['DELETE'])
-app.add_url_rule('/settings/applications/<application_id>/members', 'settings_application_invite', view_func=invite_user, methods=['POST'])
-app.add_url_rule('/settings/applications/<application_id>/members/<member_id>', 'settings_application_member_delete', view_func=delete_application_member, methods=['DELETE'])
+app.add_url_rule('/settings/applications', 'settings_applications', view_func=settings_handler.get_applications, methods=['GET'])
+app.add_url_rule('/settings/applications', 'settings_applications_post', view_func=settings_handler.add_application, methods=['POST'])
+app.add_url_rule('/settings/applications/<application_id>', 'settings_application_put', view_func=settings_handler.update_application, methods=['PUT'])
+app.add_url_rule('/settings/applications/<application_id>', 'settings_application_delete', view_func=settings_handler.delete_application, methods=['DELETE'])
+app.add_url_rule('/settings/applications/<application_id>/members', 'settings_application_invite', view_func=settings_handler.invite_user, methods=['POST'])
+app.add_url_rule('/settings/applications/<application_id>/members/<member_id>', 'settings_application_member_delete', view_func=settings_handler.delete_application_member, methods=['DELETE'])
 # Users
-app.add_url_rule('/settings/users', 'settings_users', view_func=get_users, methods=['GET'])
-app.add_url_rule('/settings/users', 'settings_user_post', view_func=add_user, methods=['POST'])
-app.add_url_rule('/settings/users/<user_id>', 'settings_user_delete', view_func=delete_user, methods=['DELETE'])
+app.add_url_rule('/settings/users', 'settings_users', view_func=settings_handler.get_users, methods=['GET'])
+app.add_url_rule('/settings/users', 'settings_user_post', view_func=settings_handler.add_user, methods=['POST'])
+app.add_url_rule('/settings/users/<user_id>', 'settings_user_delete', view_func=settings_handler.delete_user, methods=['DELETE'])
 # Profile
-app.add_url_rule('/settings/profile', 'settings_profile', view_func=get_profile, methods=['GET'])
-app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=update_profile, methods=['PUT'])
+app.add_url_rule('/settings/profile', 'settings_profile', view_func=settings_handler.get_profile, methods=['GET'])
+app.add_url_rule('/settings/profile', 'settings_profile_put', view_func=settings_handler.update_profile, methods=['PUT'])
 # ---------------------------
 
 
@@ -40,7 +46,6 @@ app.add_url_rule('/crash_groups/<application_id>', 'crash_group', view_func=docu
 app.add_url_rule('/crash_groups', 'crash_group_default', view_func=document_view, methods=['GET'])
 app.add_url_rule('/exception_groups/<application_id>/<group_tag>', 'exception_list', view_func=document_view, methods=['GET'])
 app.add_url_rule('/exception_groups/<application_id>', 'exception_group', view_func=document_view, methods=['GET'])
-app.add_url_rule('/exception_groups', 'exception_group_default', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups/<application_id>/<group_tag>', 'log_list', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups/<application_id>', 'log_group', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups', 'log_group_default', view_func=document_view, methods=['GET'])

@@ -84,9 +84,9 @@
             {% endif %}
             <ul>
                 {% if user %}
-                    <li ng-class="{ select: select.indexOf('crash') >= 0 }"><a href="#/crash_groups">Crashes</a></li>
-                    <li ng-class="{ select: select.indexOf('exception') >= 0 }"><a href="#/exception_groups">Handled Exceptions</a></li>
-                    <li ng-class="{ select: select.indexOf('log') >= 0 }"><a href="#/log_groups">Logs</a></li>
+                    <li ng-class="{ select: select.indexOf('crash') >= 0 }"><a href="#/crashes/grouped">Crashes</a></li>
+                    <li ng-class="{ select: select.indexOf('exception') >= 0 }"><a href="#/exceptions/grouped">Handled Exceptions</a></li>
+                    <li ng-class="{ select: select.indexOf('log') >= 0 }"><a href="#/logs/grouped">Logs</a></li>
                     <li ng-class="{ select: select.indexOf('settings') >= 0 }"><a href="#/settings/applications">Settings</a></li>
                 {% else %}
                     <li><a href="#/login">Sign in</a></li>

@@ -21,6 +21,7 @@ victory =
         args.data ?= ''
         args.error ?= ->
         args.success ?= ->
+        args.hideLoadingAfterDone ?= true
 
         victory.loading.on 'Loading...'
         args.beforeSend() if args.beforeSend
@@ -28,11 +29,11 @@ victory =
         h = http
             url: args.url, method: args.method, cache: args.ache, data: args.data
         h.error (data, status, headers, config) ->
-            victory.loading.off()
+            victory.loading.off() if args.hideLoadingAfterDone
             victory.message.error status
             args.error(data, status, headers, config)
         h.success (data, status, headers, config) ->
-            victory.loading.off()
+            victory.loading.off() if args.hideLoadingAfterDone
             if data.__status__ == 302 and data.location
                 # redirect
                 location.href = data.location
@@ -88,13 +89,6 @@ victory =
             loading_height = $('#loading').height() + 10
             $('#loading').animate bottom: '-=' + loading_height , 400, 'easeInExpo', ->
                 $(@).remove()
-
-    setup:
-        all: ->
-            for key of @
-                if key != 'all'
-                    @[key]()
-            return
 
 
 window.victory = victory

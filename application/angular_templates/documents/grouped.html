@@ -1,0 +1,17 @@
+<div id="js_content" class="cs_content">
+    <!-- switch applications -->
+    <div class="pull-left">
+        <div class="btn-group">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                {{ selectedApplication.name }}
+                <span ng-hide="selectedApplication">No Application</span>
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li ng-repeat="item in applications">
+                    <a tabindex="-1" href="/applications/{{ item.id }}/{{ documentMode }}/grouped">{{ item.name }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -17,12 +17,12 @@ from base_service import *
 
 
 class ApplicationService(BaseService):
-    def get_applications(self, with_members=False):
+    def get_applications(self, is_return_members=False):
         """
         Get all my applications
 
-        @param with_members True: append application.members
-        @returns [ApplicationModel.dict()] / []
+        :param is_return_members: True: append application.members
+        :return: [ApplicationModel.dict()] / []
         """
         if g.user.level == UserLevel.root:
             owner_apps = db.GqlQuery('select * from ApplicationModel order by create_time')
@@ -35,7 +35,7 @@ class ApplicationService(BaseService):
         for item in owner_apps:
             app = item.dict()
             app['is_owner'] = True
-            if with_members:
+            if is_return_members:
                 # add user info to the application
                 members = [self.__get_member_for_application(g.user, True)]
                 if g.user.key().id() != item.owner:
@@ -49,7 +49,7 @@ class ApplicationService(BaseService):
         for item in viewer_apps:
             app = item.dict()
             app['is_owner'] = False
-            if with_members:
+            if is_return_members:
                 # add user info of the application
                 owner = UserModel().get_by_id(item.owner)
                 members = [self.__get_member_for_application(owner, False)]
@@ -71,9 +71,9 @@ class ApplicationService(BaseService):
         """
         Check the application is mine
 
-        @param application_id application id
-        @param check_is_owner True: am I owner? / False: am I owner or viewer?
-        @returns True / False
+        :param application_id: application id
+        :param check_is_owner: True: am I owner? / False: am I owner or viewer?
+        :return: True / False
         """
         try:
             application_id = long(application_id)

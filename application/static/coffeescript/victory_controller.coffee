@@ -3,6 +3,8 @@ c = angular.module 'victory.controller', []
 c.controller 'NavigationCtrl', ($scope) ->
     ###
     Navigation Controller
+
+    :scope select: selected ui-router node name
     ###
     delay = (ms, func) -> setTimeout func, ms
 
@@ -44,6 +46,12 @@ c.controller 'SettingsCtrl', ->
 c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
     ###
     /settings/applications
+
+    :scope name: new application name
+    :scope description: new application description
+    :scope items: [{id, name, newName, description, newDescription
+                        app_key, create_time, is_owner, members:[{id, name, email, is_owner}]
+                        }]
     ###
     $scope.getApplications = ->
         ###
@@ -160,6 +168,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
             success: ->
                 $scope.items = (x for x in $scope.items when x.id != id)
     $scope.getUsers()
+
 c.controller 'SettingsProfileCtrl', ($scope, $http) ->
     ###
     /settings/profile
@@ -183,20 +192,48 @@ c.controller 'SettingsProfileCtrl', ($scope, $http) ->
     $scope.getProfile()
 
 # ----------- documents ----------------
-c.controller 'CrashGroupsCtrl', ($scope, $state) ->
+c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
     ###
-    /crash_groups
-    ###
-    return
+    /crashes/grouped
+    /exceptions/grouped
+    /logs/grouped
 
-c.controller 'ExceptionGroupsCtrl', ($scope, $state) ->
+    :scope documentMode: <crashes/exceptions/logs>
+    :scope selectedApplicationId: application id
+    :scope applications: [{id, name, description,
+                        app_key, create_time, is_owner}]
     ###
-    /exception_groups
-    ###
-    return
+    switch $state.name
+        when 'grouped-exceptions' then $scope.documentMode = 'exceptions'
+        when 'grouped-logs' then $scope.documentMode = 'logs'
+        else $scope.documentMode = 'crashes'
 
-c.controller 'LogGroupsCtrl', ($scope, $state) ->
-    ###
-    /log_groups
-    ###
-    return
+    if sessionStorage.selectedApplication
+        $scope.selectedApplication = JSON.parse sessionStorage.selectedApplication
+    $scope.getApplications = ->
+        ###
+        get applications
+        ###
+        victory.ajax $http,
+            url: '/applications'
+            hideLoadingAfterDone: false
+            success: (data) ->
+                $scope.applications = data.items
+                if data.items.length > 0
+                    if not $scope.selectedApplication or $scope.selectedApplication.id not in [x.id for x in data.items]
+                        # select the first application
+                        $scope.selectedApplication = data.items[0]
+                        sessionStorage.selectedApplication = JSON.stringify $scope.selectedApplication
+                    # load document groups by application id
+                    $scope.getGroupedDocuments $scope.selectedApplication.id
+
+    $scope.getGroupedDocuments = (id) ->
+        ###
+        get grouped documents by application id
+        ###
+        victory.ajax $http,
+            url: "/applications/#{id}/exceptions/grouped"
+            success: (data) ->
+                $scope.documentGroups = data.items
+
+    $scope.getApplications()
