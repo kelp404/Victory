@@ -1,5 +1,5 @@
 
-r = angular.module 'victory', ['victory.controller', 'victory.setup', 'ui.router', 'ui.state']
+r = angular.module 'victory', ['victory.controller', 'victory.directive', 'ui.router', 'ui.state']
 r.run ($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams

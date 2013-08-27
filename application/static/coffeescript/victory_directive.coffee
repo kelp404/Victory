@@ -1,7 +1,7 @@
 
-s = angular.module 'victory.setup', []
+v = angular.module 'victory.directive', []
 
-s.directive 'vTooltip', ->
+v.directive 'vTooltip', ->
     ###
     setup tooltip
     ###
@@ -10,14 +10,14 @@ s.directive 'vTooltip', ->
             $(element).attr 'title', scope.$eval(attrs.vTooltip)
         $(element).tooltip()
 
-s.directive 'vFocus', ->
+v.directive 'vFocus', ->
     ###
     setup focus
     ###
     (scope, element, attrs) ->
         $(element).select()
 
-s.directive 'vModal', ->
+v.directive 'vModal', ->
     ###
     setup modal show
     ###
@@ -25,7 +25,7 @@ s.directive 'vModal', ->
         $(element).on 'shown', ->
             $(@).find('input:first').select()
 
-s.directive 'vEnter', ->
+v.directive 'vEnter', ->
     ###
     setup key enter derective
     ###
@@ -36,7 +36,7 @@ s.directive 'vEnter', ->
                     scope.$eval attrs.vEnter
                 event.preventDefault()
 
-s.directive 'vNavigation', ->
+v.directive 'vNavigation', ->
     ###
     setup navigation
     ###
