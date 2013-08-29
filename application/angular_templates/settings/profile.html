@@ -6,7 +6,7 @@
             <div class="controls">
                 <label for="name">Name</label>
                 <input ng-model="profile.name" v-focus type="text" class="input-xlarge" id="name" placeholder="Your Name"/>
-                <label ng-show="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
+                <label ng-if="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
             </div>
         </div>
 

@@ -18,7 +18,7 @@
                 <label class="control-label" for="name">Name</label>
                 <div class="controls">
                     <input ng-model="name" id="name" name="name" class="input-xlarge" type="text"/>
-                    <label ng-show="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
+                    <label ng-if="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
                 </div>
             </div>
 
@@ -26,7 +26,7 @@
                 <label class="control-label" for="description">Description</label>
                 <div class="controls">
                     <input ng-model="description" id="description" name="description" class="span6" type="text"/>
-                    <label ng-show="errors.description" for="name" class="help-inline">{{ errors.description }}</label>
+                    <label ng-if="errors.description" for="name" class="help-inline">{{ errors.description }}</label>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     <div ng-if="item.is_owner" ng-class="{error: item.errors.name}" class="control-group">
                         <div class="controls">
                             <input ng-model="item.newName" type="text" name="name"/>
-                            <label ng-show="item.errors.name" class="help-inline">{{ item.errors.name }}</label>
+                            <label ng-if="item.errors.name" class="help-inline">{{ item.errors.name }}</label>
                         </div>
                     </div>
                     <div ng-hide="item.is_owner">{{ item.name }}</div>
@@ -71,7 +71,7 @@
                     <div ng-if="item.is_owner" ng-class="{error: item.errors.description}" class="control-group">
                         <div class="controls">
                             <input ng-model="item.newDescription" type="text" name="description" class="input-xlarge"/>
-                            <label ng-show="item.errors.description" class="help-inline">{{ item.errors.description }}</label>
+                            <label ng-if="item.errors.description" class="help-inline">{{ item.errors.description }}</label>
                         </div>
                     </div>
                     <div ng-hide="item.is_owner">{{ item.description }}</div>
