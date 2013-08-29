@@ -55,7 +55,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
     ###
     $scope.getApplications = ->
         ###
-        get applications
+        Get applications.
         ###
         victory.ajax $http,
             url: '/settings/applications'
@@ -67,7 +67,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 $scope.items = data.items
     $scope.addApplication = ->
         ###
-        add an application
+        Add an application.
         ###
         victory.ajax $http,
             method: 'post'
@@ -85,7 +85,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 $scope.getApplications()
     $scope.updateApplication = (id) ->
         ###
-        update the application.
+        Update the application.
         ###
         updateItem = (x for x in $scope.items when x.id == id)[0]
         victory.ajax $http,
@@ -102,7 +102,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 $scope.getApplications()
     $scope.deleteApplication = (id) ->
         ###
-        delete the application
+        Delete the application.
         ###
         victory.ajax $http,
             method: 'delete'
@@ -112,7 +112,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 $scope.getApplications()
     $scope.inviteUser = (id, email) ->
         ###
-        invite an user into the application
+        Invite an user into the application.
         ###
         victory.ajax $http,
             method: 'post'
@@ -124,7 +124,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 $scope.getApplications()
     $scope.deleteMenter = (applicationId, memberId) ->
         ###
-        delete the member from the application
+        Delete the member from the application.
         ###
         victory.ajax $http,
             method: 'delete'
@@ -140,7 +140,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
     ###
     $scope.getUsers = ->
         ###
-        get users
+        Get users.
         ###
         victory.ajax $http,
             url: '/settings/users'
@@ -148,7 +148,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
                 $scope.items = data.items
     $scope.addUser = ->
         ###
-        add an user
+        Add an user.
         ###
         victory.ajax $http,
             method: 'post'
@@ -160,7 +160,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
                 $scope.getUsers()
     $scope.deleteUser = (id) ->
         ###
-        delete the user
+        Delete the user.
         ###
         victory.ajax $http,
             method: 'delete'
@@ -204,16 +204,19 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
                         app_key, create_time, is_owner}]
     :scope documents: [{group_tag, create_time, name, email, title, description, times}]
     ###
+    # setup documentMode
     switch $state.current.name
         when 'grouped-exceptions' then $scope.documentMode = 'exceptions'
         when 'grouped-logs' then $scope.documentMode = 'logs'
         else $scope.documentMode = 'crashes'
 
+    # setup selectedApplication
     if sessionStorage.selectedApplication
         $scope.selectedApplication = JSON.parse sessionStorage.selectedApplication
+
     $scope.getApplications = ->
         ###
-        get applications
+        Get applications
         ###
         victory.ajax $http,
             url: '/applications'
@@ -232,12 +235,36 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
 
     $scope.getGroupedDocuments = (id) ->
         ###
-        get grouped documents by application id
+        Get grouped documents by application id.
         ###
         victory.ajax $http,
-            url: "/applications/#{id}/exceptions/grouped"
+            url: "/applications/#{id}/#{$scope.documentMode}/grouped"
             success: (data) ->
-                $scope.documentGroups = data.items
+                $scope.groupedDocuments = data.items
                 $scope.documentTotal = data.total
+
+    $scope.getGroupedDocumentHref = (groupedDocument) ->
+        ###
+        Get the href of the grouped document.
+        :param groupedDocument: grouped document
+        :return: "#/applications/{{application_id}}/{{documentMode}}/{{group_tag}}" / "#document_{{group_tag}}"
+        ###
+        if groupedDocument.items > 1
+            # documents page
+            return "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/#{groupedDocument.group_tag}"
+        else
+            # modal
+            return "#document_#{groupedDocument.group_tag}"
+
+    $scope.modal = (groupedDocument) ->
+        ###
+        Check the grouped document should show the bootstrap modal window.
+        :param groupedDocument: grouped document
+        :return: "modal" / ""
+        ###
+        if groupedDocument.times > 1
+            return ""
+        else
+            return "modal"
 
     $scope.getApplications()

@@ -29,6 +29,12 @@ def get_grouped_documents(application_id=None):
 
     ds = DocumentService()
     docs, total = ds.get_document_groups(application_id, keyword, index, DocumentModel.exception)
+
+    for item in docs:
+        if item['times'] == 1:
+            # add detail info
+            item.update(ds.get_last_document(application_id, item['group_tag'], DocumentModel.exception))
+
     return jsonify({'items': docs, 'total': total})
 
 

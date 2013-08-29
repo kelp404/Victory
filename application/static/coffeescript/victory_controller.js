@@ -72,7 +72,7 @@
 
     $scope.getApplications = function() {
       /*
-      get applications
+      Get applications.
       */
 
       return victory.ajax($http, {
@@ -91,7 +91,7 @@
     };
     $scope.addApplication = function() {
       /*
-      add an application
+      Add an application.
       */
 
       return victory.ajax($http, {
@@ -116,7 +116,7 @@
     };
     $scope.updateApplication = function(id) {
       /*
-      update the application.
+      Update the application.
       */
 
       var updateItem, x;
@@ -152,7 +152,7 @@
     };
     $scope.deleteApplication = function(id) {
       /*
-      delete the application
+      Delete the application.
       */
 
       return victory.ajax($http, {
@@ -166,7 +166,7 @@
     };
     $scope.inviteUser = function(id, email) {
       /*
-      invite an user into the application
+      Invite an user into the application.
       */
 
       return victory.ajax($http, {
@@ -183,7 +183,7 @@
     };
     $scope.deleteMenter = function(applicationId, memberId) {
       /*
-      delete the member from the application
+      Delete the member from the application.
       */
 
       return victory.ajax($http, {
@@ -228,7 +228,7 @@
 
     $scope.getUsers = function() {
       /*
-      get users
+      Get users.
       */
 
       return victory.ajax($http, {
@@ -240,7 +240,7 @@
     };
     $scope.addUser = function() {
       /*
-      add an user
+      Add an user.
       */
 
       return victory.ajax($http, {
@@ -257,7 +257,7 @@
     };
     $scope.deleteUser = function(id) {
       /*
-      delete the user
+      Delete the user.
       */
 
       return victory.ajax($http, {
@@ -344,7 +344,7 @@
     }
     $scope.getApplications = function() {
       /*
-      get applications
+      Get applications
       */
 
       return victory.ajax($http, {
@@ -376,16 +376,42 @@
     };
     $scope.getGroupedDocuments = function(id) {
       /*
-      get grouped documents by application id
+      Get grouped documents by application id.
       */
 
       return victory.ajax($http, {
-        url: "/applications/" + id + "/exceptions/grouped",
+        url: "/applications/" + id + "/" + $scope.documentMode + "/grouped",
         success: function(data) {
-          $scope.documentGroups = data.items;
+          $scope.groupedDocuments = data.items;
           return $scope.documentTotal = data.total;
         }
       });
+    };
+    $scope.getGroupedDocumentHref = function(groupedDocument) {
+      /*
+      Get the href of the grouped document.
+      :param groupedDocument: grouped document
+      :return: "#/applications/{{application_id}}/{{documentMode}}/{{group_tag}}" / "#document_{{group_tag}}"
+      */
+
+      if (groupedDocument.items > 1) {
+        return "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/" + groupedDocument.group_tag;
+      } else {
+        return "#document_" + groupedDocument.group_tag;
+      }
+    };
+    $scope.modal = function(groupedDocument) {
+      /*
+      Check the grouped document should show the bootstrap modal window.
+      :param groupedDocument: grouped document
+      :return: "modal" / ""
+      */
+
+      if (groupedDocument.times > 1) {
+        return "";
+      } else {
+        return "modal";
+      }
     };
     return $scope.getApplications();
   });

@@ -2,14 +2,14 @@
     <!-- switch applications -->
     <div class="pull-left">
         <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="">
                 {{ selectedApplication.name }}
                 <span ng-hide="selectedApplication">No Application</span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
                 <li ng-repeat="item in applications">
-                    <a tabindex="-1" href="/applications/{{ item.id }}/{{ documentMode }}/grouped">{{ item.name }}</a>
+                    <a tabindex="-1" href="#/applications/{{ item.id }}/{{ documentMode }}/grouped">{{ item.name }}</a>
                 </li>
             </ul>
         </div>
@@ -22,4 +22,81 @@
         <li ng-if="documentMode == 'crashes'" class="active">Crashes</li>
     </ul>
     <div class="cs_clear"></div>
+
+    <!-- content table: exception, log -->
+    <table ng-if="documentMode != 'crashes'" class="table table-bordered table-hover table-content table-pointer">
+        <thead>
+            <tr>
+                <th class="span2">User Name</th>
+                <th class="span3">Title</th>
+                <th class="span6">Description</th>
+                <th class="span2">Last Occurred</th>
+                <th width="70"><div class="text-right">Times/Day</div></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentHref(item) }}" data-toggle="{{ modal(item) }}">
+                <td><span v-tooltip="item.email">{{ item.name }}</span></td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.create_time|date:'yyyy-MM-dd hh:mm a' }}</td>
+                <td><div class="text-right">{{ item.times }}</div></td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- content table: crash -->
+    <table ng-if="documentMode == 'crashes'" class="table table-bordered table-hover table-content table-pointer">
+        <thead>
+            <tr>
+                <th class="span2">User Name</th>
+                <th>Title</th>
+                <th class="span2">Last Occurred</th>
+                <th width="70"><div class="text-right">Times/Day</div></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentHref(item) }}" data-toggle="{{ modal(item) }}">
+                <td><span v-tooltip="item.email">{{ item.name }}</span></td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.create_time|date:'yyyy-MM-dd hh:mm a' }}</td>
+                <td><div class="text-right">{{ item.times }}</div></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- modal -->
+    <div ng-repeat="item in groupedDocuments" id="document_{{ item.group_tag }}" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 ng-if="documentMode == 'exceptions'">Handled Exception</h3>
+            <h3 ng-if="documentMode == 'logs'" class="active">Log</h3>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr><td class="span2">Application</td><td>{{ selectedApplication.name }}</td></tr>
+                    <tr ng-if="item.version"><td>Version</td><td>{{ item.version }}</td></tr>
+                    <tr><td>Title</td><td>{{ item.title }}</td></tr>
+                    <tr ng-if="item.description"><td>Description</td><td><pre>{{ item.description }}</pre></td></tr>
+                    <tr><td>Datetime</td><td>{{ item.create_time|date:'yyyy-MM-dd hh:mm:ss a' }}</td></tr>
+                    <tr ng-if="item.status"><td>Status</td><td>{{ item.status }}</td></tr>
+                    <tr ng-if="item.method"><td>Method</td><td>{{ item.method }}</td></tr>
+                    <tr ng-if="item.url"><td>URL</td><td>{{ item.url }}</td></tr>
+                    <tr ng-if="item.timeout"><td>Timeout</td><td>{{ item.timeout }}</td></tr>
+                    <tr ng-if="item.parameters"><td>Parameters</td><td>{{ item.parameters }}</td></tr>
+                    <tr ng-if="item.device"><td>Device</td><td>{{ item.device }}</td></tr>
+                    <tr ng-if="item.os_version"><td>OS Version</td><td>{{ item.os_version }}</td></tr>
+                    <tr ng-if="item.name"><td>Name</td><td>{{ item.name }}</td></tr>
+                    <tr ng-if="item.email"><td>Email</td><td>{{ item.email }}</td></tr>
+                    <tr ng-if="item.access_token"><td>Access Token</td><td>{{ item.access_token }}</td></tr>
+                    <tr><td>IP Address</td><td>{{ item.ip }}</td></tr>
+                    <tr><td>User-Agent</td><td>{{ item.user_agent }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </div>
 </div>

@@ -149,26 +149,32 @@ class DocumentService(BaseService):
         :param application_id: application id
         :param group_tag: group tag
         :param document_model: document type
-        :return: document / None
+        :return: document
         """
-        try: application_id = long(application_id)
-        except: return None
-        if group_tag is None: return None
+        try:
+            application_id = long(application_id)
+        except:
+            return abort(400)
+        if group_tag is None:
+            return abort(404)
 
         # check auth
         aps = ApplicationService()
         if not aps.is_my_application(application_id):
-            return None
+            return abort(403)
 
-        cache_key = MemcacheKey.document_detail(application_id, group_tag, DocumentModel.exception)
+        cache_key = MemcacheKey.document_detail(application_id, group_tag, document_model)
         cache_value = memcache.get(key=cache_key)
-        if cache_value: return cache_value  # return data from cache
+        if cache_value:
+            # return data from cache
+            return cache_value
+
         if document_model == DocumentModel.exception:
-            documents = db.GqlQuery('select * from ExceptionModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
+            documents = ExceptionModel().gql('where group_tag = :1 order by create_time DESC limit 1', group_tag)
         elif document_model == DocumentModel.log:
-            documents = db.GqlQuery('select * from LogModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
+            documents = LogModel().gql('where group_tag = :1 order by create_time DESC limit 1', group_tag)
         else:
-            documents = db.GqlQuery('select * from CrashModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
+            documents = CrashModel().gql('where group_tag = :1 order by create_time DESC limit 1', group_tag)
 
         for document in documents.fetch(1):
             cache_value = document.dict()
@@ -176,7 +182,7 @@ class DocumentService(BaseService):
             memcache.set(key=cache_key, value=cache_value, time=18000)
             return cache_value
 
-        return None
+        return abort(404)
 
     def add_document(self, key, document, document_model):
         """
