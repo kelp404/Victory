@@ -202,8 +202,9 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
     :scope selectedApplicationId: application id
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
+    :scope documents: [{group_tag, create_time, name, email, title, description, times}]
     ###
-    switch $state.name
+    switch $state.current.name
         when 'grouped-exceptions' then $scope.documentMode = 'exceptions'
         when 'grouped-logs' then $scope.documentMode = 'logs'
         else $scope.documentMode = 'crashes'
@@ -226,6 +227,8 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
                         sessionStorage.selectedApplication = JSON.stringify $scope.selectedApplication
                     # load document groups by application id
                     $scope.getGroupedDocuments $scope.selectedApplication.id
+                else
+                    victory.loading.off()
 
     $scope.getGroupedDocuments = (id) ->
         ###
@@ -235,5 +238,6 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
             url: "/applications/#{id}/exceptions/grouped"
             success: (data) ->
                 $scope.documentGroups = data.items
+                $scope.documentTotal = data.total
 
     $scope.getApplications()

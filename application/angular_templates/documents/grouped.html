@@ -14,4 +14,12 @@
             </ul>
         </div>
     </div>
+
+    <!-- Breadcrumb -->
+    <ul class="cs_breadcrumb breadcrumb pull-left">
+        <li ng-if="documentMode == 'exceptions'" class="active">Handled Exceptions</li>
+        <li ng-if="documentMode == 'logs'" class="active">Logs</li>
+        <li ng-if="documentMode == 'crashes'" class="active">Crashes</li>
+    </ul>
+    <div class="cs_clear"></div>
 </div>

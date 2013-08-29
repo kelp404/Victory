@@ -326,9 +326,10 @@
     :scope selectedApplicationId: application id
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
+    :scope documents: [{group_tag, create_time, name, email, title, description, times}]
     */
 
-    switch ($state.name) {
+    switch ($state.current.name) {
       case 'grouped-exceptions':
         $scope.documentMode = 'exceptions';
         break;
@@ -367,6 +368,8 @@
               sessionStorage.selectedApplication = JSON.stringify($scope.selectedApplication);
             }
             return $scope.getGroupedDocuments($scope.selectedApplication.id);
+          } else {
+            return victory.loading.off();
           }
         }
       });
@@ -379,7 +382,8 @@
       return victory.ajax($http, {
         url: "/applications/" + id + "/exceptions/grouped",
         success: function(data) {
-          return $scope.documentGroups = data.items;
+          $scope.documentGroups = data.items;
+          return $scope.documentTotal = data.total;
         }
       });
     };

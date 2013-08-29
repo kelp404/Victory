@@ -5,10 +5,10 @@
   v = angular.module('victory.directive', []);
 
   v.directive('vTooltip', function() {
-
     /*
     setup tooltip
     */
+
     return function(scope, element, attrs) {
       if (attrs.vTooltip) {
         $(element).attr('title', scope.$eval(attrs.vTooltip));
@@ -18,20 +18,20 @@
   });
 
   v.directive('vFocus', function() {
-
     /*
     setup focus
     */
+
     return function(scope, element, attrs) {
       return $(element).select();
     };
   });
 
   v.directive('vModal', function() {
-
     /*
     setup modal show
     */
+
     return function(scope, element, attrs) {
       return $(element).on('shown', function() {
         return $(this).find('input:first').select();
@@ -40,10 +40,10 @@
   });
 
   v.directive('vEnter', function() {
-
     /*
     setup key enter derective
     */
+
     return function(scope, element, attrs) {
       return element.bind("keydown keypress", function(event) {
         if (event.which === 13) {
@@ -57,10 +57,10 @@
   });
 
   v.directive('vNavigation', function() {
-
     /*
     setup navigation
     */
+
     return function(scope, element, attrs) {
       var $selected, index, match, noop;
       if ($(element).find('li.select').length > 0) {

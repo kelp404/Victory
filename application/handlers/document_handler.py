@@ -29,7 +29,7 @@ def get_grouped_documents(application_id=None):
 
     ds = DocumentService()
     docs, total = ds.get_document_groups(application_id, keyword, index, DocumentModel.exception)
-    return jsonify({'items': docs})
+    return jsonify({'items': docs, 'total': total})
 
 
 @authorization(UserLevel.normal)
