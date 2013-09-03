@@ -1,4 +1,7 @@
 
+# default page size
+pageSize = 20
+
 c = angular.module 'victory.controller', []
 c.controller 'NavigationCtrl', ($scope) ->
     ###
@@ -192,7 +195,7 @@ c.controller 'SettingsProfileCtrl', ($scope, $http) ->
     $scope.getProfile()
 
 # ----------- documents ----------------
-c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
+c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
     ###
     /crashes/grouped
     /exceptions/grouped
@@ -200,15 +203,20 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
 
     :scope documentMode: <crashes/exceptions/logs>
     :scope selectedApplicationId: application id
+    :scope searchKeyword: search keywords
+    :scope page: current page
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
     :scope documents: [{group_tag, create_time, name, email, title, description, times}]
+    :scope page: {total, index, max}
     ###
     # setup documentMode
-    switch $state.current.name
-        when 'grouped-exceptions' then $scope.documentMode = 'exceptions'
-        when 'grouped-logs' then $scope.documentMode = 'logs'
-        else $scope.documentMode = 'crashes'
+    if $state.current.name.indexOf('exception')
+        $scope.documentMode = 'exceptions'
+    else if $state.current.name.indexOf('log')
+        $scope.documentMode = 'logs'
+    else
+        $scope.documentMode = 'crashes'
 
     # setup selectedApplication
     if sessionStorage.selectedApplication
@@ -241,7 +249,23 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
             url: "/applications/#{id}/#{$scope.documentMode}/grouped"
             success: (data) ->
                 $scope.groupedDocuments = data.items
-                $scope.documentTotal = data.total
+                $scope.page =
+                    total: data.total
+                    index: 0
+                    max: (data.total - 1) / pageSize
+                    hasPrevious: false
+                    hasNext: pageSize < data.total
+
+    $scope.searchGroupedDocuments = (keyword) ->
+        ###
+        Search grouped documents with keywords.
+        ###
+        victory.ajax $http,
+            url: "/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped/?q=#{keyword}"
+            success: (data) ->
+                console.log 'success'
+    $scope.gotoSearchPage = (keyword) ->
+        location.href = "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped/q/#{keyword}"
 
     $scope.getGroupedDocumentHref = (groupedDocument) ->
         ###
@@ -267,4 +291,8 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
         else
             return "modal"
 
-    $scope.getApplications()
+    if $stateParams.keyword
+        $scope.keyword = $stateParams.keyword
+        $scope.searchGroupedDocuments $stateParams.keyword
+    else
+        $scope.getApplications()

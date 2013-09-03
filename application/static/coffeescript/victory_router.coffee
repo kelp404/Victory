@@ -67,6 +67,11 @@ r.config ($stateProvider, $urlRouterProvider) ->
         resolve: title: -> 'Exceptions - '
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
+    $stateProvider.state 'grouped-exceptions-search',
+        url: '/applications/:applicationId/exceptions/grouped/q/:keyword'
+        resolve: title: -> 'Exceptions - '
+        templateUrl: '/views/documents/grouped.html'
+        controller: 'GroupedDocumentsCtrl'
 
     $stateProvider.state 'grouped-logs',
         url: '/logs/grouped'

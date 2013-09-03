@@ -104,6 +104,16 @@
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
     });
+    $stateProvider.state('grouped-exceptions-search', {
+      url: '/applications/:applicationId/exceptions/grouped/q/:keyword',
+      resolve: {
+        title: function() {
+          return 'Exceptions - ';
+        }
+      },
+      templateUrl: '/views/documents/grouped.html',
+      controller: 'GroupedDocumentsCtrl'
+    });
     return $stateProvider.state('grouped-logs', {
       url: '/logs/grouped',
       templateUrl: '/views/documents/grouped.html',

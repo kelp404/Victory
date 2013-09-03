@@ -1,4 +1,18 @@
 <div id="js_content" class="cs_content">
+    <!-- search -->
+    <form ng-submit="gotoSearchPage(keyword)" class="input-append pull-right">
+        <input ng-model="keyword" v-focus class="span3" type="text" placeholder="search"/>
+        <input type="submit" class="btn" value="Search" />
+
+        <!-- previous page -->
+        <a ng-if="!page.hasPrevious" href="#disabled" class="btn disabled" onclick="return false;">«</a>
+        <a ng-if="page.hasPrevious" href="?index={{ page.index - 1 }}&q={{ keyword }}" class="btn">«</a>
+
+        <!-- next page -->
+        <a ng-if="!page.hasNext" href="#disabled" class="btn disabled" onclick="return false;">»</a>
+        <a ng-if="page.hasNext" href="?index={{ page.index + 1 }}&q={{ keyword }}" class="btn">»</a>
+    </form>
+
     <!-- switch applications -->
     <div class="pull-left">
         <div class="btn-group">
