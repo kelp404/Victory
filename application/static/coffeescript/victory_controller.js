@@ -394,7 +394,7 @@
       :return: "#/applications/{{application_id}}/{{documentMode}}/{{group_tag}}" / "#document_{{group_tag}}"
       */
 
-      if (groupedDocument.items > 1) {
+      if (groupedDocument.times > 1) {
         return "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/" + groupedDocument.group_tag;
       } else {
         return "#document_" + groupedDocument.group_tag;

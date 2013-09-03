@@ -249,7 +249,7 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $http) ->
         :param groupedDocument: grouped document
         :return: "#/applications/{{application_id}}/{{documentMode}}/{{group_tag}}" / "#document_{{group_tag}}"
         ###
-        if groupedDocument.items > 1
+        if groupedDocument.times > 1
             # documents page
             return "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/#{groupedDocument.group_tag}"
         else
