@@ -105,7 +105,7 @@
       controller: 'GroupedDocumentsCtrl'
     });
     $stateProvider.state('grouped-exceptions-search', {
-      url: '/applications/:applicationId/exceptions/grouped/q/:keyword',
+      url: '/applications/:applicationId/exceptions/grouped/:keyword/:index',
       resolve: {
         title: function() {
           return 'Exceptions - ';

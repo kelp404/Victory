@@ -5,12 +5,12 @@
         <input type="submit" class="btn" value="Search" />
 
         <!-- previous page -->
+        <a ng-if="page.hasPrevious" href="{{ getGroupedDocumentsUrl(keyword, page.index - 1) }}" class="btn">«</a>
         <a ng-if="!page.hasPrevious" href="#disabled" class="btn disabled" onclick="return false;">«</a>
-        <a ng-if="page.hasPrevious" href="?index={{ page.index - 1 }}&q={{ keyword }}" class="btn">«</a>
 
         <!-- next page -->
+        <a ng-if="page.hasNext" href="{{ getGroupedDocumentsUrl(keyword, page.index + 1) }}" class="btn">»</a>
         <a ng-if="!page.hasNext" href="#disabled" class="btn disabled" onclick="return false;">»</a>
-        <a ng-if="page.hasNext" href="?index={{ page.index + 1 }}&q={{ keyword }}" class="btn">»</a>
     </form>
 
     <!-- switch applications -->
@@ -49,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentHref(item) }}" data-toggle="{{ modal(item) }}">
+            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentUrl(item) }}" data-toggle="{{ modal(item) }}">
                 <td><span v-tooltip="item.email">{{ item.name }}</span></td>
                 <td>{{ item.title }}</td>
                 <td>{{ item.description }}</td>
@@ -69,7 +69,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentHref(item) }}" data-toggle="{{ modal(item) }}">
+            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentUrl(item) }}" data-toggle="{{ modal(item) }}">
                 <td><span v-tooltip="item.email">{{ item.name }}</span></td>
                 <td>{{ item.title }}</td>
                 <td>{{ item.description }}</td>
@@ -113,4 +113,25 @@
             <a class="btn" data-dismiss="modal">Close</a>
         </div>
     </div>
+
+    <!-- pager -->
+    <div class="pagination pull-right">
+        <ul>
+            <li ng-if="page.hasPrevious"><a href="{{ getGroupedDocumentsUrl(keyword, page.index - 1) }}">«</a></li>
+            <li ng-if="!page.hasPrevious" class="disabled"><a href="#disabled" onclick="return false;">«</a></li>
+
+            <li ng-if="page.index - 3 >= 0"><a href="{{ getGroupedDocumentsUrl(keyword, page.index - 3) }}">{{ index() - 2 }}</a></li>
+            <li ng-if="page.index - 2 >= 0"><a href="{{ getGroupedDocumentsUrl(keyword, page.index - 2) }}">{{ index() - 1 }}</a></li>
+            <li ng-if="page.index - 1 >= 0"><a href="{{ getGroupedDocumentsUrl(keyword, page.index - 1) }}">{{ index() }}</a></li>
+            <li class="disabled"><a href="#disabled" onclick="return false;">{{ index() + 1 }}</a></li>
+            <li ng-if="page.index + 1 <= page.max"><a href="{{ getGroupedDocumentsUrl(keyword, page.index + 1) }}">{{ index() + 2 }}</a></li>
+            <li ng-if="page.index + 2 <= page.max"><a href="{{ getGroupedDocumentsUrl(keyword, page.index + 2) }}">{{ index() + 3 }}</a></li>
+            <li ng-if="page.index + 3 <= page.max"><a href="{{ getGroupedDocumentsUrl(keyword, page.index + 3) }}">{{ index() + 4 }}</a></li>
+
+            <li ng-if="page.hasNext"><a href="{{ getGroupedDocumentsUrl(keyword, page.index + 1) }}">»</a></li>
+            <li ng-if="!page.hasNext" class="disabled"><a href="#disabled" onclick="return false;">»</a></li>
+        </ul>
+    </div>
+
+    <div class="cs_clear"></div>
 </div>

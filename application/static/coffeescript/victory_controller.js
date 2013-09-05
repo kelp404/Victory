@@ -320,13 +320,10 @@
 
   c.controller('GroupedDocumentsCtrl', function($scope, $state, $stateParams, $http) {
     /*
-    /crashes/grouped
-    /exceptions/grouped
-    /logs/grouped
-    
     :scope documentMode: <crashes/exceptions/logs>
     :scope selectedApplication: the current application
     :scope keyword: search keywords
+    :scope index: page index
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
     :scope groupedDocuments: [{group_tag, create_time, name, email, title, description, times}]
@@ -340,6 +337,15 @@
     } else {
       $scope.documentMode = 'crashes';
     }
+    $scope.index = function() {
+      /*
+      Get parseInt(page.index)
+      */
+
+      var index;
+      index = $scope.page ? $scope.page.index : 0;
+      return parseInt(index);
+    };
     if (sessionStorage.selectedApplication) {
       $scope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
     }
@@ -368,62 +374,59 @@
               $scope.selectedApplication = data.items[0];
               sessionStorage.selectedApplication = JSON.stringify($scope.selectedApplication);
             }
-            return $scope.getGroupedDocuments($scope.selectedApplication.id);
+            return $scope.searchGroupedDocuments('', $stateParams.index);
           } else {
             return victory.loading.off();
           }
         }
       });
     };
-    $scope.getGroupedDocuments = function(id) {
-      /*
-      Get grouped documents by application id.
-      */
-
-      return victory.ajax($http, {
-        url: "/applications/" + id + "/" + $scope.documentMode + "/grouped",
-        success: function(data) {
-          return $scope.setGroupedDocuments(data.items, data.total);
-        }
-      });
-    };
-    $scope.searchGroupedDocuments = function(keyword) {
+    $scope.searchGroupedDocuments = function(keyword, index) {
+      if (keyword == null) {
+        keyword = '';
+      }
+      if (index == null) {
+        index = 0;
+      }
       /*
       Search grouped documents with keywords.
       */
 
       return victory.ajax($http, {
-        url: "/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped?q=" + keyword,
+        url: "/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped?q=" + keyword + "&index=" + index,
         success: function(data) {
-          return $scope.setGroupedDocuments(data.items, data.total);
+          $scope.groupedDocuments = data.items;
+          return $scope.page = {
+            total: data.total,
+            index: index,
+            max: (data.total - 1) / pageSize,
+            hasPrevious: index > 0,
+            hasNext: (index + 1) * pageSize < data.total
+          };
         }
       });
     };
-    $scope.gotoSearchPage = function(keyword) {
-      /*
-      Goto the search page of grouped documents.
-      */
-
-      return location.href = "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped/q/" + keyword;
-    };
-    $scope.setGroupedDocuments = function(groupedDocuments, total, index) {
+    $scope.getGroupedDocumentsUrl = function(keyword, index) {
       if (index == null) {
         index = 0;
       }
       /*
-      Set $scope.groupedDocuments and $scope.page.
+      Get the url of grouped documents.
       */
 
-      $scope.groupedDocuments = groupedDocuments;
-      return $scope.page = {
-        total: total,
-        index: index,
-        max: (total - 1) / pageSize,
-        hasPrevious: index > 0,
-        hasNext: (index + 1) * pageSize < total
-      };
+      return "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped/" + keyword + "/" + index;
     };
-    $scope.getGroupedDocumentHref = function(groupedDocument) {
+    $scope.gotoSearchPage = function(keyword, index) {
+      if (index == null) {
+        index = 0;
+      }
+      /*
+      Goto the search page of grouped documents.
+      */
+
+      return location.href = $scope.getGroupedDocumentsUrl(keyword, index);
+    };
+    $scope.getGroupedDocumentUrl = function(groupedDocument) {
       /*
       Get the href of the grouped document.
       :param groupedDocument: grouped document
@@ -451,7 +454,7 @@
     };
     if ($stateParams.keyword) {
       $scope.keyword = $stateParams.keyword;
-      return $scope.searchGroupedDocuments($stateParams.keyword);
+      return $scope.searchGroupedDocuments($stateParams.keyword, $stateParams.index);
     } else {
       $scope.keyword = '';
       return $scope.getApplications();
