@@ -297,5 +297,6 @@ class DocumentService(BaseService):
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
         index.put(search_document)
+        db.Model().get(model.key()) # sync
 
         return True, None
