@@ -202,18 +202,17 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
     /logs/grouped
 
     :scope documentMode: <crashes/exceptions/logs>
-    :scope selectedApplicationId: application id
-    :scope searchKeyword: search keywords
-    :scope page: current page
+    :scope selectedApplication: the current application
+    :scope keyword: search keywords
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
-    :scope documents: [{group_tag, create_time, name, email, title, description, times}]
-    :scope page: {total, index, max}
+    :scope groupedDocuments: [{group_tag, create_time, name, email, title, description, times}]
+    :scope page: {total, index, max, hasPrevious, hasNext}
     ###
     # setup documentMode
-    if $state.current.name.indexOf('exception')
+    if $state.current.name.indexOf('exception') >= 0
         $scope.documentMode = 'exceptions'
-    else if $state.current.name.indexOf('log')
+    else if $state.current.name.indexOf('log') >= 0
         $scope.documentMode = 'logs'
     else
         $scope.documentMode = 'crashes'
@@ -224,7 +223,7 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
 
     $scope.getApplications = ->
         ###
-        Get applications
+        Get applications, then get grouped documents.
         ###
         victory.ajax $http,
             url: '/applications'
@@ -248,24 +247,33 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
         victory.ajax $http,
             url: "/applications/#{id}/#{$scope.documentMode}/grouped"
             success: (data) ->
-                $scope.groupedDocuments = data.items
-                $scope.page =
-                    total: data.total
-                    index: 0
-                    max: (data.total - 1) / pageSize
-                    hasPrevious: false
-                    hasNext: pageSize < data.total
+                $scope.setGroupedDocuments data.items, data.total
 
     $scope.searchGroupedDocuments = (keyword) ->
         ###
         Search grouped documents with keywords.
         ###
         victory.ajax $http,
-            url: "/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped/?q=#{keyword}"
+            url: "/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped?q=#{keyword}"
             success: (data) ->
-                console.log 'success'
+                $scope.setGroupedDocuments data.items, data.total
     $scope.gotoSearchPage = (keyword) ->
+        ###
+        Goto the search page of grouped documents.
+        ###
         location.href = "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped/q/#{keyword}"
+
+    $scope.setGroupedDocuments = (groupedDocuments, total, index=0) ->
+        ###
+        Set $scope.groupedDocuments and $scope.page.
+        ###
+        $scope.groupedDocuments = groupedDocuments
+        $scope.page =
+            total: total
+            index: index
+            max: (total - 1) / pageSize
+            hasPrevious: index > 0
+            hasNext: (index + 1) * pageSize < total
 
     $scope.getGroupedDocumentHref = (groupedDocument) ->
         ###
@@ -295,4 +303,5 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
         $scope.keyword = $stateParams.keyword
         $scope.searchGroupedDocuments $stateParams.keyword
     else
+        $scope.keyword = ''
         $scope.getApplications()

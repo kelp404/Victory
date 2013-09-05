@@ -325,18 +325,17 @@
     /logs/grouped
     
     :scope documentMode: <crashes/exceptions/logs>
-    :scope selectedApplicationId: application id
-    :scope searchKeyword: search keywords
-    :scope page: current page
+    :scope selectedApplication: the current application
+    :scope keyword: search keywords
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
-    :scope documents: [{group_tag, create_time, name, email, title, description, times}]
-    :scope page: {total, index, max}
+    :scope groupedDocuments: [{group_tag, create_time, name, email, title, description, times}]
+    :scope page: {total, index, max, hasPrevious, hasNext}
     */
 
-    if ($state.current.name.indexOf('exception')) {
+    if ($state.current.name.indexOf('exception') >= 0) {
       $scope.documentMode = 'exceptions';
-    } else if ($state.current.name.indexOf('log')) {
+    } else if ($state.current.name.indexOf('log') >= 0) {
       $scope.documentMode = 'logs';
     } else {
       $scope.documentMode = 'crashes';
@@ -346,7 +345,7 @@
     }
     $scope.getApplications = function() {
       /*
-      Get applications
+      Get applications, then get grouped documents.
       */
 
       return victory.ajax($http, {
@@ -384,14 +383,7 @@
       return victory.ajax($http, {
         url: "/applications/" + id + "/" + $scope.documentMode + "/grouped",
         success: function(data) {
-          $scope.groupedDocuments = data.items;
-          return $scope.page = {
-            total: data.total,
-            index: 0,
-            max: (data.total - 1) / pageSize,
-            hasPrevious: false,
-            hasNext: pageSize < data.total
-          };
+          return $scope.setGroupedDocuments(data.items, data.total);
         }
       });
     };
@@ -401,14 +393,35 @@
       */
 
       return victory.ajax($http, {
-        url: "/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped/?q=" + keyword,
+        url: "/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped?q=" + keyword,
         success: function(data) {
-          return console.log('success');
+          return $scope.setGroupedDocuments(data.items, data.total);
         }
       });
     };
     $scope.gotoSearchPage = function(keyword) {
+      /*
+      Goto the search page of grouped documents.
+      */
+
       return location.href = "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped/q/" + keyword;
+    };
+    $scope.setGroupedDocuments = function(groupedDocuments, total, index) {
+      if (index == null) {
+        index = 0;
+      }
+      /*
+      Set $scope.groupedDocuments and $scope.page.
+      */
+
+      $scope.groupedDocuments = groupedDocuments;
+      return $scope.page = {
+        total: total,
+        index: index,
+        max: (total - 1) / pageSize,
+        hasPrevious: index > 0,
+        hasNext: (index + 1) * pageSize < total
+      };
     };
     $scope.getGroupedDocumentHref = function(groupedDocument) {
       /*
@@ -440,6 +453,7 @@
       $scope.keyword = $stateParams.keyword;
       return $scope.searchGroupedDocuments($stateParams.keyword);
     } else {
+      $scope.keyword = '';
       return $scope.getApplications();
     }
   });

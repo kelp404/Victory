@@ -18,7 +18,7 @@
         <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="">
                 {{ selectedApplication.name }}
-                <span ng-hide="selectedApplication">No Application</span>
+                <span ng-if="!selectedApplication">No Application</span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">

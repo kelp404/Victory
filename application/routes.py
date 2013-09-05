@@ -12,6 +12,7 @@ from handlers.web_service_handler import *
 app.add_url_rule('/applications', 'applications', view_func=get_applications, methods=['GET'])
 # Exception Documents
 app.add_url_rule('/applications/<application_id>/exceptions/grouped', 'application_exception_groups', view_func=get_grouped_documents, methods=['GET'])
+app.add_url_rule('/applications/<application_id>/exceptions/<group_tag>', 'application_exception_groups_list', view_func=document_view, methods=['GET'])
 
 # Settings
 # Applications
@@ -43,9 +44,5 @@ app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_ad
 # Document
 app.add_url_rule('/crash_groups/<application_id>/<group_tag>', 'crash_list', view_func=document_view, methods=['GET'])
 app.add_url_rule('/crash_groups/<application_id>', 'crash_group', view_func=document_view, methods=['GET'])
-app.add_url_rule('/crash_groups', 'crash_group_default', view_func=document_view, methods=['GET'])
-app.add_url_rule('/exception_groups/<application_id>/<group_tag>', 'exception_list', view_func=document_view, methods=['GET'])
-app.add_url_rule('/exception_groups/<application_id>', 'exception_group', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups/<application_id>/<group_tag>', 'log_list', view_func=document_view, methods=['GET'])
 app.add_url_rule('/log_groups/<application_id>', 'log_group', view_func=document_view, methods=['GET'])
-app.add_url_rule('/log_groups', 'log_group_default', view_func=document_view, methods=['GET'])
