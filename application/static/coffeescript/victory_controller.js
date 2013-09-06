@@ -337,14 +337,8 @@
     } else {
       $scope.documentMode = 'crashes';
     }
-    $scope.index = function() {
-      /*
-      Get parseInt(page.index)
-      */
-
-      var index;
-      index = $scope.page ? $scope.page.index : 0;
-      return parseInt(index);
+    $scope.page = {
+      index: 0
     };
     if (sessionStorage.selectedApplication) {
       $scope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);

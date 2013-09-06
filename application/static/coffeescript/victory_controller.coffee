@@ -214,12 +214,9 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
     else
         $scope.documentMode = 'crashes'
 
-    $scope.index = ->
-        ###
-        Get parseInt(page.index)
-        ###
-        index = if $scope.page then $scope.page.index else 0
-        parseInt index
+    # set default page.index
+    $scope.page =
+        index: 0
 
     # setup selectedApplication
     if sessionStorage.selectedApplication
