@@ -17,7 +17,7 @@ c.controller 'NavigationCtrl', ($scope) ->
 
 
 # ----------- controllers for ui.router ----------------
-c.controller 'IndexCtrl', ($scope) ->
+c.controller 'IndexCtrl', ->
     ###
     /
     ###
@@ -42,7 +42,7 @@ c.controller 'SettingsCtrl', ->
     /settings
     ###
     location.href = '#/settings/applications'
-c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
+c.controller 'SettingsApplicationsCtrl', ($scope, $victory, httpApplications) ->
     ###
     /settings/applications
 
@@ -52,15 +52,19 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
                         app_key, create_time, is_owner, members:[{id, name, email, is_owner}]
                         }]
     ###
+    # setup applications
+    for item in httpApplications.data.items
+        item.newName = item.name
+        item.newDescription = item.description
+    $scope.items = httpApplications.data.items
+
     $scope.getApplications = ->
         ###
         Get applications.
         ###
-        $victory.ajax
-            url: '/settings/applications'
+        $victory.setting.getApplications
             success: (data) ->
                 for item in data.items
-                    # for updating the application
                     item.newName = item.name
                     item.newDescription = item.description
                 $scope.items = data.items
@@ -68,9 +72,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
         ###
         Add an application.
         ###
-        $victory.ajax
-            method: 'post'
-            url: '/settings/applications'
+        $victory.setting.addApplication
             data:
                 name: $scope.name
                 description: $scope.description
@@ -87,9 +89,8 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
         Update the application.
         ###
         updateItem = (x for x in $scope.items when x.id == id)[0]
-        $victory.ajax
-            method: 'put'
-            url: "/settings/applications/#{id}"
+        $victory.setting.updateApplication
+            id: id
             data:
                 name: updateItem.newName
                 description: updateItem.newDescription
@@ -103,9 +104,8 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
         ###
         Delete the application.
         ###
-        $victory.ajax
-            method: 'delete'
-            url: "/settings/applications/#{id}"
+        $victory.setting.deleteApplication
+            id: id
             success: ->
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
@@ -113,11 +113,9 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
         ###
         Invite an user into the application.
         ###
-        $victory.ajax
-            method: 'post'
-            url: "/settings/applications/#{id}/members"
-            data:
-                email: email
+        $victory.setting.inviteUser
+            applicationId: id
+            email: email
             success: ->
                 $('.modal.in').modal 'hide'
                 $scope.getApplications()
@@ -125,35 +123,32 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
         ###
         Delete the member from the application.
         ###
-        $victory.ajax
-            method: 'delete'
-            url: "/settings/applications/#{applicationId}/members/#{memberId}"
+        $victory.setting.deleteMember
+            applicationId: applicationId
+            memberId: memberId
             success: ->
                 application = (x for x in $scope.items when x.id == applicationId)[0]
                 application.members = (x for x in application.members when x.id != memberId)
-    $scope.getApplications()
 
-c.controller 'SettingsUsersCtrl', ($scope, $victory) ->
+c.controller 'SettingsUsersCtrl', ($scope, $victory, httpUsers) ->
     ###
     /settings/users
     ###
+    $scope.items = httpUsers.data.items
+
     $scope.getUsers = ->
         ###
         Get users.
         ###
-        $victory.ajax
-            url: '/settings/users'
+        $victory.setting.getUsers
             success: (data) ->
                 $scope.items = data.items
     $scope.addUser = ->
         ###
         Add an user.
         ###
-        $victory.ajax
-            method: 'post'
-            url: '/settings/users'
-            data:
-                email: $scope.email
+        $victory.setting.addUser
+            email: $scope.email
             success: ->
                 $scope.email = ''
                 $scope.getUsers()
@@ -161,34 +156,29 @@ c.controller 'SettingsUsersCtrl', ($scope, $victory) ->
         ###
         Delete the user.
         ###
-        $victory.ajax
-            method: 'delete'
-            url: "/settings/users/#{id}"
+        $victory.setting.deleteUser
+            id: id
             success: ->
                 $scope.items = (x for x in $scope.items when x.id != id)
-    $scope.getUsers()
 
-c.controller 'SettingsProfileCtrl', ($scope, $victory) ->
+c.controller 'SettingsProfileCtrl', ($scope, $victory, httpProfile) ->
     ###
     /settings/profile
     ###
+    $scope.profile = httpProfile.data
+
     $scope.getProfile = ->
-        $victory.ajax
-            url: '/settings/profile'
+        $victory.setting.getProfile
             success: (data) ->
                 $scope.profile = data
     $scope.updateProfile = ->
-        $victory.ajax
-            method: 'put'
-            url: '/settings/profile'
-            data:
-                name: $scope.profile.name
+        $victory.setting.updateProfile
+            name: $scope.profile.name
             error: (data, status) ->
                 if status == 400 and data
                     $scope.errors = data
             success: ->
                 $scope.getProfile()
-    $scope.getProfile()
 
 # ----------- documents ----------------
 c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams) ->

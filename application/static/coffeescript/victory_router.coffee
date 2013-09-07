@@ -27,7 +27,10 @@ r.config ($stateProvider, $urlRouterProvider) ->
         controller: 'SettingsCtrl'
     $stateProvider.state 'settings-applications',
         url: '/settings/applications'
-        resolve: title: -> 'Applications - Settings - '
+        resolve:
+            title: -> 'Applications - Settings - '
+            httpApplications: ($victory) ->
+                $victory.setting.httpApplications()
         views:
             viewContent:
                 templateUrl: '/views/settings/applications.html'
@@ -37,7 +40,10 @@ r.config ($stateProvider, $urlRouterProvider) ->
                 controller: 'SettingsMenuCtrl'
     $stateProvider.state 'settings-users',
         url: '/settings/users'
-        resolve: title: -> 'Users - Settings - '
+        resolve:
+            title: -> 'Users - Settings - '
+            httpUsers: ($victory) ->
+                $victory.setting.httpUsers()
         views:
             viewContent:
                 templateUrl: '/views/settings/users.html'
@@ -47,7 +53,10 @@ r.config ($stateProvider, $urlRouterProvider) ->
                 controller: 'SettingsMenuCtrl'
     $stateProvider.state 'settings-profile',
         url: '/settings/profile'
-        resolve: title: -> 'Profile - Settings - '
+        resolve:
+            title: -> 'Profile - Settings - '
+            httpProfile: ($victory) ->
+                $victory.setting.httpProfile()
         views:
             viewContent:
                 templateUrl: '/views/settings/profile.html'

@@ -40,6 +40,9 @@
       resolve: {
         title: function() {
           return 'Applications - Settings - ';
+        },
+        httpApplications: function($victory) {
+          return $victory.setting.httpApplications();
         }
       },
       views: {
@@ -58,6 +61,9 @@
       resolve: {
         title: function() {
           return 'Users - Settings - ';
+        },
+        httpUsers: function($victory) {
+          return $victory.setting.httpUsers();
         }
       },
       views: {
@@ -76,6 +82,9 @@
       resolve: {
         title: function() {
           return 'Profile - Settings - ';
+        },
+        httpProfile: function($victory) {
+          return $victory.setting.httpProfile();
         }
       },
       views: {

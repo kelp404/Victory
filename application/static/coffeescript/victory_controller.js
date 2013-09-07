@@ -24,7 +24,7 @@
     });
   });
 
-  c.controller('IndexCtrl', function($scope) {
+  c.controller('IndexCtrl', function() {
     /*
     /
     */
@@ -58,7 +58,7 @@
     return location.href = '#/settings/applications';
   });
 
-  c.controller('SettingsApplicationsCtrl', function($scope, $victory) {
+  c.controller('SettingsApplicationsCtrl', function($scope, $victory, httpApplications) {
     /*
     /settings/applications
     
@@ -69,18 +69,25 @@
                         }]
     */
 
+    var item, _i, _len, _ref;
+    _ref = httpApplications.data.items;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      item.newName = item.name;
+      item.newDescription = item.description;
+    }
+    $scope.items = httpApplications.data.items;
     $scope.getApplications = function() {
       /*
       Get applications.
       */
 
-      return $victory.ajax({
-        url: '/settings/applications',
+      return $victory.setting.getApplications({
         success: function(data) {
-          var item, _i, _len, _ref;
-          _ref = data.items;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            item = _ref[_i];
+          var _j, _len1, _ref1;
+          _ref1 = data.items;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            item = _ref1[_j];
             item.newName = item.name;
             item.newDescription = item.description;
           }
@@ -93,9 +100,7 @@
       Add an application.
       */
 
-      return $victory.ajax({
-        method: 'post',
-        url: '/settings/applications',
+      return $victory.setting.addApplication({
         data: {
           name: $scope.name,
           description: $scope.description
@@ -120,20 +125,19 @@
 
       var updateItem, x;
       updateItem = ((function() {
-        var _i, _len, _ref, _results;
-        _ref = $scope.items;
+        var _j, _len1, _ref1, _results;
+        _ref1 = $scope.items;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          x = _ref[_i];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          x = _ref1[_j];
           if (x.id === id) {
             _results.push(x);
           }
         }
         return _results;
       })())[0];
-      return $victory.ajax({
-        method: 'put',
-        url: "/settings/applications/" + id,
+      return $victory.setting.updateApplication({
+        id: id,
         data: {
           name: updateItem.newName,
           description: updateItem.newDescription
@@ -154,9 +158,8 @@
       Delete the application.
       */
 
-      return $victory.ajax({
-        method: 'delete',
-        url: "/settings/applications/" + id,
+      return $victory.setting.deleteApplication({
+        id: id,
         success: function() {
           $('.modal.in').modal('hide');
           return $scope.getApplications();
@@ -168,34 +171,31 @@
       Invite an user into the application.
       */
 
-      return $victory.ajax({
-        method: 'post',
-        url: "/settings/applications/" + id + "/members",
-        data: {
-          email: email
-        },
+      return $victory.setting.inviteUser({
+        applicationId: id,
+        email: email,
         success: function() {
           $('.modal.in').modal('hide');
           return $scope.getApplications();
         }
       });
     };
-    $scope.deleteMenter = function(applicationId, memberId) {
+    return $scope.deleteMenter = function(applicationId, memberId) {
       /*
       Delete the member from the application.
       */
 
-      return $victory.ajax({
-        method: 'delete',
-        url: "/settings/applications/" + applicationId + "/members/" + memberId,
+      return $victory.setting.deleteMember({
+        applicationId: applicationId,
+        memberId: memberId,
         success: function() {
           var application, x;
           application = ((function() {
-            var _i, _len, _ref, _results;
-            _ref = $scope.items;
+            var _j, _len1, _ref1, _results;
+            _ref1 = $scope.items;
             _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              x = _ref[_i];
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              x = _ref1[_j];
               if (x.id === applicationId) {
                 _results.push(x);
               }
@@ -203,11 +203,11 @@
             return _results;
           })())[0];
           return application.members = (function() {
-            var _i, _len, _ref, _results;
-            _ref = application.members;
+            var _j, _len1, _ref1, _results;
+            _ref1 = application.members;
             _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              x = _ref[_i];
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              x = _ref1[_j];
               if (x.id !== memberId) {
                 _results.push(x);
               }
@@ -217,21 +217,20 @@
         }
       });
     };
-    return $scope.getApplications();
   });
 
-  c.controller('SettingsUsersCtrl', function($scope, $victory) {
+  c.controller('SettingsUsersCtrl', function($scope, $victory, httpUsers) {
     /*
     /settings/users
     */
 
+    $scope.items = httpUsers.data.items;
     $scope.getUsers = function() {
       /*
       Get users.
       */
 
-      return $victory.ajax({
-        url: '/settings/users',
+      return $victory.setting.getUsers({
         success: function(data) {
           return $scope.items = data.items;
         }
@@ -242,26 +241,21 @@
       Add an user.
       */
 
-      return $victory.ajax({
-        method: 'post',
-        url: '/settings/users',
-        data: {
-          email: $scope.email
-        },
+      return $victory.setting.addUser({
+        email: $scope.email,
         success: function() {
           $scope.email = '';
           return $scope.getUsers();
         }
       });
     };
-    $scope.deleteUser = function(id) {
+    return $scope.deleteUser = function(id) {
       /*
       Delete the user.
       */
 
-      return $victory.ajax({
-        method: 'delete',
-        url: "/settings/users/" + id,
+      return $victory.setting.deleteUser({
+        id: id,
         success: function() {
           var x;
           return $scope.items = (function() {
@@ -279,29 +273,24 @@
         }
       });
     };
-    return $scope.getUsers();
   });
 
-  c.controller('SettingsProfileCtrl', function($scope, $victory) {
+  c.controller('SettingsProfileCtrl', function($scope, $victory, httpProfile) {
     /*
     /settings/profile
     */
 
+    $scope.profile = httpProfile.data;
     $scope.getProfile = function() {
-      return $victory.ajax({
-        url: '/settings/profile',
+      return $victory.setting.getProfile({
         success: function(data) {
           return $scope.profile = data;
         }
       });
     };
-    $scope.updateProfile = function() {
-      return $victory.ajax({
-        method: 'put',
-        url: '/settings/profile',
-        data: {
-          name: $scope.profile.name
-        },
+    return $scope.updateProfile = function() {
+      return $victory.setting.updateProfile({
+        name: $scope.profile.name,
         error: function(data, status) {
           if (status === 400 && data) {
             return $scope.errors = data;
@@ -312,7 +301,6 @@
         }
       });
     };
-    return $scope.getProfile();
   });
 
   c.controller('GroupedDocumentsCtrl', function($scope, $victory, $state, $stateParams) {

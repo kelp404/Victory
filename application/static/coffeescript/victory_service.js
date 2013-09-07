@@ -5,12 +5,10 @@
   s = angular.module('victory.service', []);
 
   s.factory('$victory', function($http, $rootScope) {
-    var stupidBrowser, user_agent;
+    var application, common, document, setting, stupidBrowser, user_agent;
     user_agent = navigator.userAgent.toLowerCase();
     stupidBrowser = user_agent.indexOf('msie') !== -1;
-    return {
-      stupidBrowser: stupidBrowser,
-      pageSize: 20,
+    common = {
       ajax: function(args) {
         var h,
           _this = this;
@@ -98,7 +96,7 @@
       },
       loading: {
         /*
-        loading
+        Show/Hide loading effect.
         */
 
         on: function(message) {
@@ -117,7 +115,7 @@
             $('#loading .message').html(message);
             return;
           }
-          loading = $('<div id="loading"><div class="spin"></div><div class="message">' + message + '</div><div class="clear"></div></div>');
+          loading = $("<div id='loading'><div class='spin'></div><div class='message'>" + message + "</div><div class='cs_clear'></div></div>");
           $('body').append(loading);
           loading_height = $('#loading').height();
           $('#loading').css({
@@ -153,6 +151,224 @@
           });
         }
       }
+    };
+    setting = {
+      httpApplications: function() {
+        /*
+        Get applications of the settings.
+        :return: $http object
+        */
+
+        return common.ajax({
+          url: '/settings/applications'
+        });
+      },
+      getApplications: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Get applications of the settings.
+        :param args: {success()}
+        */
+
+        return common.ajax({
+          url: '/settings/applications',
+          success: args.success
+        });
+      },
+      addApplication: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Add the application.
+        :param args: {data:{name, description}, error(), success()}
+        */
+
+        return common.ajax({
+          method: 'post',
+          url: '/settings/applications',
+          data: args.data,
+          error: args.error,
+          success: args.success
+        });
+      },
+      updateApplication: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Update the application.
+        :param args: {id, data:{name, description}, error(), success()}
+        */
+
+        return common.ajax({
+          method: 'put',
+          url: "/settings/applications/" + args.id,
+          data: args.data,
+          error: args.error,
+          success: args.success
+        });
+      },
+      deleteApplication: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Delete the application by id.
+        :param args: {id, success()}
+        */
+
+        return common.ajax({
+          method: 'delete',
+          url: "/settings/applications/" + args.id,
+          success: args.success
+        });
+      },
+      inviteUser: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Invite the user into the application.
+        :param args: {applicationId, email, success()}
+        */
+
+        return common.ajax({
+          method: 'post',
+          url: "/settings/applications/" + args.applicationId + "/members",
+          data: {
+            email: args.email
+          },
+          success: args.success
+        });
+      },
+      deleteMember: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Delete the member from the application.
+        :param args: {applicationId, memberId, success()}
+        */
+
+        return common.ajax({
+          method: 'delete',
+          url: "/settings/applications/" + args.applicationId + "/members/" + args.memberId,
+          success: args.success
+        });
+      },
+      httpUsers: function() {
+        /*
+        Get users of the settings.
+        :return: $http object
+        */
+
+        return common.ajax({
+          url: '/settings/users'
+        });
+      },
+      getUsers: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Get users of the settings.
+        :param args: {success()}
+        */
+
+        return common.ajax({
+          url: '/settings/users',
+          success: args.success
+        });
+      },
+      addUser: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Add an user.
+        :param args: {email, success()}
+        */
+
+        return common.ajax({
+          method: 'post',
+          url: '/settings/users',
+          data: {
+            email: args.email
+          },
+          success: args.success
+        });
+      },
+      deleteUser: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Delete the user by id.
+        :param args: {id, success()}
+        */
+
+        return common.ajax({
+          method: 'delete',
+          url: "/settings/users/" + args.id,
+          success: args.success
+        });
+      },
+      httpProfile: function() {
+        /*
+        Get the profile.
+        :return: $http object
+        */
+
+        return common.ajax({
+          url: '/settings/profile'
+        });
+      },
+      getProfile: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Get the profile.
+        :param args: {success()}
+        */
+
+        return common.ajax({
+          url: '/settings/profile',
+          success: args.success
+        });
+      },
+      updateProfile: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Update the profile.
+        :param args: {name, error(), success()}
+        */
+
+        return common.ajax({
+          method: 'put',
+          url: '/settings/profile',
+          data: {
+            name: args.name
+          },
+          error: args.error,
+          success: args.success
+        });
+      }
+    };
+    application = {};
+    document = {};
+    return {
+      stupidBrowser: stupidBrowser,
+      pageSize: 20,
+      common: common,
+      setting: setting,
+      application: application,
+      document: document
     };
   });
 
