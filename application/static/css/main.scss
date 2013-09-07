@@ -164,9 +164,11 @@ body
     }
 }
 
-.cs_crash_info dl
-{
+.cs_crash_info dl {
     margin: 0 0 3px 0;
+}
+.cs_monospaced {
+    font-family: courier;
 }
 
 /* table */

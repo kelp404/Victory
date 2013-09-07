@@ -81,5 +81,48 @@
     </div>
     <div class="cs_clear" style="height: 30px;"></div>
 
-    
+    <!-- crashed threads -->
+    <div ng-repeat="thread in crash.crashedThreads">
+        <legend>Thread {{ thread.index }} Crashed : {{ thread.name }}</legend>
+        <table ng-if="thread.backtrace" class="table table-striped table-hover table-content">
+            <thead>
+                <tr>
+                    <th class="span1"></th>
+                    <th class="span3">object name</th>
+                    <th width="90px">address</th>
+                    <th>symbol name</th></tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="x in thread.backtrace.contents">
+                    <td><span class="pull-right">{{ $index }}</span></td>
+                    <td>{{ x.object_name }}</td>
+                    <td class="cs_monospaced">{{ x.instruction_addr_hex }}</td>
+                    <td>{{ x.symbol_name }} + {{ x.instruction_addr - x.symbol_addr }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- threads -->
+    <div ng-repeat="thread in crash.threads">
+        <legend>Thread {{ thread.index }} : {{ thread.name }}</legend>
+        <table ng-if="thread.backtrace" class="table table-striped table-hover table-content">
+            <thead>
+                <tr>
+                    <th class="span1"></th>
+                    <th class="span3">object name</th>
+                    <th width="90px">address</th>
+                    <th>symbol name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="x in thread.backtrace.contents">
+                    <td><span class="pull-right">{{ $index }}</span></td>
+                    <td>{{ x.object_name }}</td>
+                    <td class="cs_monospaced">{{ x.instruction_addr_hex }}</td>
+                    <td>{{ x.symbol_name }} + {{ x.instruction_addr - x.symbol_addr }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>

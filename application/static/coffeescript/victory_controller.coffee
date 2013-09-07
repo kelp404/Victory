@@ -252,7 +252,6 @@ c.controller 'CrashDocumentCtrl', ($scope, $victory, documentMode, crash) ->
     ###
     /applications/<applicationId>/<documentMode>/<groupTag>
     ###
-    console.log crash
     $scope.documentMode = documentMode
     $scope.crash = crash
     $victory.application.getApplications

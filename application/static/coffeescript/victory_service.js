@@ -510,7 +510,50 @@
           success: args.success
         });
         return ajax.then(function(data) {
-          return data.data.crash;
+          var crash, thread, x, _i, _j, _len, _len1, _ref, _ref1;
+          crash = data.data.crash;
+          try {
+            _ref = crash.report.crash.threads;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              thread = _ref[_i];
+              if (thread.backtrace) {
+                _ref1 = thread.backtrace.contents;
+                for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                  x = _ref1[_j];
+                  x.instruction_addr_hex = '0x' + ('00000000' + x.instruction_addr.toString(16)).slice(-8);
+                }
+              }
+            }
+          } catch (_error) {}
+          try {
+            crash.crashedThreads = (function() {
+              var _k, _len2, _ref2, _results;
+              _ref2 = crash.report.crash.threads;
+              _results = [];
+              for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+                x = _ref2[_k];
+                if (x.crashed) {
+                  _results.push(x);
+                }
+              }
+              return _results;
+            })();
+          } catch (_error) {}
+          try {
+            crash.threads = (function() {
+              var _k, _len2, _ref2, _results;
+              _ref2 = crash.report.crash.threads;
+              _results = [];
+              for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+                x = _ref2[_k];
+                if (!x.crashed) {
+                  _results.push(x);
+                }
+              }
+              return _results;
+            })();
+          } catch (_error) {}
+          return crash;
         });
       }
     };

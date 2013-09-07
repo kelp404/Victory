@@ -394,7 +394,6 @@
     /applications/<applicationId>/<documentMode>/<groupTag>
     */
 
-    console.log(crash);
     $scope.documentMode = documentMode;
     $scope.crash = crash;
     return $victory.application.getApplications({

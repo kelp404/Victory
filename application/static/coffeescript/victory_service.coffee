@@ -314,7 +314,19 @@ s.factory '$victory', ($http, $rootScope) ->
                 url: "/applications/#{args.applicationId}/crashes/#{args.groupTag}"
                 success: args.success
             ajax.then (data) ->
-                data.data.crash
+                crash = data.data.crash
+                try
+                    # append instruction_addr_hex
+                    for thread in crash.report.crash.threads when thread.backtrace
+                        for x in thread.backtrace.contents
+                            x.instruction_addr_hex = '0x' + ('00000000' + x.instruction_addr.toString(16)).slice(-8)
+                try
+                    # append crashed threads
+                    crash.crashedThreads = (x for x in crash.report.crash.threads when x.crashed)
+                try
+                    # append threads without crashed
+                    crash.threads = (x for x in crash.report.crash.threads when not x.crashed)
+                crash
 
 
     # -------------- $victory ----------------
