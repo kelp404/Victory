@@ -305,6 +305,16 @@ s.factory '$victory', ($http, $rootScope) ->
                 success: args.success
             ajax.then (data) ->
                 data.data.items
+        getCrashDocument: (args={}) ->
+            ###
+            Get the crash document by the grouped tag.
+            :param args: {applicationId, groupTag, success()}
+            ###
+            ajax = common.ajax
+                url: "/applications/#{args.applicationId}/crashes/#{args.groupTag}"
+                success: args.success
+            ajax.then (data) ->
+                data.data.crash
 
 
     # -------------- $victory ----------------

@@ -48,7 +48,7 @@ def get_grouped_documents(application_id=None):
 @authorization(UserLevel.normal)
 def get_documents(application_id=None, group_tag=None):
     """
-    GET applications/<application_id>/exceptions/<group_tag>
+    GET applications/<application_id>/<exceptions/logs>/<group_tag>
     """
     # check value
     try:
@@ -57,16 +57,44 @@ def get_documents(application_id=None, group_tag=None):
         return abort(400)
     # documentModel
     if request.url_rule.endpoint.find('exception') >= 0:
-        documentModel = DocumentModel.exception
-    elif request.url_rule.endpoint.find('log') >= 0:
-        documentModel = DocumentModel.log
+        document_model = DocumentModel.exception
     else:
-        documentModel = DocumentModel.crash
+        document_model = DocumentModel.log
 
     ds = DocumentService()
-    docs = ds.get_documents(application_id, group_tag, documentModel)
-
+    docs = ds.get_documents(application_id, group_tag, document_model)
     return jsonify({'items': docs})
+
+
+def get_last_document(application_id=None, group_tag=None):
+    """
+    GET applications/<application_id>/crashes/<group_tag>
+    """
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
+
+    ds = DocumentService()
+    document = ds.get_last_document(application_id, group_tag, DocumentModel.crash)
+    if document is None:
+        return abort(404)
+
+    result = document
+    return jsonify({'crash': result})
+
+    # g.view_model['result'] = result
+    # g.view_model['crashed_threads'] = [thread for thread in result['report']['crash']['threads'] if thread['crashed']]
+    # g.view_model['threads'] = [thread for thread in result['report']['crash']['threads'] if not thread['crashed']]
+    # for thread in g.view_model['crashed_threads']:
+    #     if 'backtrace' in thread:
+    #         for x in thread['backtrace']['contents']:
+    #             x['instruction_addr_hex'] = '0x' + ('00000000' + hex(x['instruction_addr'])[2:])[-8:]
+    # for thread in g.view_model['threads']:
+    #     if 'backtrace' in thread:
+    #         for x in thread['backtrace']['contents']:
+    #             x['instruction_addr_hex'] = '0x' + ('00000000' + hex(x['instruction_addr'])[2:])[-8:]
+    # return render_template('document_crash.html', **g.view_model)
 
 
 # old function

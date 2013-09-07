@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <!-- Breadcrumb -->
+    <!-- breadcrumb -->
     <ul class="cs_breadcrumb breadcrumb pull-left">
         <li ng-if="documentMode == 'exceptions'" class="active">Handled Exceptions</li>
         <li ng-if="documentMode == 'logs'" class="active">Logs</li>
@@ -69,7 +69,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in groupedDocuments" href="#/applications/{{ selectedApplication.id }}/crashes/{{ item.group_tag }}">
+            <tr ng-repeat="item in groupedDocuments" ng-click="clickGroupedDocument(item)">
                 <td><span v-tooltip="item.email">{{ item.name }}</span></td>
                 <td>{{ item.title }}</td>
                 <td>{{ item.create_time|date:'yyyy-MM-dd hh:mm a' }}</td>

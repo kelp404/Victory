@@ -342,7 +342,7 @@
       Clicked the grouped document row in the table.
       */
 
-      if (groupedDocument.times > 1) {
+      if (groupedDocument.times > 1 || $scope.documentMode === 'crashes') {
         return location.href = "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/" + groupedDocument.group_tag;
       }
     };
@@ -387,6 +387,21 @@
       }
       return "";
     };
+  });
+
+  c.controller('CrashDocumentCtrl', function($scope, $victory, documentMode, crash) {
+    /*
+    /applications/<applicationId>/<documentMode>/<groupTag>
+    */
+
+    console.log(crash);
+    $scope.documentMode = documentMode;
+    $scope.crash = crash;
+    return $victory.application.getApplications({
+      success: function(data) {
+        return $scope.applications = data.items;
+      }
+    });
   });
 
 }).call(this);

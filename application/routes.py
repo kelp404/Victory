@@ -12,7 +12,7 @@ from handlers.web_service_handler import *
 app.add_url_rule('/applications', 'applications', view_func=get_applications, methods=['GET'])
 # Crash Documents
 app.add_url_rule('/applications/<application_id>/crashes/grouped', 'application_crash_groups', view_func=get_grouped_documents, methods=['GET'])
-app.add_url_rule('/applications/<application_id>/crashes/<group_tag>', 'application_crash_groups_list', view_func=document_view, methods=['GET'])
+app.add_url_rule('/applications/<application_id>/crashes/<group_tag>', 'application_crash', view_func=get_last_document, methods=['GET'])
 # Exception Documents
 app.add_url_rule('/applications/<application_id>/exceptions/grouped', 'application_exception_groups', view_func=get_grouped_documents, methods=['GET'])
 app.add_url_rule('/applications/<application_id>/exceptions/<group_tag>', 'application_exception_groups_list', view_func=get_documents, methods=['GET'])

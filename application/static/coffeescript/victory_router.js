@@ -137,6 +137,25 @@
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
     });
+    $stateProvider.state('crash', {
+      url: '/applications/:applicationId/crashes/:groupTag',
+      resolve: {
+        title: function() {
+          return 'Crash - ';
+        },
+        documentMode: function() {
+          return 'crashes';
+        },
+        crash: function($victory, $stateParams) {
+          return $victory.document.getCrashDocument({
+            applicationId: $stateParams.applicationId,
+            groupTag: $stateParams.groupTag
+          });
+        }
+      },
+      templateUrl: '/views/documents/crash.html',
+      controller: 'CrashDocumentCtrl'
+    });
     $stateProvider.state('grouped-exceptions', {
       url: '/exceptions/grouped',
       resolve: {

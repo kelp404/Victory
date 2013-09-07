@@ -1,0 +1,85 @@
+<div id="js_content" class="cs_content">
+    <!-- switch applications -->
+    <div class="pull-left">
+        <div class="btn-group">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="">
+                {{ selectedApplication.name }}
+                <span ng-if="!selectedApplication">No Application</span>
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li ng-repeat="item in applications">
+                    <a tabindex="-1" href="#/applications/{{ item.id }}/{{ documentMode }}/grouped//">{{ item.name }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- breadcrumb -->
+    <ul class="cs_breadcrumb breadcrumb pull-left">
+        <li><a href="#/applications/{{ selectedApplication.id }}/{{ documentMode }}/grouped//">Crashes</a> <span class="divider">/</span></li>
+        <li class="active">{{ crash.name }} - {{ crash.title }}</li>
+    </ul>
+    <div class="cs_clear"></div>
+
+    <!-- information -->
+    <legend>Information</legend>
+
+    <div class="cs_crash_info">
+        <dl class="dl-horizontal pull-left span7">
+            <dt>App Version</dt>
+            <dd>{{ crash.version }}</dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>OS Version</dt>
+            <dd>{{ crash.os_version }}</dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>Hardware Model</dt>
+            <dd>{{ crash.device }}</dd>
+        </dl>
+        <dl ng-if="crash.report.system.model" class="dl-horizontal pull-left span7">
+            <dt>Model</dt>
+            <dd>{{ crash.report.system.model }}</dd>
+        </dl>
+        <dl ng-if="crash.report.system.cpu_arch" class="dl-horizontal pull-left span7">
+            <dt>CPU arch</dt>
+            <dd>{{ crash.report.system.cpu_arch }}</dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>User</dt>
+            <dd>{{ crash.name }} <span ng-if="crash.email">&lt;{{ crash.email }}&gt;</span></dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>App uuid</dt>
+            <dd>{{ crash.app_uuid }}</dd>
+        </dl>
+        <dl ng-if="crash.report.system.device_app_hash" class="dl-horizontal pull-left span7">
+            <dt>Device App Hash</dt>
+            <dd>{{ crash.report.system.device_app_hash }}</dd>
+        </dl>
+        <dl ng-if="crash.report.system.parent_process_name" class="dl-horizontal pull-left span7">
+            <dt>Parent Process Name</dt>
+            <dd>{{ crash.report.system.parent_process_name }}</dd>
+        </dl>
+        <dl ng-if="crash.report.system.CFBundleIdentifier" class="dl-horizontal pull-left span7">
+            <dt>Bundle Identifier</dt>
+            <dd>{{ crash.report.system.CFBundleIdentifier }}</dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>IP Address</dt>
+            <dd>{{ crash.ip }}</dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>Datetime</dt>
+            <dd>{{ crash.create_time|date:'yyyy-MM-dd hh:mm:ss a' }}</dd>
+        </dl>
+        <dl class="dl-horizontal pull-left span7">
+            <dt>User-Agent</dt>
+            <dd>{{ crash.user_agent }}</dd>
+        </dl>
+    </div>
+    <div class="cs_clear" style="height: 30px;"></div>
+
+    
+</div>

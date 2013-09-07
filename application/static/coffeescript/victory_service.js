@@ -494,6 +494,24 @@
         return ajax.then(function(data) {
           return data.data.items;
         });
+      },
+      getCrashDocument: function(args) {
+        var ajax;
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Get the crash document by the grouped tag.
+        :param args: {applicationId, groupTag, success()}
+        */
+
+        ajax = common.ajax({
+          url: "/applications/" + args.applicationId + "/crashes/" + args.groupTag,
+          success: args.success
+        });
+        return ajax.then(function(data) {
+          return data.data.crash;
+        });
       }
     };
     return {

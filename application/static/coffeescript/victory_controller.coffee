@@ -212,7 +212,7 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $stateParams, documentMode, groupe
         ###
         Clicked the grouped document row in the table.
         ###
-        if groupedDocument.times > 1
+        if groupedDocument.times > 1 or $scope.documentMode == 'crashes'
             location.href = "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/#{groupedDocument.group_tag}"
 
     $scope.modal = (groupedDocument) ->
@@ -247,3 +247,14 @@ c.controller 'DocumentsCtrl', ($scope, $victory, documentMode, documents) ->
         else if document.url
             return "URL: #{document.url}"
         ""
+
+c.controller 'CrashDocumentCtrl', ($scope, $victory, documentMode, crash) ->
+    ###
+    /applications/<applicationId>/<documentMode>/<groupTag>
+    ###
+    console.log crash
+    $scope.documentMode = documentMode
+    $scope.crash = crash
+    $victory.application.getApplications
+        success: (data) ->
+            $scope.applications = data.items
