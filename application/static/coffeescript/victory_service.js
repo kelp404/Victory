@@ -349,11 +349,6 @@
     };
     document = {
       getGroupedDocumentsAndApplications: function(documentMode, applicationId, keyword, index) {
-        /*
-        Get grouped documents and applications for GroupedDocumentsCtrl.
-        :return: {applications, groupedDocuments, page}
-        */
-
         var ajaxApplications, result,
           _this = this;
         if (keyword == null) {
@@ -362,6 +357,11 @@
         if (index == null) {
           index = 0;
         }
+        /*
+        Get grouped documents and applications for GroupedDocumentsCtrl.
+        :return: {applications, groupedDocuments, page}
+        */
+
         applicationId = parseInt(applicationId);
         result = {
           applications: null,

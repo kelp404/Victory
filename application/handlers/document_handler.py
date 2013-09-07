@@ -26,14 +26,21 @@ def get_grouped_documents(application_id=None):
     keyword = request.args.get('q')
     if keyword is None:
         keyword = ''
+    # documentModel
+    if request.url_rule.endpoint.find('exception') >= 0:
+        documentModel = DocumentModel.exception
+    elif request.url_rule.endpoint.find('log') >= 0:
+        documentModel = DocumentModel.log
+    else:
+        documentModel = DocumentModel.crash
 
     ds = DocumentService()
-    docs, total = ds.get_document_groups(application_id, keyword, index, DocumentModel.exception)
+    docs, total = ds.get_document_groups(application_id, keyword, index, documentModel)
 
     for item in docs:
         if item['times'] == 1:
             # add detail info
-            item.update(ds.get_last_document(application_id, item['group_tag'], DocumentModel.exception))
+            item.update(ds.get_last_document(application_id, item['group_tag'], documentModel))
 
     return jsonify({'items': docs, 'total': total})
 

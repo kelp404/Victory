@@ -143,7 +143,7 @@
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
     });
-    return $stateProvider.state('grouped-logs', {
+    $stateProvider.state('grouped-logs', {
       url: '/logs/grouped',
       resolve: {
         title: function() {
@@ -151,6 +151,25 @@
         },
         documentMode: function() {
           return 'logs';
+        },
+        groupedDocumentsAndApplications: function($victory) {
+          return $victory.document.getGroupedDocumentsAndApplications('logs');
+        }
+      },
+      templateUrl: '/views/documents/grouped.html',
+      controller: 'GroupedDocumentsCtrl'
+    });
+    return $stateProvider.state('grouped-logs-search', {
+      url: '/applications/:applicationId/logs/grouped/:keyword/:index',
+      resolve: {
+        title: function() {
+          return 'Logs - ';
+        },
+        documentMode: function() {
+          return 'logs';
+        },
+        groupedDocumentsAndApplications: function($victory, $stateParams) {
+          return $victory.document.getGroupedDocumentsAndApplications('logs', $stateParams.applicationId, $stateParams.keyword, $stateParams.index);
         }
       },
       templateUrl: '/views/documents/grouped.html',

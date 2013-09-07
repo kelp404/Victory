@@ -102,5 +102,20 @@ r.config ($stateProvider, $urlRouterProvider) ->
         resolve:
             title: -> 'Logs - '
             documentMode: -> 'logs'
+            groupedDocumentsAndApplications: ($victory) ->
+                $victory.document.getGroupedDocumentsAndApplications 'logs'
+        templateUrl: '/views/documents/grouped.html'
+        controller: 'GroupedDocumentsCtrl'
+    $stateProvider.state 'grouped-logs-search',
+        url: '/applications/:applicationId/logs/grouped/:keyword/:index'
+        resolve:
+            title: -> 'Logs - '
+            documentMode: -> 'logs'
+            groupedDocumentsAndApplications: ($victory, $stateParams) ->
+                $victory.document.getGroupedDocumentsAndApplications(
+                    'logs',
+                    $stateParams.applicationId,
+                    $stateParams.keyword,
+                    $stateParams.index)
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'

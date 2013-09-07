@@ -223,14 +223,12 @@ s.factory '$victory', ($http, $rootScope) ->
 
     # -------------- document ----------------
     document =
-        getGroupedDocumentsAndApplications: (documentMode, applicationId, keyword, index) ->
+        getGroupedDocumentsAndApplications: (documentMode, applicationId, keyword='', index=0) ->
             ###
             Get grouped documents and applications for GroupedDocumentsCtrl.
             :return: {applications, groupedDocuments, page}
             ###
             # cleanup input value
-            keyword ?= ''
-            index ?= 0
             applicationId = parseInt(applicationId)
 
             # result object
