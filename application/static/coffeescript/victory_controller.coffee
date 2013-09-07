@@ -1,8 +1,5 @@
 
-# default page size
-pageSize = 20
-
-c = angular.module 'victory.controller', []
+c = angular.module 'victory.controller', ['victory.service']
 c.controller 'NavigationCtrl', ($scope) ->
     ###
     Navigation Controller
@@ -24,7 +21,6 @@ c.controller 'IndexCtrl', ($scope) ->
     ###
     /
     ###
-    $scope.title = victory.titleSuffix
     if not victory.user.isLogin
         location.href = '#/login'
 
@@ -46,7 +42,7 @@ c.controller 'SettingsCtrl', ->
     /settings
     ###
     location.href = '#/settings/applications'
-c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
+c.controller 'SettingsApplicationsCtrl', ($scope, $victory) ->
     ###
     /settings/applications
 
@@ -60,7 +56,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         ###
         Get applications.
         ###
-        victory.ajax $http,
+        $victory.ajax
             url: '/settings/applications'
             success: (data) ->
                 for item in data.items
@@ -72,7 +68,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         ###
         Add an application.
         ###
-        victory.ajax $http,
+        $victory.ajax
             method: 'post'
             url: '/settings/applications'
             data:
@@ -91,7 +87,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         Update the application.
         ###
         updateItem = (x for x in $scope.items when x.id == id)[0]
-        victory.ajax $http,
+        $victory.ajax
             method: 'put'
             url: "/settings/applications/#{id}"
             data:
@@ -107,7 +103,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         ###
         Delete the application.
         ###
-        victory.ajax $http,
+        $victory.ajax
             method: 'delete'
             url: "/settings/applications/#{id}"
             success: ->
@@ -117,7 +113,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         ###
         Invite an user into the application.
         ###
-        victory.ajax $http,
+        $victory.ajax
             method: 'post'
             url: "/settings/applications/#{id}/members"
             data:
@@ -129,7 +125,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
         ###
         Delete the member from the application.
         ###
-        victory.ajax $http,
+        $victory.ajax
             method: 'delete'
             url: "/settings/applications/#{applicationId}/members/#{memberId}"
             success: ->
@@ -137,7 +133,7 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $http) ->
                 application.members = (x for x in application.members when x.id != memberId)
     $scope.getApplications()
 
-c.controller 'SettingsUsersCtrl', ($scope, $http) ->
+c.controller 'SettingsUsersCtrl', ($scope, $victory) ->
     ###
     /settings/users
     ###
@@ -145,7 +141,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
         ###
         Get users.
         ###
-        victory.ajax $http,
+        $victory.ajax
             url: '/settings/users'
             success: (data) ->
                 $scope.items = data.items
@@ -153,7 +149,7 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
         ###
         Add an user.
         ###
-        victory.ajax $http,
+        $victory.ajax
             method: 'post'
             url: '/settings/users'
             data:
@@ -165,24 +161,24 @@ c.controller 'SettingsUsersCtrl', ($scope, $http) ->
         ###
         Delete the user.
         ###
-        victory.ajax $http,
+        $victory.ajax
             method: 'delete'
             url: "/settings/users/#{id}"
             success: ->
                 $scope.items = (x for x in $scope.items when x.id != id)
     $scope.getUsers()
 
-c.controller 'SettingsProfileCtrl', ($scope, $http) ->
+c.controller 'SettingsProfileCtrl', ($scope, $victory) ->
     ###
     /settings/profile
     ###
     $scope.getProfile = ->
-        victory.ajax $http,
+        $victory.ajax
             url: '/settings/profile'
             success: (data) ->
                 $scope.profile = data
     $scope.updateProfile = ->
-        victory.ajax $http,
+        $victory.ajax
             method: 'put'
             url: '/settings/profile'
             data:
@@ -195,7 +191,7 @@ c.controller 'SettingsProfileCtrl', ($scope, $http) ->
     $scope.getProfile()
 
 # ----------- documents ----------------
-c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
+c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams) ->
     ###
     :scope documentMode: <crashes/exceptions/logs>
     :scope selectedApplication: the current application
@@ -226,7 +222,7 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
         ###
         Get applications, then get grouped documents.
         ###
-        victory.ajax $http,
+        $victory.ajax
             url: '/applications'
             hideLoadingAfterDone: false
             success: (data) ->
@@ -245,16 +241,16 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $state, $stateParams, $http) ->
         ###
         Search grouped documents with keywords.
         ###
-        victory.ajax $http,
+        $victory.ajax
             url: "/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped?q=#{keyword}&index=#{index}"
             success: (data) ->
                 $scope.groupedDocuments = data.items
                 $scope.page =
                     total: data.total
                     index: index
-                    max: (data.total - 1) / pageSize
+                    max: (data.total - 1) / $victory.pageSize
                     hasPrevious: index > 0
-                    hasNext: (index + 1) * pageSize < data.total
+                    hasNext: (index + 1) * $victory.pageSize < data.total
 
     $scope.getGroupedDocumentsUrl = (keyword, index=0) ->
         ###

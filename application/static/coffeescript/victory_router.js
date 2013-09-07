@@ -2,7 +2,7 @@
 (function() {
   var r;
 
-  r = angular.module('victory', ['victory.controller', 'victory.directive', 'ui.router', 'ui.state']);
+  r = angular.module('victory.router', ['victory.controller', 'victory.service', 'victory.directive', 'ui.router', 'ui.state']);
 
   r.run(function($rootScope, $state, $stateParams) {
     $rootScope.$state = $state;
