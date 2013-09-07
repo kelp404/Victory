@@ -1,6 +1,6 @@
 
 # flask
-from flask import request, jsonify
+from flask import jsonify
 
 # application
 from application.decorator.auth_decorator import *

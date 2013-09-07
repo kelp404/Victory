@@ -71,6 +71,21 @@ r.config ($stateProvider, $urlRouterProvider) ->
         resolve:
             title: -> 'Crashes - '
             documentMode: -> 'crashes'
+            groupedDocumentsAndApplications: ($victory) ->
+                $victory.document.getGroupedDocumentsAndApplications 'crashes'
+        templateUrl: '/views/documents/grouped.html'
+        controller: 'GroupedDocumentsCtrl'
+    $stateProvider.state 'grouped-crashes-search',
+        url: '/applications/:applicationId/crashes/grouped/:keyword/:index'
+        resolve:
+            title: -> 'Crashes - '
+            documentMode: -> 'crashes'
+            groupedDocumentsAndApplications: ($victory, $stateParams) ->
+                $victory.document.getGroupedDocumentsAndApplications(
+                    'crashes',
+                    $stateParams.applicationId,
+                    $stateParams.keyword,
+                    $stateParams.index)
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
 

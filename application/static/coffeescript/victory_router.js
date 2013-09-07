@@ -106,6 +106,25 @@
         },
         documentMode: function() {
           return 'crashes';
+        },
+        groupedDocumentsAndApplications: function($victory) {
+          return $victory.document.getGroupedDocumentsAndApplications('crashes');
+        }
+      },
+      templateUrl: '/views/documents/grouped.html',
+      controller: 'GroupedDocumentsCtrl'
+    });
+    $stateProvider.state('grouped-crashes-search', {
+      url: '/applications/:applicationId/crashes/grouped/:keyword/:index',
+      resolve: {
+        title: function() {
+          return 'Crashes - ';
+        },
+        documentMode: function() {
+          return 'crashes';
+        },
+        groupedDocumentsAndApplications: function($victory, $stateParams) {
+          return $victory.document.getGroupedDocumentsAndApplications('crashes', $stateParams.applicationId, $stateParams.keyword, $stateParams.index);
         }
       },
       templateUrl: '/views/documents/grouped.html',

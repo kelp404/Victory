@@ -69,10 +69,9 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="item in groupedDocuments" href="{{ getGroupedDocumentUrl(item) }}" data-toggle="{{ modal(item) }}">
+            <tr ng-repeat="item in groupedDocuments" href="#/applications/{{ selectedApplication.id }}/crashes/{{ item.group_tag }}">
                 <td><span v-tooltip="item.email">{{ item.name }}</span></td>
                 <td>{{ item.title }}</td>
-                <td>{{ item.description }}</td>
                 <td>{{ item.create_time|date:'yyyy-MM-dd hh:mm a' }}</td>
                 <td><div class="text-right">{{ item.times }}</div></td>
             </tr>

@@ -10,6 +10,9 @@ from handlers.web_service_handler import *
 # -------- AngularJS ---------
 # Applications
 app.add_url_rule('/applications', 'applications', view_func=get_applications, methods=['GET'])
+# Crash Documents
+app.add_url_rule('/applications/<application_id>/crashes/grouped', 'application_crash_groups', view_func=get_grouped_documents, methods=['GET'])
+app.add_url_rule('/applications/<application_id>/crashes/<group_tag>', 'application_crash_groups_list', view_func=document_view, methods=['GET'])
 # Exception Documents
 app.add_url_rule('/applications/<application_id>/exceptions/grouped', 'application_exception_groups', view_func=get_grouped_documents, methods=['GET'])
 app.add_url_rule('/applications/<application_id>/exceptions/<group_tag>', 'application_exception_groups_list', view_func=document_view, methods=['GET'])
@@ -42,8 +45,3 @@ app.add_url_rule('/api/v1/log/<key>', 'api_log', view_func=log_document_add, met
 app.add_url_rule('/api/v1/log/<key>', 'api_log_jsonp', view_func=log_document_add_jsonp, methods=['GET'])
 app.add_url_rule('/api/v1/crash/<key>', 'api_crash', view_func=crash_document_add, methods=['POST'])
 # ---------------------------
-
-
-# Document
-app.add_url_rule('/crash_groups/<application_id>/<group_tag>', 'crash_list', view_func=document_view, methods=['GET'])
-app.add_url_rule('/crash_groups/<application_id>', 'crash_group', view_func=document_view, methods=['GET'])
