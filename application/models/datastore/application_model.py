@@ -15,6 +15,6 @@ class ApplicationModel(db.Model):
             'name': self.app_name,
             'description': self.description,
             'app_key': self.app_key,
-            'create_time': self.create_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+            'create_time': self.create_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
         }
         return result

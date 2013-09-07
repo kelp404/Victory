@@ -3,30 +3,27 @@
 import uuid
 
 # flask
-from flask import g
+from flask import g, abort
 
 # google
 from google.appengine.ext import db
 from google.appengine.api import search
 
 # victory
-from ..models.datastore.application_model import *
-from ..models.datastore.user_model import *
+from application.models.datastore.application_model import *
+from application.models.datastore.user_model import *
 from base_service import *
 
 
 
 class ApplicationService(BaseService):
-    def get_applications(self, with_members=False):
+    def get_applications(self, is_return_members=False):
         """
         Get all my applications
 
-        @param with_members True: append application.members
-        @returns [application] / []
+        :param is_return_members: True: append application.members
+        :return: [ApplicationModel.dict()] / []
         """
-        # check auth
-        if g.user is None: return []
-
         if g.user.level == UserLevel.root:
             owner_apps = db.GqlQuery('select * from ApplicationModel order by create_time')
             viewer_apps = []
@@ -38,7 +35,7 @@ class ApplicationService(BaseService):
         for item in owner_apps:
             app = item.dict()
             app['is_owner'] = True
-            if with_members:
+            if is_return_members:
                 # add user info to the application
                 members = [self.__get_member_for_application(g.user, True)]
                 if g.user.key().id() != item.owner:
@@ -52,7 +49,7 @@ class ApplicationService(BaseService):
         for item in viewer_apps:
             app = item.dict()
             app['is_owner'] = False
-            if with_members:
+            if is_return_members:
                 # add user info of the application
                 owner = UserModel().get_by_id(item.owner)
                 members = [self.__get_member_for_application(owner, False)]
@@ -74,25 +71,23 @@ class ApplicationService(BaseService):
         """
         Check the application is mine
 
-        @param application_id application id
-        @param check_is_owner True: am I owner? / False: am I owner or viewer?
-        @returns True / False
+        :param application_id: application id
+        :param check_is_owner: True: am I owner? / False: am I owner or viewer?
+        :return: True / False
         """
-        try: application_id = long(application_id)
-        except: return False
+        try:
+            application_id = long(application_id)
+        except Exception:
+            return abort(400)
 
         # no id or no application
         if application_id is None or application_id == 0:
-            return False
-
-        # check auth
-        if g.user is None:
-            return False
+            return abort(400)
 
         # no application
         app = ApplicationModel().get_by_id(application_id)
         if app is None:
-            return False
+            return abort(404)
 
         # query by root
         if g.user.level == UserLevel.root:
@@ -109,17 +104,7 @@ class ApplicationService(BaseService):
 
         @param name application name (required)
         @param description application description
-        @returns True / False
         """
-        # clear up input value
-        if name is None: return False
-        name = name.strip()
-        description = description.strip()
-        if len(name) == 0: return False
-
-        # check auth
-        if g.user is None: return False
-
         app = ApplicationModel()
         app.app_name = name
         app.description = description
@@ -127,20 +112,20 @@ class ApplicationService(BaseService):
         app.owner = g.user.key().id()
         app.put()
         app.get(app.key())  # sync
-        return True
 
     def delete_application(self, application_id):
         """
         Delete the application with application id
 
-        @param application_id application id
-        @returns True / False
+        :param application_id: application id
         """
         if not self.is_my_application(application_id, True):
-            return False
+            return abort(403)
 
         # delete the application
         app = ApplicationModel().get_by_id(application_id)
+        if app is None:
+            return abort(404)
         app.delete()
 
         # delete text search
@@ -149,7 +134,6 @@ class ApplicationService(BaseService):
         self.__clear_text_search(application_id, 'LogModel')
 
         app.get(app.key())  # sync
-        return True
 
     def __clear_text_search(self, application_id, namespace):
         """
@@ -170,49 +154,43 @@ class ApplicationService(BaseService):
         """
         Update the application
 
-        @param application_id application id
-        @param name the new application name
-        @param description the new application description
-        @returns True / False
+        :param application_id: application id
+        :param name: the new application name
+        :param description: the new application description
+        :return: ApplicationModel
         """
         # check auth
-        if not self.is_my_application(application_id, True): return False
-
-        # clear up input value
-        if name is None: return False
-        name = name.strip()
-        description = description.strip()
-        if len(name) == 0: return False
+        if not self.is_my_application(application_id, True):
+            return abort(403)
 
         app = ApplicationModel().get_by_id(application_id)
         if app:
             app.app_name = name
             app.description = description
             app.put()
-            app.get(app.key())  #sync
-            return True
+            app.get(app.key())  # sync
+            return app
 
-        return False
+        return abort(404)
 
     def add_user_to_application(self, user_id, application_id):
         """
         Add a user to the application (viewer)
 
-        @param user_id user id
-        @param application_id application id
-        @returns True / False
+        :param user_id: user id
+        :param application_id: application id
         """
         # check input value
-        if user_id is None or application_id is None: return False
+        if user_id is None or application_id is None:
+            return abort(400)
 
         application = ApplicationModel.get_by_id(application_id)
         if self.is_my_application(application_id, True) and user_id not in application.viewer and user_id != application.owner:
             application.viewer.append(user_id)
             application.put()
             application.get(application.key())  #sync
-            return True
         else:
-            return False
+            return abort(403)
 
     def delete_user_from_application(self, user_id, application_id):
         """
@@ -220,17 +198,15 @@ class ApplicationService(BaseService):
 
         @param user_id user id
         @param application_id application id
-        @returns True / False
         """
         # check input value
         if user_id is None or application_id is None:
-            return False
+            return abort(400)
 
         application = ApplicationModel.get_by_id(application_id)
         if self.is_my_application(application_id, True) and user_id in application.viewer:
             application.viewer.remove(user_id)
             application.put()
             application.get(application.key())  # sync
-            return True
         else:
-            return False
+            return abort(403)

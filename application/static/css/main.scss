@@ -127,7 +127,12 @@ body
     }
 }
 
-
+/* breadcrumb */
+.cs_breadcrumb
+{
+    background-color: #fff;
+    margin-bottom: 10px;
+}
 
 /* content */
 .cs_content_background
@@ -138,9 +143,11 @@ body
     min-width: $content_width;
 
     .cs_content {
+        min-height: 200px;
         width: $content_width;
     }
     .cs_content_medium {
+        min-height: 200px;
         margin-left: 270px;
         width: $content_width - 270;
     }
@@ -157,9 +164,11 @@ body
     }
 }
 
-.cs_crash_info dl
-{
+.cs_crash_info dl {
     margin: 0 0 3px 0;
+}
+.cs_monospaced {
+    font-family: courier;
 }
 
 /* table */
@@ -171,6 +180,22 @@ body
 .table td .control-group { margin-bottom: 0 }
 .table td input { margin-bottom: 0; }
 
+
+/* settings */
+.cs_added_group
+{
+    margin: -5px 0 10px 0;
+}
+
+
+/* login page */
+.cs_login
+{
+    text-align: center;
+    a {
+        color: #505050;
+    }
+}
 
 
 /* footer */

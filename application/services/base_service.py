@@ -1,6 +1,6 @@
 
 # victory
-from ..models.datastore.count_model import *
+from application.models.datastore.count_model import *
 
 
 

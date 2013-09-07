@@ -22,7 +22,7 @@ from application import config
 
 
 class DocumentService(BaseService):
-    def get_document_groups(self, application_id, keyword, index, document_model):
+    def get_grouped_documents(self, application_id, keyword, index, document_model):
         """
         Get document groups by application id, search keyword and index
 
@@ -93,7 +93,7 @@ class DocumentService(BaseService):
                            'times': int(document.field('times').value),
                            'description': document.field('description').value,
                            'email': document.field('email').value,
-                           'create_time': document.field('create_time').value.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'})
+                           'create_time': document.field('create_time').value.strftime('%Y-%m-%dT%H:%M:%S.%fZ')})
 
         # if number of documents over maximum then return the maximum
         if documents.number_found > 1000 + config.page_size:
@@ -120,20 +120,22 @@ class DocumentService(BaseService):
         :param document_model: document type (ExceptionModel / LogModel)
         :return: [document] / []
         """
-        try: application_id = long(application_id)
-        except: return []
-        if group_tag is None: return []
+        try:
+            application_id = long(application_id)
+        except Exception:
+            return abort(400)
+        if group_tag is None: return abort(400)
         # check auth
         aps = ApplicationService()
         if not aps.is_my_application(application_id):
-            return []
+            return abort(403)
 
         if document_model == DocumentModel.exception:
-            documents = db.GqlQuery('select * from ExceptionModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
+            documents = ExceptionModel().gql('where group_tag = :1 order by create_time DESC limit 100', group_tag)
         elif document_model == DocumentModel.log:
-            documents = db.GqlQuery('select * from LogModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
+            documents = LogModel().gql('where group_tag = :1 order by create_time DESC limit 100', group_tag)
         else:
-            documents = db.GqlQuery('select * from CrashModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
+            documents = CrashModel().gql('where group_tag = :1 order by create_time DESC limit 100', group_tag)
 
         result = []
         for document in documents.fetch(100):
@@ -149,26 +151,32 @@ class DocumentService(BaseService):
         :param application_id: application id
         :param group_tag: group tag
         :param document_model: document type
-        :return: document / None
+        :return: document
         """
-        try: application_id = long(application_id)
-        except: return None
-        if group_tag is None: return None
+        try:
+            application_id = long(application_id)
+        except:
+            return abort(400)
+        if group_tag is None:
+            return abort(404)
 
         # check auth
         aps = ApplicationService()
         if not aps.is_my_application(application_id):
-            return None
+            return abort(403)
 
-        cache_key = MemcacheKey.document_detail(application_id, group_tag, DocumentModel.exception)
+        cache_key = MemcacheKey.document_detail(application_id, group_tag, document_model)
         cache_value = memcache.get(key=cache_key)
-        if cache_value: return cache_value  # return data from cache
+        if cache_value:
+            # return data from cache
+            return cache_value
+
         if document_model == DocumentModel.exception:
-            documents = db.GqlQuery('select * from ExceptionModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
+            documents = ExceptionModel().gql('where group_tag = :1 order by create_time DESC limit 1', group_tag)
         elif document_model == DocumentModel.log:
-            documents = db.GqlQuery('select * from LogModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
+            documents = LogModel().gql('where group_tag = :1 order by create_time DESC limit 1', group_tag)
         else:
-            documents = db.GqlQuery('select * from CrashModel where group_tag = :1 order by create_time DESC limit 1', group_tag)
+            documents = CrashModel().gql('where group_tag = :1 order by create_time DESC limit 1', group_tag)
 
         for document in documents.fetch(1):
             cache_value = document.dict()
@@ -176,7 +184,7 @@ class DocumentService(BaseService):
             memcache.set(key=cache_key, value=cache_value, time=18000)
             return cache_value
 
-        return None
+        return abort(404)
 
     def add_document(self, key, document, document_model):
         """
@@ -291,5 +299,6 @@ class DocumentService(BaseService):
                                            search.NumberField(name='times', value=times),
                                            search.DateField(name='create_time', value=model.create_time)])
         index.put(search_document)
+        db.Model().get(model.key()) # sync
 
         return True, None

@@ -3,111 +3,111 @@
 from flask import render_template, jsonify, request, abort
 
 # victory
+from base_handler import validated_failed, success
 from application.decorator.auth_decorator import *
-from application.services.account_service import AccountService
+from application.models.form.application_form import *
+from application.models.form.invite_user_form import *
+from application.models.form.profile_form import *
+from application.services.account_service import *
 from application.services.application_service import *
 
 
 
-def redirect_to_application():
-    """
-    GET /settings/applications
-    """
-    return applications()
-
-
 @authorization(UserLevel.normal)
-def profile():
+def get_profile():
     """
     GET: settings/profile
     get profile
     """
-    g.view_model['title'] = 'Profile - '
-    return render_template('./settings/profile.html', **g.view_model)
+    return jsonify(g.user.dict())
 
 @authorization(UserLevel.normal)
-def profile_update():
+def update_profile():
     """
     PUT: settings/profile
     update profile
     """
-    name = request.form.get('name')
+    profile = ProfileForm(**request.json)
+    if not profile.validate():
+        return validated_failed(**profile.validated_messages())
+
     acs = AccountService()
-    success, result_name = acs.update_profile(name)
-    if success:
-        return jsonify({ 'success': success, 'name': result_name })
-    else:
-        return abort(417)
+    acs.update_profile(profile.name.data)
+    return success()
 
 
 @authorization(UserLevel.normal)
-def applications():
+def get_applications():
     """
     GET: settings/applications
     get applications list
     """
-    g.view_model['title'] = 'Applications - '
-
     aps = ApplicationService()
-    g.view_model['result'] = aps.get_applications(True)
-    return render_template('./settings/applications.html', **g.view_model)
+    result = aps.get_applications(True)
+    return jsonify({'items': result})
 
 @authorization(UserLevel.normal)
-def application_add():
+def add_application():
     """
     POST: settings/applications
     add an application
     """
-    name = request.form.get('name')
-    description = request.form.get('description')
+    ap = ApplicationForm(**request.json)
+    if not ap.validate():
+        return validated_failed(**ap.validated_messages())
+
     aps = ApplicationService()
-    aps.add_application(name, description)
-    return applications()
+    aps.add_application(ap.name.data, ap.description.data)
+    return success(201)
 
 @authorization(UserLevel.normal)
-def application_update(application_id):
+def update_application(application_id):
     """
     PUT: settings/applications/<application_id>
     update the application
     """
     # check input
-    try: application_id = long(application_id)
-    except: return abort(400)
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
 
-    name = request.form.get('name')
-    description = request.form.get('description')
+    ap = ApplicationForm(**request.json)
+    if not ap.validate():
+        return validated_failed(**ap.validated_messages())
+
     aps = ApplicationService()
-    success = aps.update_application(application_id, name, description)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    aps.update_application(application_id, ap.name.data, ap.description.data)
+    return success()
 
 @authorization(UserLevel.normal)
-def application_delete(application_id):
+def delete_application(application_id):
     """
     DELETE: settings/applications/<application_id>
     delete the application
     """
-    try: application_id = long(application_id)
-    except: return abort(400)
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
 
     aps = ApplicationService()
-    success = aps.delete_application(application_id)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    aps.delete_application(application_id)
+    return success()
 
 @authorization(UserLevel.normal)
-def application_invite(application_id):
+def invite_user(application_id):
     """
-    POST: settings/application/<application_id>/invite
+    POST: settings/application/<application_id>/members
     invite user to join the application
     """
-    try: application_id = long(application_id)
-    except: return abort(400)
-    email = request.form.get('email')
+    try:
+        application_id = long(application_id)
+    except:
+        return abort(400)
+    user = InviteUserForm(**request.json)
+    if not user.validate():
+        return validated_failed(**user.validated_messages())
 
     acs = AccountService()
     aps = ApplicationService()
@@ -117,19 +117,16 @@ def application_invite(application_id):
         return abort(403)
 
     # invite user
-    user = acs.invite_user(email)
+    user = acs.invite_user(user.email.data)
     if user is None:
         return abort(417)
 
     # add the new user to the application
-    success = aps.add_user_to_application(user.key().id(), application_id)
-    if success:
-        return jsonify({ 'success': success })
-    else:
-        return abort(417)
+    aps.add_user_to_application(user.key().id(), application_id)
+    return success(201)
 
 @authorization(UserLevel.normal)
-def application_member_delete(application_id, member_id):
+def delete_application_member(application_id, member_id):
     """
     DELETE: settings/applications/<application_id>/members/<member_id>
     delete a member in the application
@@ -141,47 +138,48 @@ def application_member_delete(application_id, member_id):
         return abort(400)
 
     aps = ApplicationService()
-    success = aps.delete_user_from_application(member_id, application_id)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    aps.delete_user_from_application(member_id, application_id)
+    return success()
 
 
 @authorization(UserLevel.root)
-def users():
+def get_users():
     """
     GET: settings/users
     get users list
     """
     acs = AccountService()
-    g.view_model['result'] = acs.get_users()
-
-    return render_template('./settings/users.html', **g.view_model)
+    result = acs.get_users()
+    return jsonify({'items': result})
 
 @authorization(UserLevel.root)
-def user_add():
+def add_user():
     """
     POST: settings/users
     add an user
     """
-    email = request.form.get('email')
+    user = InviteUserForm(**request.json)
+    if not user.validate():
+        return validated_failed(**user.validated_messages())
+
     acs = AccountService()
-    user = acs.invite_user(email)
+    user = acs.invite_user(user.email.data)
     if user:
-        return users()
+        return success(201)
     else:
         return abort(417)
 
 @authorization(UserLevel.root)
-def user_delete(user_id):
+def delete_user(user_id):
     """
     DELETE: settings/users/<user_id>
     delete the user
     """
+    try:
+        user_id = long(user_id)
+    except Exception:
+        return abort(400)
+
     acs = AccountService()
-    success = acs.delete_user(user_id)
-    if success:
-        return jsonify({'success': success})
-    else:
-        return abort(417)
+    acs.delete_user(user_id)
+    return success()

@@ -1,6 +1,6 @@
 
 # flask
-from flask import g
+from flask import g, abort
 
 # google
 from google.appengine.ext import db
@@ -8,8 +8,7 @@ from google.appengine.api import mail
 from google.appengine.api import users
 
 # victory
-from ..models.datastore.user_model import *
-from ..models.view_model.user_view_model import *
+from application.models.datastore.user_model import *
 from base_service import BaseService
 from application import config
 
@@ -60,43 +59,27 @@ class AccountService(BaseService):
         """
         Update user's profile
 
-        @param name user's name
-        @returns True, user name / False, None
+        :param name: user's name
         """
-        # clear up input value
-        if name is None: return False, None
-        name = name.strip()
-
-        # check auth
-        if g.user is None: return False, None
-
-        if len(name) > 0:
-            user = UserModel().get_by_id(g.user.key().id())
-            user.name = name
-            user.put()
-            user.get(user.key())    # sync
-            return True, name
-
-        return False, None
+        user = UserModel().get(g.user.key())
+        user.name = name
+        user.put()
+        user.get(user.key())    # sync
 
     def invite_user(self, email):
         """
         Invite user to join Takanash with email
 
-        @param email invited user's email
-        @returns UserModel(new user) / None
+        :param email: invited user's email
+        :return: UserModel(new user)
         """
         # clear up input value
-        if email is None: return None
-        email = email.strip().lower()
-
-        # check auth
-        if g.user is None: return None
+        email = email.lower()
 
         user = db.GqlQuery('select * from UserModel where email = :1 limit 1', email)
         if user.count(1) > 0:
             # user is exist
-            return UserModel().get(user[0])
+            return UserModel().get(user[0].key())
 
         # add a new user
         user = UserModel()
@@ -117,45 +100,30 @@ class AccountService(BaseService):
         """
         Get all users (for root)
 
-        @returns [UserViewModel] / []
+        @returns [UserModel.dict()] / []
         """
-        # check auth
-        if g.user is None: return []
-        if g.user.level != UserLevel.root: return []
+        if g.user.level != UserLevel.root:
+            return abort(403)
 
         result = []
         members = db.GqlQuery('select * from UserModel order by create_time')
         for user in members:
-            result.append(UserViewModel(
-                user_id= user.key().id(),
-                is_root= user.level == UserLevel.root,
-                is_deletable= user.level != UserLevel.root,
-                name= user.name,
-                email= user.email,
-                create_time= user.create_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
-            ))
+            result.append(user.dict())
         return result
 
     def delete_user(self, user_id):
         """
         Delete user with id (for root)
 
-        @param user_id user id
-        @returns True / False
+        :param user_id: user id
         """
-        # clear input value
-        try: user_id = long(user_id)
-        except: return False
-
-        # check auth
-        if g.user is None: return False
-        if g.user.level != UserLevel.root: return False
-
         # delete self
-        if user_id == g.user.key().id(): return False
+        if user_id == g.user.key().id():
+            return abort(400)
 
         user = UserModel.get_by_id(user_id)
-        if user is None : return False
+        if user is None :
+            return abort(404)
 
         # delete relational from application
         applications = db.GqlQuery('select * from ApplicationModel where viewer in :1', [user_id])
@@ -168,4 +136,3 @@ class AccountService(BaseService):
 
         # delete user
         user.delete()
-        return True

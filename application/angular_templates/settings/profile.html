@@ -1,0 +1,24 @@
+<div id="js_content" class="cs_content_medium">
+    <form ng-submit="updateProfile()">
+        <legend>Profile</legend>
+
+        <div ng-class="{error: errors.name}" class="control-group">
+            <div class="controls">
+                <label for="name">Name</label>
+                <input ng-model="profile.name" v-focus type="text" class="input-xlarge" id="name" placeholder="Your Name"/>
+                <label ng-if="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <label for="account">Account</label>
+                <input type="text" class="input-xlarge" id="account" disabled value="{{ profile.email }}" placeholder="email@gmail.com"/>
+            </div>
+        </div>
+
+        <div>
+            <input type="submit" class="btn" value="Update Profile"/>
+        </div>
+    </form>
+</div>

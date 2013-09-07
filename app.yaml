@@ -51,6 +51,10 @@ handlers:
 - url: /font/
   static_dir: application/static/font
 
+# angular template
+- url: /views/
+  static_dir: application/angular_templates
+
 # cron jobs
 - url: /cron_jobs/.*
   script: cron_jobs.app

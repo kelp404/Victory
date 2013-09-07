@@ -1,0 +1,110 @@
+<div id="js_content" class="cs_content_medium">
+    <legend>Applications</legend>
+
+    <!-- add button -->
+    <form class="input-append pull-right cs_added_group">
+        <input v-focus type="text" ng-model="name" />
+        <input type="submit" href="#form_add_application" data-toggle="modal" class="btn" value="Add"/>
+    </form>
+
+    <!-- add an application form -->
+    <form id="form_add_application" ng-submit="addApplication()" v-modal class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Add a new application</h3>
+        </div>
+        <div class="modal-body">
+            <div ng-class="{error: errors.name}" class="control-group">
+                <label class="control-label" for="name">Name</label>
+                <div class="controls">
+                    <input ng-model="name" id="name" name="name" class="input-xlarge" type="text"/>
+                    <label ng-if="errors.name" for="name" class="help-inline">{{ errors.name }}</label>
+                </div>
+            </div>
+
+            <div ng-class="{error: errors.description}" class="control-group">
+                <label class="control-label" for="description">Description</label>
+                <div class="controls">
+                    <input ng-model="description" id="description" name="description" class="span6" type="text"/>
+                    <label ng-if="errors.description" for="name" class="help-inline">{{ errors.description }}</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input type="submit" class="btn" value="Submit"/>
+        </div>
+    </form>
+
+    <!-- applications content -->
+    <table class="table table-bordered table-hover table-content table-pointer">
+        <thead>
+            <tr><th class="span2">Name</th><th>Description</th><th class="span3">Create Time</th></tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in items" data-toggle="modal" href="#application{{ item.id }}">
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.create_time | date:'yyyy-MM-dd hh:mm a' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- application detail modal -->
+    <form ng-repeat="item in items" ng-submit="updateApplication(item.id)" id="application{{ item.id }}" v-modal class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Application {{ item.name }}</h3>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <tbody>
+                <tr><td class="span2">Name</td><td>
+                    <div ng-if="item.is_owner" ng-class="{error: item.errors.name}" class="control-group">
+                        <div class="controls">
+                            <input ng-model="item.newName" type="text" name="name"/>
+                            <label ng-if="item.errors.name" class="help-inline">{{ item.errors.name }}</label>
+                        </div>
+                    </div>
+                    <div ng-hide="item.is_owner">{{ item.name }}</div>
+                </td></tr>
+                <tr><td>Description</td><td>
+                    <div ng-if="item.is_owner" ng-class="{error: item.errors.description}" class="control-group">
+                        <div class="controls">
+                            <input ng-model="item.newDescription" type="text" name="description" class="input-xlarge"/>
+                            <label ng-if="item.errors.description" class="help-inline">{{ item.errors.description }}</label>
+                        </div>
+                    </div>
+                    <div ng-hide="item.is_owner">{{ item.description }}</div>
+                </td></tr>
+                <tr><td>Key</td><td>{{ item.app_key }}</td></tr>
+                <tr><td>Members</td><td>
+                    <div ng-repeat="member in item.members">
+                        <span v-tooltip="member.name">{{ member.email }}</span>
+                        <span ng-if="item.is_owner">
+                            <!-- if i am owner and the member(in loop) is not owner -->
+                            <a ng-hide="member.is_owner" ng-click="deleteMenter(item.id, member.id)" v-tooltip href title="Remove from this application.">delete</a>
+                        </span>
+                    </div>
+                </td></tr>
+                <tr><td>Create Time</td><td>{{ item.create_time | date:'yyyy-MM-dd hh:mm a' }}</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <span ng-if="item.is_owner">
+                <div class="input-append pull-left">
+                    <div class="control-group" style="margin-bottom: 0">
+                        <div class="controls">
+                            <input ng-model="email" v-enter="inviteUser(item.id, email)" type="text" class="input-medium" placeholder="email@gmail.com" />
+                            <a ng-click="inviteUser(item.id, email)" class="btn">Invite</a>
+                        </div>
+                    </div>
+                </div>
+
+                <a ng-click="deleteApplication(item.id)" class="btn btn-danger">Delete</a>
+                <input type="submit" class="btn" value="Save"/>
+            </span>
+            <a class="btn" data-dismiss="modal">Close</a>
+        </div>
+    </form>
+</div>

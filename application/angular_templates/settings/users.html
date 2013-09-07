@@ -1,0 +1,30 @@
+<div id="js_content" class="cs_content_medium">
+    <legend>Users</legend>
+
+    <!-- invite user button -->
+    <form ng-submit="addUser()" class="input-append pull-right cs_added_group">
+        <div class="control-group">
+            <div class="controls">
+                <input ng-model="email" v-focus type="text" placeholder="email@gmail.com" />
+                <input type="submit" class="btn" value="Invite"/>
+            </div>
+        </div>
+    </form>
+
+    <!-- users content -->
+    <table class="table table-bordered table-hover table-content">
+        <thead>
+            <tr><th class="span2">Name</th><th>Email</th><th class="span2">Create Time</th><th class="span1"></th></tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in items">
+                <td>{{ item.name }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.create_time | date:'yyyy-MM-dd hh:mm a' }}</td>
+                <td>
+                    <a ng-if="item.is_deletable" ng-click="deleteUser(item.id)" href>Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
