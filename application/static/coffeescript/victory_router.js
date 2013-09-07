@@ -41,8 +41,8 @@
         title: function() {
           return 'Applications - Settings - ';
         },
-        httpApplications: function($victory) {
-          return $victory.setting.httpApplications();
+        applications: function($victory) {
+          return $victory.setting.getApplications();
         }
       },
       views: {
@@ -62,8 +62,8 @@
         title: function() {
           return 'Users - Settings - ';
         },
-        httpUsers: function($victory) {
-          return $victory.setting.httpUsers();
+        users: function($victory) {
+          return $victory.setting.getUsers();
         }
       },
       views: {
@@ -83,8 +83,8 @@
         title: function() {
           return 'Profile - Settings - ';
         },
-        httpProfile: function($victory) {
-          return $victory.setting.httpProfile();
+        profile: function($victory) {
+          return $victory.setting.getProfile();
         }
       },
       views: {
@@ -100,6 +100,14 @@
     });
     $stateProvider.state('grouped-crashes', {
       url: '/crashes/grouped',
+      resolve: {
+        title: function() {
+          return 'Crashes - ';
+        },
+        documentMode: function() {
+          return 'crashes';
+        }
+      },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
     });
@@ -108,6 +116,12 @@
       resolve: {
         title: function() {
           return 'Exceptions - ';
+        },
+        documentMode: function() {
+          return 'exceptions';
+        },
+        groupedDocumentsAndApplications: function($victory) {
+          return $victory.document.getGroupedDocumentsAndApplications('exceptions');
         }
       },
       templateUrl: '/views/documents/grouped.html',
@@ -118,6 +132,12 @@
       resolve: {
         title: function() {
           return 'Exceptions - ';
+        },
+        documentMode: function() {
+          return 'exceptions';
+        },
+        groupedDocumentsAndApplications: function($victory, $stateParams) {
+          return $victory.document.getGroupedDocumentsAndApplications('exceptions', $stateParams.applicationId, $stateParams.keyword, $stateParams.index);
         }
       },
       templateUrl: '/views/documents/grouped.html',
@@ -125,6 +145,14 @@
     });
     return $stateProvider.state('grouped-logs', {
       url: '/logs/grouped',
+      resolve: {
+        title: function() {
+          return 'Logs - ';
+        },
+        documentMode: function() {
+          return 'logs';
+        }
+      },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
     });

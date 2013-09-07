@@ -1,8 +1,17 @@
 
 s = angular.module 'victory.service', []
 s.factory '$victory', ($http, $rootScope) ->
+    # setup the selected application
+    if sessionStorage.selectedApplication
+        # application {id, name, description, app_key, create_time, is_owner}
+        $rootScope.selectedApplication = JSON.parse sessionStorage.selectedApplication
+
+    # is stupid browser?
     user_agent = navigator.userAgent.toLowerCase()
     stupidBrowser = user_agent.indexOf('msie') != -1
+
+    # default page size
+    pageSize = 20
 
     # ---------------- common function ----------------
     common =
@@ -90,21 +99,17 @@ s.factory '$victory', ($http, $rootScope) ->
     # -------------- setting ----------------
     setting =
         # -------------- application ----------------
-        httpApplications: ->
-            ###
-            Get applications of the settings.
-            :return: $http object
-            ###
-            common.ajax
-                url: '/settings/applications'
         getApplications: (args={}) ->
             ###
             Get applications of the settings.
             :param args: {success()}
             ###
-            common.ajax
+            ajax = common.ajax
                 url: '/settings/applications'
                 success: args.success
+            ajax.then (data) ->
+                # for resolve
+                data.data.items
         addApplication: (args={}) ->
             ###
             Add the application.
@@ -158,21 +163,17 @@ s.factory '$victory', ($http, $rootScope) ->
                 success: args.success
 
         # -------------- user ----------------
-        httpUsers: ->
-            ###
-            Get users of the settings.
-            :return: $http object
-            ###
-            common.ajax
-                url: '/settings/users'
         getUsers: (args={}) ->
             ###
             Get users of the settings.
             :param args: {success()}
             ###
-            common.ajax
+            ajax = common.ajax
                 url: '/settings/users'
                 success: args.success
+            ajax.then (data) ->
+                # for resolve
+                data.data.items
         addUser: (args={}) ->
             ###
             Add an user.
@@ -195,21 +196,17 @@ s.factory '$victory', ($http, $rootScope) ->
                 success: args.success
 
         # -------------- profile ----------------
-        httpProfile: ->
-            ###
-            Get the profile.
-            :return: $http object
-            ###
-            common.ajax
-                url: '/settings/profile'
         getProfile: (args={}) ->
             ###
             Get the profile.
             :param args: {success()}
             ###
-            common.ajax
+            ajax = common.ajax
                 url: '/settings/profile'
                 success: args.success
+            ajax.then (data) ->
+                # for resolve
+                data.data
         updateProfile: (args={}) ->
             ###
             Update the profile.
@@ -224,19 +221,72 @@ s.factory '$victory', ($http, $rootScope) ->
                 success: args.success
 
 
-    # -------------- application ----------------
-    application = {}
-
-
     # -------------- document ----------------
-    document = {}
+    document =
+        getGroupedDocumentsAndApplications: (documentMode, applicationId, keyword, index) ->
+            ###
+            Get grouped documents and applications for GroupedDocumentsCtrl.
+            :return: {applications, groupedDocuments, page}
+            ###
+            # cleanup input value
+            keyword ?= ''
+            index ?= 0
+            applicationId = parseInt(applicationId)
+
+            # result object
+            result =
+                applications: null
+                groupedDocuments: null
+                page: index: 0
+
+            ajaxApplications = common.ajax
+                url: '/applications'
+                hideLoadingAfterDone: false
+            ajaxApplications.then (data) =>
+                result.applications = data.data.items
+                if result.applications.length > 0
+                    if applicationId in (x.id for x in result.applications)
+                        # select the application
+                        $rootScope.selectedApplication = (x for x in result.applications when x.id == applicationId)[0]
+                        sessionStorage.selectedApplication = JSON.stringify $rootScope.selectedApplication
+                    else if not $rootScope.selectedApplication or $rootScope.selectedApplication.id not in (x.id for x in result.applications)
+                        # select the first application
+                        $rootScope.selectedApplication = result.applications[0]
+                        sessionStorage.selectedApplication = JSON.stringify $rootScope.selectedApplication
+
+                    # load grouped documents by application id
+                    ajaxDocuments = @getGroupedDocuments
+                        applicationId: $rootScope.selectedApplication.id
+                        documentMode: documentMode
+                        keyword: keyword
+                        index: index
+                    ajaxDocuments.then (data) ->
+                        result.groupedDocuments = data.data.items
+                        result.page =
+                            total: data.data.total
+                            index: index
+                            max: (data.data.total - 1) / pageSize
+                            hasPrevious: index > 0
+                            hasNext: (index + 1) * pageSize < data.data.total
+                        result
+                else
+                    common.loading.off()
+                    result
+        getGroupedDocuments: (args={}) ->
+            ###
+            Get grouped documents
+            :param args: {applicationId, documentMode, keyword, index success()}
+            ###
+            args.keyword ?= ''
+            args.index ?= 0
+            common.ajax
+                url: "/applications/#{$rootScope.selectedApplication.id}/#{args.documentMode}/grouped?q=#{args.keyword}&index=#{args.index}"
+                success: args.success
 
 
     # -------------- $victory ----------------
     stupidBrowser: stupidBrowser
-    # default page size
-    pageSize: 20
+    pageSize: pageSize
     common: common
     setting: setting
-    application: application
     document: document

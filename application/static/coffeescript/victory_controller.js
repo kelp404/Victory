@@ -58,7 +58,7 @@
     return location.href = '#/settings/applications';
   });
 
-  c.controller('SettingsApplicationsCtrl', function($scope, $victory, httpApplications) {
+  c.controller('SettingsApplicationsCtrl', function($scope, $victory, applications) {
     /*
     /settings/applications
     
@@ -69,14 +69,13 @@
                         }]
     */
 
-    var item, _i, _len, _ref;
-    _ref = httpApplications.data.items;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      item = _ref[_i];
+    var item, _i, _len;
+    for (_i = 0, _len = applications.length; _i < _len; _i++) {
+      item = applications[_i];
       item.newName = item.name;
       item.newDescription = item.description;
     }
-    $scope.items = httpApplications.data.items;
+    $scope.items = applications;
     $scope.getApplications = function() {
       /*
       Get applications.
@@ -84,10 +83,10 @@
 
       return $victory.setting.getApplications({
         success: function(data) {
-          var _j, _len1, _ref1;
-          _ref1 = data.items;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            item = _ref1[_j];
+          var _j, _len1, _ref;
+          _ref = data.items;
+          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+            item = _ref[_j];
             item.newName = item.name;
             item.newDescription = item.description;
           }
@@ -125,11 +124,11 @@
 
       var updateItem, x;
       updateItem = ((function() {
-        var _j, _len1, _ref1, _results;
-        _ref1 = $scope.items;
+        var _j, _len1, _ref, _results;
+        _ref = $scope.items;
         _results = [];
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          x = _ref1[_j];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          x = _ref[_j];
           if (x.id === id) {
             _results.push(x);
           }
@@ -191,11 +190,11 @@
         success: function() {
           var application, x;
           application = ((function() {
-            var _j, _len1, _ref1, _results;
-            _ref1 = $scope.items;
+            var _j, _len1, _ref, _results;
+            _ref = $scope.items;
             _results = [];
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              x = _ref1[_j];
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              x = _ref[_j];
               if (x.id === applicationId) {
                 _results.push(x);
               }
@@ -203,11 +202,11 @@
             return _results;
           })())[0];
           return application.members = (function() {
-            var _j, _len1, _ref1, _results;
-            _ref1 = application.members;
+            var _j, _len1, _ref, _results;
+            _ref = application.members;
             _results = [];
-            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-              x = _ref1[_j];
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              x = _ref[_j];
               if (x.id !== memberId) {
                 _results.push(x);
               }
@@ -219,12 +218,12 @@
     };
   });
 
-  c.controller('SettingsUsersCtrl', function($scope, $victory, httpUsers) {
+  c.controller('SettingsUsersCtrl', function($scope, $victory, users) {
     /*
     /settings/users
     */
 
-    $scope.items = httpUsers.data.items;
+    $scope.items = users;
     $scope.getUsers = function() {
       /*
       Get users.
@@ -275,12 +274,12 @@
     };
   });
 
-  c.controller('SettingsProfileCtrl', function($scope, $victory, httpProfile) {
+  c.controller('SettingsProfileCtrl', function($scope, $victory, profile) {
     /*
     /settings/profile
     */
 
-    $scope.profile = httpProfile.data;
+    $scope.profile = profile;
     $scope.getProfile = function() {
       return $victory.setting.getProfile({
         success: function(data) {
@@ -303,88 +302,21 @@
     };
   });
 
-  c.controller('GroupedDocumentsCtrl', function($scope, $victory, $state, $stateParams) {
+  c.controller('GroupedDocumentsCtrl', function($scope, $victory, $state, $stateParams, documentMode, groupedDocumentsAndApplications) {
     /*
     :scope documentMode: <crashes/exceptions/logs>
-    :scope selectedApplication: the current application
     :scope keyword: search keywords
-    :scope index: page index
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
     :scope groupedDocuments: [{group_tag, create_time, name, email, title, description, times}]
     :scope page: {total, index, max, hasPrevious, hasNext}
     */
 
-    if ($state.current.name.indexOf('exception') >= 0) {
-      $scope.documentMode = 'exceptions';
-    } else if ($state.current.name.indexOf('log') >= 0) {
-      $scope.documentMode = 'logs';
-    } else {
-      $scope.documentMode = 'crashes';
-    }
-    $scope.page = {
-      index: 0
-    };
-    if (sessionStorage.selectedApplication) {
-      $scope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
-    }
-    $scope.getApplications = function() {
-      /*
-      Get applications, then get grouped documents.
-      */
-
-      return $victory.ajax({
-        url: '/applications',
-        hideLoadingAfterDone: false,
-        success: function(data) {
-          var x, _ref;
-          $scope.applications = data.items;
-          if (data.items.length > 0) {
-            if (!$scope.selectedApplication || ((_ref = $scope.selectedApplication.id) !== (function() {
-              var _i, _len, _ref1, _results;
-              _ref1 = data.items;
-              _results = [];
-              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                x = _ref1[_i];
-                _results.push(x.id);
-              }
-              return _results;
-            })())) {
-              $scope.selectedApplication = data.items[0];
-              sessionStorage.selectedApplication = JSON.stringify($scope.selectedApplication);
-            }
-            return $scope.searchGroupedDocuments('', $stateParams.index);
-          } else {
-            return victory.loading.off();
-          }
-        }
-      });
-    };
-    $scope.searchGroupedDocuments = function(keyword, index) {
-      if (keyword == null) {
-        keyword = '';
-      }
-      if (index == null) {
-        index = 0;
-      }
-      /*
-      Search grouped documents with keywords.
-      */
-
-      return $victory.ajax({
-        url: "/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/grouped?q=" + keyword + "&index=" + index,
-        success: function(data) {
-          $scope.groupedDocuments = data.items;
-          return $scope.page = {
-            total: data.total,
-            index: index,
-            max: (data.total - 1) / $victory.pageSize,
-            hasPrevious: index > 0,
-            hasNext: (index + 1) * $victory.pageSize < data.total
-          };
-        }
-      });
-    };
+    $scope.documentMode = documentMode;
+    $scope.keyword = $stateParams.keyword ? $stateParams.keyword : '';
+    $scope.applications = groupedDocumentsAndApplications.applications;
+    $scope.groupedDocuments = groupedDocumentsAndApplications.groupedDocuments;
+    $scope.page = groupedDocumentsAndApplications.page;
     $scope.getGroupedDocumentsUrl = function(keyword, index) {
       if (index == null) {
         index = 0;
@@ -418,7 +350,7 @@
         return "#document_" + groupedDocument.group_tag;
       }
     };
-    $scope.modal = function(groupedDocument) {
+    return $scope.modal = function(groupedDocument) {
       /*
       Check the grouped document should show the bootstrap modal window.
       :param groupedDocument: grouped document
@@ -431,13 +363,6 @@
         return "modal";
       }
     };
-    if ($stateParams.keyword) {
-      $scope.keyword = $stateParams.keyword;
-      return $scope.searchGroupedDocuments($stateParams.keyword, $stateParams.index);
-    } else {
-      $scope.keyword = '';
-      return $scope.getApplications();
-    }
   });
 
 }).call(this);

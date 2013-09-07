@@ -42,7 +42,7 @@ c.controller 'SettingsCtrl', ->
     /settings
     ###
     location.href = '#/settings/applications'
-c.controller 'SettingsApplicationsCtrl', ($scope, $victory, httpApplications) ->
+c.controller 'SettingsApplicationsCtrl', ($scope, $victory, applications) ->
     ###
     /settings/applications
 
@@ -53,10 +53,10 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory, httpApplications) ->
                         }]
     ###
     # setup applications
-    for item in httpApplications.data.items
+    for item in applications
         item.newName = item.name
         item.newDescription = item.description
-    $scope.items = httpApplications.data.items
+    $scope.items = applications
 
     $scope.getApplications = ->
         ###
@@ -130,11 +130,11 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory, httpApplications) ->
                 application = (x for x in $scope.items when x.id == applicationId)[0]
                 application.members = (x for x in application.members when x.id != memberId)
 
-c.controller 'SettingsUsersCtrl', ($scope, $victory, httpUsers) ->
+c.controller 'SettingsUsersCtrl', ($scope, $victory, users) ->
     ###
     /settings/users
     ###
-    $scope.items = httpUsers.data.items
+    $scope.items = users
 
     $scope.getUsers = ->
         ###
@@ -161,11 +161,11 @@ c.controller 'SettingsUsersCtrl', ($scope, $victory, httpUsers) ->
             success: ->
                 $scope.items = (x for x in $scope.items when x.id != id)
 
-c.controller 'SettingsProfileCtrl', ($scope, $victory, httpProfile) ->
+c.controller 'SettingsProfileCtrl', ($scope, $victory, profile) ->
     ###
     /settings/profile
     ###
-    $scope.profile = httpProfile.data
+    $scope.profile = profile
 
     $scope.getProfile = ->
         $victory.setting.getProfile
@@ -181,66 +181,20 @@ c.controller 'SettingsProfileCtrl', ($scope, $victory, httpProfile) ->
                 $scope.getProfile()
 
 # ----------- documents ----------------
-c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams) ->
+c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams, documentMode, groupedDocumentsAndApplications) ->
     ###
     :scope documentMode: <crashes/exceptions/logs>
-    :scope selectedApplication: the current application
     :scope keyword: search keywords
-    :scope index: page index
     :scope applications: [{id, name, description,
                         app_key, create_time, is_owner}]
     :scope groupedDocuments: [{group_tag, create_time, name, email, title, description, times}]
     :scope page: {total, index, max, hasPrevious, hasNext}
     ###
-    # setup documentMode
-    if $state.current.name.indexOf('exception') >= 0
-        $scope.documentMode = 'exceptions'
-    else if $state.current.name.indexOf('log') >= 0
-        $scope.documentMode = 'logs'
-    else
-        $scope.documentMode = 'crashes'
-
-    # set default page.index
-    $scope.page =
-        index: 0
-
-    # setup selectedApplication
-    if sessionStorage.selectedApplication
-        $scope.selectedApplication = JSON.parse sessionStorage.selectedApplication
-
-    $scope.getApplications = ->
-        ###
-        Get applications, then get grouped documents.
-        ###
-        $victory.ajax
-            url: '/applications'
-            hideLoadingAfterDone: false
-            success: (data) ->
-                $scope.applications = data.items
-                if data.items.length > 0
-                    if not $scope.selectedApplication or $scope.selectedApplication.id not in [x.id for x in data.items]
-                        # select the first application
-                        $scope.selectedApplication = data.items[0]
-                        sessionStorage.selectedApplication = JSON.stringify $scope.selectedApplication
-                    # load document groups by application id
-                    $scope.searchGroupedDocuments '', $stateParams.index
-                else
-                    victory.loading.off()
-
-    $scope.searchGroupedDocuments = (keyword='', index=0) ->
-        ###
-        Search grouped documents with keywords.
-        ###
-        $victory.ajax
-            url: "/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/grouped?q=#{keyword}&index=#{index}"
-            success: (data) ->
-                $scope.groupedDocuments = data.items
-                $scope.page =
-                    total: data.total
-                    index: index
-                    max: (data.total - 1) / $victory.pageSize
-                    hasPrevious: index > 0
-                    hasNext: (index + 1) * $victory.pageSize < data.total
+    $scope.documentMode = documentMode
+    $scope.keyword = if $stateParams.keyword then $stateParams.keyword else ''
+    $scope.applications = groupedDocumentsAndApplications.applications
+    $scope.groupedDocuments = groupedDocumentsAndApplications.groupedDocuments
+    $scope.page = groupedDocumentsAndApplications.page
 
     $scope.getGroupedDocumentsUrl = (keyword, index=0) ->
         ###
@@ -277,10 +231,3 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams) ->
             return ""
         else
             return "modal"
-
-    if $stateParams.keyword
-        $scope.keyword = $stateParams.keyword
-        $scope.searchGroupedDocuments $stateParams.keyword, $stateParams.index
-    else
-        $scope.keyword = ''
-        $scope.getApplications()
