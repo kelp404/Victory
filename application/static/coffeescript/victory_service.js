@@ -6,7 +6,7 @@
   s = angular.module('victory.service', []);
 
   s.factory('$victory', function($http, $rootScope) {
-    var common, document, pageSize, setting, stupidBrowser, user_agent;
+    var application, common, document, pageSize, setting, stupidBrowser, user_agent;
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
     }
@@ -347,22 +347,42 @@
         });
       }
     };
+    application = {
+      getApplications: function(args) {
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Get applications.
+        :param args: {success()}
+        */
+
+        return common.ajax({
+          url: "/applications",
+          success: args.success
+        });
+      }
+    };
     document = {
-      getGroupedDocumentsAndApplications: function(documentMode, applicationId, keyword, index) {
+      getGroupedDocumentsAndApplications: function(args) {
         var ajaxApplications, result,
           _this = this;
-        if (keyword == null) {
-          keyword = '';
-        }
-        if (index == null) {
-          index = 0;
+        if (args == null) {
+          args = {};
         }
         /*
         Get grouped documents and applications for GroupedDocumentsCtrl.
+        :param args: {documentMode, applicationId, keyword, index}
         :return: {applications, groupedDocuments, page}
         */
 
-        applicationId = parseInt(applicationId);
+        args.applicationId = parseInt(args.applicationId);
+        if (args.keyword == null) {
+          args.keyword = '';
+        }
+        if (args.index == null) {
+          args.index = 0;
+        }
         result = {
           applications: null,
           groupedDocuments: null,
@@ -375,33 +395,10 @@
           hideLoadingAfterDone: false
         });
         return ajaxApplications.then(function(data) {
-          var ajaxDocuments, x, _ref;
+          var ajaxDocuments, x, _ref, _ref1;
           result.applications = data.data.items;
           if (result.applications.length > 0) {
-            if (__indexOf.call((function() {
-              var _i, _len, _ref, _results;
-              _ref = result.applications;
-              _results = [];
-              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                x = _ref[_i];
-                _results.push(x.id);
-              }
-              return _results;
-            })(), applicationId) >= 0) {
-              $rootScope.selectedApplication = ((function() {
-                var _i, _len, _ref, _results;
-                _ref = result.applications;
-                _results = [];
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                  x = _ref[_i];
-                  if (x.id === applicationId) {
-                    _results.push(x);
-                  }
-                }
-                return _results;
-              })())[0];
-              sessionStorage.selectedApplication = JSON.stringify($rootScope.selectedApplication);
-            } else if (!$rootScope.selectedApplication || (_ref = $rootScope.selectedApplication.id, __indexOf.call((function() {
+            if (_ref = args.applicationId, __indexOf.call((function() {
               var _i, _len, _ref1, _results;
               _ref1 = result.applications;
               _results = [];
@@ -410,24 +407,47 @@
                 _results.push(x.id);
               }
               return _results;
-            })(), _ref) < 0)) {
+            })(), _ref) >= 0) {
+              $rootScope.selectedApplication = ((function() {
+                var _i, _len, _ref1, _results;
+                _ref1 = result.applications;
+                _results = [];
+                for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                  x = _ref1[_i];
+                  if (x.id === args.applicationId) {
+                    _results.push(x);
+                  }
+                }
+                return _results;
+              })())[0];
+              sessionStorage.selectedApplication = JSON.stringify($rootScope.selectedApplication);
+            } else if (!$rootScope.selectedApplication || (_ref1 = $rootScope.selectedApplication.id, __indexOf.call((function() {
+              var _i, _len, _ref2, _results;
+              _ref2 = result.applications;
+              _results = [];
+              for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+                x = _ref2[_i];
+                _results.push(x.id);
+              }
+              return _results;
+            })(), _ref1) < 0)) {
               $rootScope.selectedApplication = result.applications[0];
               sessionStorage.selectedApplication = JSON.stringify($rootScope.selectedApplication);
             }
             ajaxDocuments = _this.getGroupedDocuments({
               applicationId: $rootScope.selectedApplication.id,
-              documentMode: documentMode,
-              keyword: keyword,
-              index: index
+              documentMode: args.documentMode,
+              keyword: args.keyword,
+              index: args.index
             });
             return ajaxDocuments.then(function(data) {
               result.groupedDocuments = data.data.items;
               result.page = {
                 total: data.data.total,
-                index: index,
+                index: args.index,
                 max: (data.data.total - 1) / pageSize,
-                hasPrevious: index > 0,
-                hasNext: (index + 1) * pageSize < data.data.total
+                hasPrevious: args.index > 0,
+                hasNext: (args.index + 1) * pageSize < data.data.total
               };
               return result;
             });
@@ -456,6 +476,24 @@
           url: "/applications/" + $rootScope.selectedApplication.id + "/" + args.documentMode + "/grouped?q=" + args.keyword + "&index=" + args.index,
           success: args.success
         });
+      },
+      getDocuments: function(args) {
+        var ajax;
+        if (args == null) {
+          args = {};
+        }
+        /*
+        Get documents by the grouped tag.
+        :param args: {applicationId, documentMode, groupTag, success()}
+        */
+
+        ajax = common.ajax({
+          url: "/applications/" + args.applicationId + "/" + args.documentMode + "/" + args.groupTag,
+          success: args.success
+        });
+        return ajax.then(function(data) {
+          return data.data.items;
+        });
       }
     };
     return {
@@ -463,6 +501,7 @@
       pageSize: pageSize,
       common: common,
       setting: setting,
+      application: application,
       document: document
     };
   });

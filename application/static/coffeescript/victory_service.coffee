@@ -221,15 +221,30 @@ s.factory '$victory', ($http, $rootScope) ->
                 success: args.success
 
 
+    # -------------- application ----------------
+    application =
+        getApplications: (args={}) ->
+            ###
+            Get applications.
+            :param args: {success()}
+            ###
+            common.ajax
+                url: "/applications"
+                success: args.success
+
+
     # -------------- document ----------------
     document =
-        getGroupedDocumentsAndApplications: (documentMode, applicationId, keyword='', index=0) ->
+        getGroupedDocumentsAndApplications: (args={}) ->
             ###
             Get grouped documents and applications for GroupedDocumentsCtrl.
+            :param args: {documentMode, applicationId, keyword, index}
             :return: {applications, groupedDocuments, page}
             ###
             # cleanup input value
-            applicationId = parseInt(applicationId)
+            args.applicationId = parseInt(args.applicationId)
+            args.keyword ?= ''
+            args.index ?= 0
 
             # result object
             result =
@@ -243,9 +258,9 @@ s.factory '$victory', ($http, $rootScope) ->
             ajaxApplications.then (data) =>
                 result.applications = data.data.items
                 if result.applications.length > 0
-                    if applicationId in (x.id for x in result.applications)
+                    if args.applicationId in (x.id for x in result.applications)
                         # select the application
-                        $rootScope.selectedApplication = (x for x in result.applications when x.id == applicationId)[0]
+                        $rootScope.selectedApplication = (x for x in result.applications when x.id == args.applicationId)[0]
                         sessionStorage.selectedApplication = JSON.stringify $rootScope.selectedApplication
                     else if not $rootScope.selectedApplication or $rootScope.selectedApplication.id not in (x.id for x in result.applications)
                         # select the first application
@@ -255,17 +270,17 @@ s.factory '$victory', ($http, $rootScope) ->
                     # load grouped documents by application id
                     ajaxDocuments = @getGroupedDocuments
                         applicationId: $rootScope.selectedApplication.id
-                        documentMode: documentMode
-                        keyword: keyword
-                        index: index
+                        documentMode: args.documentMode
+                        keyword: args.keyword
+                        index: args.index
                     ajaxDocuments.then (data) ->
                         result.groupedDocuments = data.data.items
                         result.page =
                             total: data.data.total
-                            index: index
+                            index: args.index
                             max: (data.data.total - 1) / pageSize
-                            hasPrevious: index > 0
-                            hasNext: (index + 1) * pageSize < data.data.total
+                            hasPrevious: args.index > 0
+                            hasNext: (args.index + 1) * pageSize < data.data.total
                         result
                 else
                     common.loading.off()
@@ -280,6 +295,16 @@ s.factory '$victory', ($http, $rootScope) ->
             common.ajax
                 url: "/applications/#{$rootScope.selectedApplication.id}/#{args.documentMode}/grouped?q=#{args.keyword}&index=#{args.index}"
                 success: args.success
+        getDocuments: (args={}) ->
+            ###
+            Get documents by the grouped tag.
+            :param args: {applicationId, documentMode, groupTag, success()}
+            ###
+            ajax = common.ajax
+                url: "/applications/#{args.applicationId}/#{args.documentMode}/#{args.groupTag}"
+                success: args.success
+            ajax.then (data) ->
+                data.data.items
 
 
     # -------------- $victory ----------------
@@ -287,4 +312,5 @@ s.factory '$victory', ($http, $rootScope) ->
     pageSize: pageSize
     common: common
     setting: setting
+    application: application
     document: document

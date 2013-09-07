@@ -15,10 +15,10 @@ app.add_url_rule('/applications/<application_id>/crashes/grouped', 'application_
 app.add_url_rule('/applications/<application_id>/crashes/<group_tag>', 'application_crash_groups_list', view_func=document_view, methods=['GET'])
 # Exception Documents
 app.add_url_rule('/applications/<application_id>/exceptions/grouped', 'application_exception_groups', view_func=get_grouped_documents, methods=['GET'])
-app.add_url_rule('/applications/<application_id>/exceptions/<group_tag>', 'application_exception_groups_list', view_func=document_view, methods=['GET'])
+app.add_url_rule('/applications/<application_id>/exceptions/<group_tag>', 'application_exception_groups_list', view_func=get_documents, methods=['GET'])
 # Log Documents
 app.add_url_rule('/applications/<application_id>/logs/grouped', 'application_log_groups', view_func=get_grouped_documents, methods=['GET'])
-app.add_url_rule('/applications/<application_id>/logs/<group_tag>', 'application_log_groups_list', view_func=document_view, methods=['GET'])
+app.add_url_rule('/applications/<application_id>/logs/<group_tag>', 'application_log_groups_list', view_func=get_documents, methods=['GET'])
 
 # Settings
 # Applications

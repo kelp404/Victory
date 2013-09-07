@@ -35,7 +35,7 @@ def get_grouped_documents(application_id=None):
         documentModel = DocumentModel.crash
 
     ds = DocumentService()
-    docs, total = ds.get_document_groups(application_id, keyword, index, documentModel)
+    docs, total = ds.get_grouped_documents(application_id, keyword, index, documentModel)
 
     for item in docs:
         if item['times'] == 1:
@@ -45,6 +45,31 @@ def get_grouped_documents(application_id=None):
     return jsonify({'items': docs, 'total': total})
 
 
+@authorization(UserLevel.normal)
+def get_documents(application_id=None, group_tag=None):
+    """
+    GET applications/<application_id>/exceptions/<group_tag>
+    """
+    # check value
+    try:
+        application_id = long(application_id)
+    except Exception:
+        return abort(400)
+    # documentModel
+    if request.url_rule.endpoint.find('exception') >= 0:
+        documentModel = DocumentModel.exception
+    elif request.url_rule.endpoint.find('log') >= 0:
+        documentModel = DocumentModel.log
+    else:
+        documentModel = DocumentModel.crash
+
+    ds = DocumentService()
+    docs = ds.get_documents(application_id, group_tag, documentModel)
+
+    return jsonify({'items': docs})
+
+
+# old function
 @authorization(UserLevel.normal)
 def document_view(application_id=None, group_tag=None):
     try: index = int(request.args.get('index'))
@@ -99,7 +124,7 @@ def document_view(application_id=None, group_tag=None):
     ds = DocumentService()
     if group_tag is None:
         # get document groups of the application
-        result, total = ds.get_document_groups(application_id, keyword, index, document_model)
+        result, total = ds.get_grouped_documents(application_id, keyword, index, document_model)
         g.view_model['page'] = {
             'items': result,
             'total': total,

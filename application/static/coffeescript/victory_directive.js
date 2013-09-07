@@ -6,7 +6,7 @@
 
   v.directive('vTooltip', function() {
     /*
-    setup tooltip
+    Show the bootstrap tool tip.
     */
 
     return function(scope, element, attrs) {
@@ -19,7 +19,7 @@
 
   v.directive('vFocus', function() {
     /*
-    setup focus
+    Focus this element.
     */
 
     return function(scope, element, attrs) {
@@ -29,7 +29,7 @@
 
   v.directive('vModal', function() {
     /*
-    setup modal show
+    Find the first input text box then focus it on the bootstrap modal window.
     */
 
     return function(scope, element, attrs) {
@@ -41,7 +41,7 @@
 
   v.directive('vEnter', function() {
     /*
-    setup key enter derective
+    Eval the AngularJS expression when pressed `Enter`.
     */
 
     return function(scope, element, attrs) {
@@ -58,7 +58,7 @@
 
   v.directive('vNavigation', function() {
     /*
-    setup navigation
+    Setup the navigation effect.
     */
 
     return function(scope, element, attrs) {

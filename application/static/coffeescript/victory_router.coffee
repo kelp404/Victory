@@ -72,7 +72,8 @@ r.config ($stateProvider, $urlRouterProvider) ->
             title: -> 'Crashes - '
             documentMode: -> 'crashes'
             groupedDocumentsAndApplications: ($victory) ->
-                $victory.document.getGroupedDocumentsAndApplications 'crashes'
+                $victory.document.getGroupedDocumentsAndApplications
+                    documentMode: 'crashes'
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
     $stateProvider.state 'grouped-crashes-search',
@@ -81,13 +82,14 @@ r.config ($stateProvider, $urlRouterProvider) ->
             title: -> 'Crashes - '
             documentMode: -> 'crashes'
             groupedDocumentsAndApplications: ($victory, $stateParams) ->
-                $victory.document.getGroupedDocumentsAndApplications(
-                    'crashes',
-                    $stateParams.applicationId,
-                    $stateParams.keyword,
-                    $stateParams.index)
+                $victory.document.getGroupedDocumentsAndApplications
+                    documentMode: 'crashes'
+                    applicationId: $stateParams.applicationId
+                    keyword: $stateParams.keyword
+                    index: $stateParams.index
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
+
 
     $stateProvider.state 'grouped-exceptions',
         url: '/exceptions/grouped'
@@ -95,7 +97,8 @@ r.config ($stateProvider, $urlRouterProvider) ->
             title: -> 'Exceptions - '
             documentMode: -> 'exceptions'
             groupedDocumentsAndApplications: ($victory) ->
-                $victory.document.getGroupedDocumentsAndApplications 'exceptions'
+                $victory.document.getGroupedDocumentsAndApplications
+                    documentMode: 'exceptions'
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
     $stateProvider.state 'grouped-exceptions-search',
@@ -104,13 +107,26 @@ r.config ($stateProvider, $urlRouterProvider) ->
             title: -> 'Exceptions - '
             documentMode: -> 'exceptions'
             groupedDocumentsAndApplications: ($victory, $stateParams) ->
-                $victory.document.getGroupedDocumentsAndApplications(
-                    'exceptions',
-                    $stateParams.applicationId,
-                    $stateParams.keyword,
-                    $stateParams.index)
+                $victory.document.getGroupedDocumentsAndApplications
+                    documentMode: 'exceptions'
+                    applicationId: $stateParams.applicationId
+                    keyword: $stateParams.keyword
+                    index: $stateParams.index
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
+    $stateProvider.state 'exceptions',
+        url: '/applications/:applicationId/exceptions/:groupTag'
+        resolve:
+            title: -> 'Exceptions - '
+            documentMode: -> 'exceptions'
+            documents: ($victory, $stateParams) ->
+                $victory.document.getDocuments
+                    documentMode: 'exceptions'
+                    applicationId: $stateParams.applicationId
+                    groupTag: $stateParams.groupTag
+        templateUrl: '/views/documents/list.html'
+        controller: 'DocumentsCtrl'
+
 
     $stateProvider.state 'grouped-logs',
         url: '/logs/grouped'
@@ -118,7 +134,8 @@ r.config ($stateProvider, $urlRouterProvider) ->
             title: -> 'Logs - '
             documentMode: -> 'logs'
             groupedDocumentsAndApplications: ($victory) ->
-                $victory.document.getGroupedDocumentsAndApplications 'logs'
+                $victory.document.getGroupedDocumentsAndApplications
+                    documentMode: 'logs'
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
     $stateProvider.state 'grouped-logs-search',
@@ -127,10 +144,22 @@ r.config ($stateProvider, $urlRouterProvider) ->
             title: -> 'Logs - '
             documentMode: -> 'logs'
             groupedDocumentsAndApplications: ($victory, $stateParams) ->
-                $victory.document.getGroupedDocumentsAndApplications(
-                    'logs',
-                    $stateParams.applicationId,
-                    $stateParams.keyword,
-                    $stateParams.index)
+                $victory.document.getGroupedDocumentsAndApplications
+                    documentMode: 'logs'
+                    applicationId: $stateParams.applicationId
+                    keyword: $stateParams.keyword
+                    index: $stateParams.index
         templateUrl: '/views/documents/grouped.html'
         controller: 'GroupedDocumentsCtrl'
+    $stateProvider.state 'logs',
+        url: '/applications/:applicationId/logs/:groupTag'
+        resolve:
+            title: -> 'Logs - '
+            documentMode: -> 'logs'
+            documents: ($victory, $stateParams) ->
+                $victory.document.getDocuments
+                    documentMode: 'logs'
+                    applicationId: $stateParams.applicationId
+                    groupTag: $stateParams.groupTag
+        templateUrl: '/views/documents/list.html'
+        controller: 'DocumentsCtrl'

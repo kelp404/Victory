@@ -22,7 +22,7 @@ from application import config
 
 
 class DocumentService(BaseService):
-    def get_document_groups(self, application_id, keyword, index, document_model):
+    def get_grouped_documents(self, application_id, keyword, index, document_model):
         """
         Get document groups by application id, search keyword and index
 
@@ -120,20 +120,22 @@ class DocumentService(BaseService):
         :param document_model: document type (ExceptionModel / LogModel)
         :return: [document] / []
         """
-        try: application_id = long(application_id)
-        except: return []
-        if group_tag is None: return []
+        try:
+            application_id = long(application_id)
+        except Exception:
+            return abort(400)
+        if group_tag is None: return abort(400)
         # check auth
         aps = ApplicationService()
         if not aps.is_my_application(application_id):
-            return []
+            return abort(403)
 
         if document_model == DocumentModel.exception:
-            documents = db.GqlQuery('select * from ExceptionModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
+            documents = ExceptionModel().gql('where group_tag = :1 order by create_time DESC limit 100', group_tag)
         elif document_model == DocumentModel.log:
-            documents = db.GqlQuery('select * from LogModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
+            documents = LogModel().gql('where group_tag = :1 order by create_time DESC limit 100', group_tag)
         else:
-            documents = db.GqlQuery('select * from CrashModel where group_tag = :1 order by create_time DESC limit 100', group_tag)
+            documents = CrashModel().gql('where group_tag = :1 order by create_time DESC limit 100', group_tag)
 
         result = []
         for document in documents.fetch(100):

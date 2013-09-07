@@ -23,6 +23,7 @@ class LogModel(db.Model):
 
     def dict(self):
         result = {
+            'id': self.key().id(),
             'name': self.name,
             'group_tag': self.group_tag,
             'email': self.email,

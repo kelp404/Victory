@@ -302,7 +302,7 @@
     };
   });
 
-  c.controller('GroupedDocumentsCtrl', function($scope, $victory, $state, $stateParams, documentMode, groupedDocumentsAndApplications) {
+  c.controller('GroupedDocumentsCtrl', function($scope, $stateParams, documentMode, groupedDocumentsAndApplications) {
     /*
     :scope documentMode: <crashes/exceptions/logs>
     :scope keyword: search keywords
@@ -337,17 +337,13 @@
 
       return location.href = $scope.getGroupedDocumentsUrl(keyword, index);
     };
-    $scope.getGroupedDocumentUrl = function(groupedDocument) {
+    $scope.clickGroupedDocument = function(groupedDocument) {
       /*
-      Get the href of the grouped document.
-      :param groupedDocument: grouped document
-      :return: "#/applications/{{application_id}}/{{documentMode}}/{{group_tag}}" / "#document_{{group_tag}}"
+      Clicked the grouped document row in the table.
       */
 
       if (groupedDocument.times > 1) {
-        return "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/" + groupedDocument.group_tag;
-      } else {
-        return "#document_" + groupedDocument.group_tag;
+        return location.href = "#/applications/" + $scope.selectedApplication.id + "/" + $scope.documentMode + "/" + groupedDocument.group_tag;
       }
     };
     return $scope.modal = function(groupedDocument) {
@@ -362,6 +358,34 @@
       } else {
         return "modal";
       }
+    };
+  });
+
+  c.controller('DocumentsCtrl', function($scope, $victory, documentMode, documents) {
+    /*
+    /applications/<applicationId>/<documentMode>/<groupTag>
+    */
+
+    $scope.documentMode = documentMode;
+    $scope.documents = documents;
+    $victory.application.getApplications({
+      success: function(data) {
+        return $scope.applications = data.items;
+      }
+    });
+    return $scope.renderDescription = function(document) {
+      /*
+      Render the description of the document.
+      */
+
+      if (document.description) {
+        return document.description;
+      } else if (document.parameters) {
+        return "Parameters: " + document.parameters;
+      } else if (document.url) {
+        return "URL: " + document.url;
+      }
+      return "";
     };
   });
 

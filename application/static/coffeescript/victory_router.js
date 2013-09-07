@@ -108,7 +108,9 @@
           return 'crashes';
         },
         groupedDocumentsAndApplications: function($victory) {
-          return $victory.document.getGroupedDocumentsAndApplications('crashes');
+          return $victory.document.getGroupedDocumentsAndApplications({
+            documentMode: 'crashes'
+          });
         }
       },
       templateUrl: '/views/documents/grouped.html',
@@ -124,7 +126,12 @@
           return 'crashes';
         },
         groupedDocumentsAndApplications: function($victory, $stateParams) {
-          return $victory.document.getGroupedDocumentsAndApplications('crashes', $stateParams.applicationId, $stateParams.keyword, $stateParams.index);
+          return $victory.document.getGroupedDocumentsAndApplications({
+            documentMode: 'crashes',
+            applicationId: $stateParams.applicationId,
+            keyword: $stateParams.keyword,
+            index: $stateParams.index
+          });
         }
       },
       templateUrl: '/views/documents/grouped.html',
@@ -140,7 +147,9 @@
           return 'exceptions';
         },
         groupedDocumentsAndApplications: function($victory) {
-          return $victory.document.getGroupedDocumentsAndApplications('exceptions');
+          return $victory.document.getGroupedDocumentsAndApplications({
+            documentMode: 'exceptions'
+          });
         }
       },
       templateUrl: '/views/documents/grouped.html',
@@ -156,11 +165,36 @@
           return 'exceptions';
         },
         groupedDocumentsAndApplications: function($victory, $stateParams) {
-          return $victory.document.getGroupedDocumentsAndApplications('exceptions', $stateParams.applicationId, $stateParams.keyword, $stateParams.index);
+          return $victory.document.getGroupedDocumentsAndApplications({
+            documentMode: 'exceptions',
+            applicationId: $stateParams.applicationId,
+            keyword: $stateParams.keyword,
+            index: $stateParams.index
+          });
         }
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
+    });
+    $stateProvider.state('exceptions', {
+      url: '/applications/:applicationId/exceptions/:groupTag',
+      resolve: {
+        title: function() {
+          return 'Exceptions - ';
+        },
+        documentMode: function() {
+          return 'exceptions';
+        },
+        documents: function($victory, $stateParams) {
+          return $victory.document.getDocuments({
+            documentMode: 'exceptions',
+            applicationId: $stateParams.applicationId,
+            groupTag: $stateParams.groupTag
+          });
+        }
+      },
+      templateUrl: '/views/documents/list.html',
+      controller: 'DocumentsCtrl'
     });
     $stateProvider.state('grouped-logs', {
       url: '/logs/grouped',
@@ -172,13 +206,15 @@
           return 'logs';
         },
         groupedDocumentsAndApplications: function($victory) {
-          return $victory.document.getGroupedDocumentsAndApplications('logs');
+          return $victory.document.getGroupedDocumentsAndApplications({
+            documentMode: 'logs'
+          });
         }
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
     });
-    return $stateProvider.state('grouped-logs-search', {
+    $stateProvider.state('grouped-logs-search', {
       url: '/applications/:applicationId/logs/grouped/:keyword/:index',
       resolve: {
         title: function() {
@@ -188,11 +224,36 @@
           return 'logs';
         },
         groupedDocumentsAndApplications: function($victory, $stateParams) {
-          return $victory.document.getGroupedDocumentsAndApplications('logs', $stateParams.applicationId, $stateParams.keyword, $stateParams.index);
+          return $victory.document.getGroupedDocumentsAndApplications({
+            documentMode: 'logs',
+            applicationId: $stateParams.applicationId,
+            keyword: $stateParams.keyword,
+            index: $stateParams.index
+          });
         }
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
+    });
+    return $stateProvider.state('logs', {
+      url: '/applications/:applicationId/logs/:groupTag',
+      resolve: {
+        title: function() {
+          return 'Logs - ';
+        },
+        documentMode: function() {
+          return 'logs';
+        },
+        documents: function($victory, $stateParams) {
+          return $victory.document.getDocuments({
+            documentMode: 'logs',
+            applicationId: $stateParams.applicationId,
+            groupTag: $stateParams.groupTag
+          });
+        }
+      },
+      templateUrl: '/views/documents/list.html',
+      controller: 'DocumentsCtrl'
     });
   });
 

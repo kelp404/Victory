@@ -181,7 +181,7 @@ c.controller 'SettingsProfileCtrl', ($scope, $victory, profile) ->
                 $scope.getProfile()
 
 # ----------- documents ----------------
-c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams, documentMode, groupedDocumentsAndApplications) ->
+c.controller 'GroupedDocumentsCtrl', ($scope, $stateParams, documentMode, groupedDocumentsAndApplications) ->
     ###
     :scope documentMode: <crashes/exceptions/logs>
     :scope keyword: search keywords
@@ -208,18 +208,12 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams, do
         ###
         location.href = $scope.getGroupedDocumentsUrl keyword, index
 
-    $scope.getGroupedDocumentUrl = (groupedDocument) ->
+    $scope.clickGroupedDocument = (groupedDocument) ->
         ###
-        Get the href of the grouped document.
-        :param groupedDocument: grouped document
-        :return: "#/applications/{{application_id}}/{{documentMode}}/{{group_tag}}" / "#document_{{group_tag}}"
+        Clicked the grouped document row in the table.
         ###
         if groupedDocument.times > 1
-            # documents page
-            return "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/#{groupedDocument.group_tag}"
-        else
-            # modal
-            return "#document_#{groupedDocument.group_tag}"
+            location.href = "#/applications/#{$scope.selectedApplication.id}/#{$scope.documentMode}/#{groupedDocument.group_tag}"
 
     $scope.modal = (groupedDocument) ->
         ###
@@ -231,3 +225,25 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $victory, $state, $stateParams, do
             return ""
         else
             return "modal"
+
+c.controller 'DocumentsCtrl', ($scope, $victory, documentMode, documents) ->
+    ###
+    /applications/<applicationId>/<documentMode>/<groupTag>
+    ###
+    $scope.documentMode = documentMode
+    $scope.documents = documents
+    $victory.application.getApplications
+        success: (data) ->
+            $scope.applications = data.items
+
+    $scope.renderDescription = (document) ->
+        ###
+        Render the description of the document.
+        ###
+        if document.description
+            return document.description
+        else if document.parameters
+            return "Parameters: #{document.parameters}"
+        else if document.url
+            return "URL: #{document.url}"
+        ""

@@ -3,7 +3,7 @@ v = angular.module 'victory.directive', []
 
 v.directive 'vTooltip', ->
     ###
-    setup tooltip
+    Show the bootstrap tool tip.
     ###
     (scope, element, attrs) ->
         if attrs.vTooltip
@@ -12,14 +12,14 @@ v.directive 'vTooltip', ->
 
 v.directive 'vFocus', ->
     ###
-    setup focus
+    Focus this element.
     ###
     (scope, element, attrs) ->
         $(element).select()
 
 v.directive 'vModal', ->
     ###
-    setup modal show
+    Find the first input text box then focus it on the bootstrap modal window.
     ###
     (scope, element, attrs) ->
         $(element).on 'shown', ->
@@ -27,7 +27,7 @@ v.directive 'vModal', ->
 
 v.directive 'vEnter', ->
     ###
-    setup key enter derective
+    Eval the AngularJS expression when pressed `Enter`.
     ###
     (scope, element, attrs) ->
         element.bind "keydown keypress", (event) ->
@@ -38,7 +38,7 @@ v.directive 'vEnter', ->
 
 v.directive 'vNavigation', ->
     ###
-    setup navigation
+    Setup the navigation effect.
     ###
     (scope, element, attrs) ->
         if $(element).find('li.select').length > 0
