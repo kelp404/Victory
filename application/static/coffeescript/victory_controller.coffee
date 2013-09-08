@@ -21,7 +21,9 @@ c.controller 'IndexCtrl', ->
     ###
     /
     ###
-    if not victory.user.isLogin
+    if victory.user.isLogin
+        location.href = '#/crashes/grouped'
+    else
         location.href = '#/login'
 
 c.controller 'LoginCtrl', ($scope) ->

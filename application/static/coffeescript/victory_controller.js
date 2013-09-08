@@ -29,7 +29,9 @@
     /
     */
 
-    if (!victory.user.isLogin) {
+    if (victory.user.isLogin) {
+      return location.href = '#/crashes/grouped';
+    } else {
       return location.href = '#/login';
     }
   });
