@@ -176,7 +176,7 @@ You could download compiler form [Google Code](https://code.google.com/p/closure
 Settings  |  value 
 :---------:|:---------:
 Program | java
-Parameters | -jar /Volumes/Data/tools/closure-compiler/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --js $FileName$ --js_output_file $FileNameWithoutExtension$.min.$FileExt$
+Parameters | -jar /Volumes/Data/tools/closure-compiler/compiler.jar --compilation_level WHITESPACE_ONLY --js $FileName$ --js_output_file $FileNameWithoutExtension$.min.$FileExt$
 Working directory | $FileDir$
 ---
 
