@@ -1,17 +1,25 @@
 
 s = angular.module 'victory.service', []
 s.factory '$victory', ($http, $rootScope) ->
+    # ----- setup root scope -------
     # setup the selected application
     if sessionStorage.selectedApplication
         # application {id, name, description, app_key, create_time, is_owner}
         $rootScope.selectedApplication = JSON.parse sessionStorage.selectedApplication
 
+    # setup user info
+    $rootScope.user = victory.user
+    # ---------------------
+
+    # ----- const -----------
+    # default page size
+    pageSize = 20
+    # ---------------------
+
+    # ---------------- $victory ----------------
     # is stupid browser?
     user_agent = navigator.userAgent.toLowerCase()
     stupidBrowser = user_agent.indexOf('msie') != -1
-
-    # default page size
-    pageSize = 20
 
     # ---------------- common function ----------------
     common =
@@ -331,7 +339,6 @@ s.factory '$victory', ($http, $rootScope) ->
 
     # -------------- $victory ----------------
     stupidBrowser: stupidBrowser
-    pageSize: pageSize
     common: common
     setting: setting
     application: application

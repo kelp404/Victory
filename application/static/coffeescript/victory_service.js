@@ -10,9 +10,10 @@
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
     }
+    $rootScope.user = victory.user;
+    pageSize = 20;
     user_agent = navigator.userAgent.toLowerCase();
     stupidBrowser = user_agent.indexOf('msie') !== -1;
-    pageSize = 20;
     common = {
       ajax: function(args) {
         var h,
@@ -559,7 +560,6 @@
     };
     return {
       stupidBrowser: stupidBrowser,
-      pageSize: pageSize,
       common: common,
       setting: setting,
       application: application,
