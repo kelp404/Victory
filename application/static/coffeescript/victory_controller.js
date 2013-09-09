@@ -24,12 +24,12 @@
     });
   });
 
-  c.controller('IndexCtrl', function() {
+  c.controller('IndexCtrl', function($scope, $victory) {
     /*
     /
     */
 
-    if (victory.user.isLogin) {
+    if ($scope.user.isLogin) {
       return location.href = '#/crashes/grouped';
     } else {
       return location.href = '#/login';

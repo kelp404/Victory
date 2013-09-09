@@ -17,11 +17,11 @@ c.controller 'NavigationCtrl', ($scope) ->
 
 
 # ----------- controllers for ui.router ----------------
-c.controller 'IndexCtrl', ->
+c.controller 'IndexCtrl', ($scope, $victory) ->
     ###
     /
     ###
-    if victory.user.isLogin
+    if $scope.user.isLogin
         location.href = '#/crashes/grouped'
     else
         location.href = '#/login'
