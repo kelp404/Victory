@@ -448,7 +448,7 @@
                 index: args.index,
                 max: (data.data.total - 1) / pageSize,
                 hasPrevious: args.index > 0,
-                hasNext: (args.index + 1) * pageSize < data.data.total
+                hasNext: (args.index * 1 + 1) * pageSize < data.data.total
               };
               return result;
             });
