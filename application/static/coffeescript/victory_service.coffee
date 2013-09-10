@@ -1,6 +1,6 @@
 
 s = angular.module 'victory.service', []
-s.factory '$victory', ($http, $rootScope) ->
+s.service '$victory', ($http, $rootScope) ->
     # ----- setup root scope -------
     # setup the selected application
     if sessionStorage.selectedApplication

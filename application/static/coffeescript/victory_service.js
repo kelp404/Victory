@@ -5,7 +5,7 @@
 
   s = angular.module('victory.service', []);
 
-  s.factory('$victory', function($http, $rootScope) {
+  s.service('$victory', function($http, $rootScope) {
     var application, common, document, pageSize, setting, stupidBrowser, user_agent;
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
