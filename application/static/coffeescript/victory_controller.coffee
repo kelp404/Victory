@@ -1,6 +1,6 @@
 
 c = angular.module 'victory.controller', ['victory.service']
-c.controller 'NavigationCtrl', ($scope) ->
+c.controller 'NavigationCtrl', ($scope, $victory) ->
     ###
     Navigation Controller
 
@@ -10,10 +10,17 @@ c.controller 'NavigationCtrl', ($scope) ->
 
     # ui.router state change event
     $scope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
+        $victory.common.loading.on()
         $scope.select = toState.name
         $('.modal.in').modal 'hide'
         delay 0, ->
             $('#js_navigation li.select').mouseover()
+
+    $scope.$on '$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) ->
+        $victory.common.loading.off()
+
+    $scope.$on '$stateChangeError', (event, toState, toParams, fromState, fromParams, error) ->
+        $victory.common.loading.off()
 
 
 # ----------- controllers for ui.router ----------------

@@ -4,7 +4,7 @@
 
   c = angular.module('victory.controller', ['victory.service']);
 
-  c.controller('NavigationCtrl', function($scope) {
+  c.controller('NavigationCtrl', function($scope, $victory) {
     /*
     Navigation Controller
     
@@ -15,12 +15,19 @@
     delay = function(ms, func) {
       return setTimeout(func, ms);
     };
-    return $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+    $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      $victory.common.loading.on();
       $scope.select = toState.name;
       $('.modal.in').modal('hide');
       return delay(0, function() {
         return $('#js_navigation li.select').mouseover();
       });
+    });
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      return $victory.common.loading.off();
+    });
+    return $scope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+      return $victory.common.loading.off();
     });
   });
 
