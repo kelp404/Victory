@@ -96,9 +96,11 @@
         */
 
         on: function() {
-          if (ngProgress.status() <= 0) {
-            return ngProgress.start();
-          }
+          var _this = this;
+          ngProgress.start();
+          return $timeout(function() {
+            return ngProgress.complete();
+          }, 10000);
         },
         off: function() {
           return $timeout(function() {

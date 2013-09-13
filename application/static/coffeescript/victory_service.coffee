@@ -73,7 +73,10 @@ s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
             Show/Hide loading effect.
             ###
             on: ->
-                ngProgress.start() if ngProgress.status() <= 0
+                ngProgress.start()
+                $timeout =>
+                    ngProgress.complete()
+                , 10000
             off: ->
                 $timeout ->
                     ngProgress.complete()
