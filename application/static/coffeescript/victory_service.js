@@ -3,9 +3,9 @@
   var s,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  s = angular.module('victory.service', []);
+  s = angular.module('victory.service', ['ngProgress']);
 
-  s.service('$victory', function($http, $rootScope) {
+  s.service('$victory', function($http, $rootScope, $timeout, ngProgress) {
     var application, common, document, pageSize, setting, stupidBrowser, user_agent;
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
@@ -41,10 +41,6 @@
         if (args.success == null) {
           args.success = function() {};
         }
-        if (args.hideLoadingAfterDone == null) {
-          args.hideLoadingAfterDone = true;
-        }
-        this.loading.on('Loading...');
         if (args.beforeSend) {
           args.beforeSend();
         }
@@ -55,16 +51,10 @@
           data: args.data
         });
         h.error(function(data, status, headers, config) {
-          if (args.hideLoadingAfterDone) {
-            _this.loading.off();
-          }
           _this.message.error(status);
           return args.error(data, status, headers, config);
         });
         return h.success(function(data, status, headers, config) {
-          if (args.hideLoadingAfterDone) {
-            _this.loading.off();
-          }
           if (data.__status__ === 302 && data.location) {
             location.href = data.location;
             return;
@@ -105,56 +95,15 @@
         Show/Hide loading effect.
         */
 
-        on: function(message) {
-          /*
-          loading
-          */
-
-          var loading, loading_height;
-          $('body, a, .table-pointer tbody tr').css({
-            cursor: 'wait'
-          });
-          if (this.stupidBrowser) {
-            return;
+        on: function() {
+          if (ngProgress.status() <= 0) {
+            return ngProgress.start();
           }
-          if ($('#loading').length > 0) {
-            $('#loading .message').html(message);
-            return;
-          }
-          loading = $("<div id='loading'><div class='spin'></div><div class='message'>" + message + "</div><div class='cs_clear'></div></div>");
-          $('body').append(loading);
-          loading_height = $('#loading').height();
-          $('#loading').css({
-            bottom: -loading_height
-          });
-          $('#loading').animate({
-            bottom: '+=' + (loading_height + 10)
-          }, 400, 'easeOutExpo');
-          return Spinner({
-            color: '#444',
-            width: 2,
-            length: 4,
-            radius: 4
-          }).spin($('#loading .spin')[0]);
         },
         off: function() {
-          var loading_height;
-          $('body').css({
-            cursor: 'default'
-          });
-          $('a, .table-pointer tbody tr').css({
-            cursor: 'pointer'
-          });
-          if (this.stupidBrowser) {
-            return;
-          }
-          $('#loading').dequeue();
-          loading_height = $('#loading').height() + 10;
-          return $('#loading').animate({
-            bottom: '-=' + loading_height
-          }, 400, 'easeInExpo', function() {
-            return $(this).remove();
-          });
+          return $timeout(function() {
+            return ngProgress.complete();
+          }, 0);
         }
       }
     };
@@ -392,8 +341,7 @@
           }
         };
         ajaxApplications = common.ajax({
-          url: '/applications',
-          hideLoadingAfterDone: false
+          url: '/applications'
         });
         return ajaxApplications.then(function(data) {
           var ajaxDocuments, x, _ref, _ref1;
@@ -453,7 +401,6 @@
               return result;
             });
           } else {
-            common.loading.off();
             return result;
           }
         });

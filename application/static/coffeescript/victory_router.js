@@ -2,11 +2,20 @@
 (function() {
   var r;
 
-  r = angular.module('victory.router', ['victory.controller', 'victory.service', 'victory.directive', 'ui.router', 'ui.state']);
+  r = angular.module('victory.router', ['victory.controller', 'victory.service', 'victory.directive', 'ui.router', 'ui.state', 'ngProgress']);
 
   r.run(function($rootScope, $state, $stateParams) {
     $rootScope.$state = $state;
     return $rootScope.$stateParams = $stateParams;
+  });
+
+  r.config(function(ngProgressProvider) {
+    /*
+    Setup settings of ngProgress.
+    */
+
+    ngProgressProvider.setColor('white');
+    return ngProgressProvider.setHeight('2px');
   });
 
   r.config(function($stateProvider, $urlRouterProvider) {

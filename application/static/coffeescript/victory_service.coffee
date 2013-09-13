@@ -1,6 +1,6 @@
 
-s = angular.module 'victory.service', []
-s.service '$victory', ($http, $rootScope) ->
+s = angular.module 'victory.service', ['ngProgress']
+s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
     # ----- setup root scope -------
     # setup the selected application
     if sessionStorage.selectedApplication
@@ -33,19 +33,15 @@ s.service '$victory', ($http, $rootScope) ->
             args.data ?= ''
             args.error ?= ->
             args.success ?= ->
-            args.hideLoadingAfterDone ?= true
 
-            @loading.on 'Loading...'
             args.beforeSend() if args.beforeSend
 
             h = $http
                 url: args.url, method: args.method, cache: args.ache, data: args.data
             h.error (data, status, headers, config) =>
-                @loading.off() if args.hideLoadingAfterDone
                 @message.error status
                 args.error(data, status, headers, config)
             h.success (data, status, headers, config) =>
-                @loading.off() if args.hideLoadingAfterDone
                 if data.__status__ == 302 and data.location
                     # redirect
                     location.href = data.location
@@ -76,32 +72,13 @@ s.service '$victory', ($http, $rootScope) ->
             ###
             Show/Hide loading effect.
             ###
-            on: (message) ->
-                ###
-                loading
-                ###
-                $('body, a, .table-pointer tbody tr').css cursor: 'wait'
-                return if @stupidBrowser
-
-                if $('#loading').length > 0
-                    $('#loading .message').html message
-                    return
-
-                loading = $("<div id='loading'><div class='spin'></div><div class='message'>#{message}</div><div class='cs_clear'></div></div>")
-                $('body').append loading
-                loading_height = $('#loading').height()
-                $('#loading').css bottom: -loading_height
-                $('#loading').animate bottom: '+=' + (loading_height + 10) , 400, 'easeOutExpo'
-                Spinner({ color: '#444', width: 2, length: 4, radius: 4 }).spin $('#loading .spin')[0]
+            on: ->
+                ngProgress.start() if ngProgress.status() <= 0
             off: ->
-                $('body').css cursor: 'default'
-                $('a, .table-pointer tbody tr').css cursor: 'pointer'
-                return if @stupidBrowser
+                $timeout ->
+                    ngProgress.complete()
+                , 0
 
-                $('#loading').dequeue()
-                loading_height = $('#loading').height() + 10
-                $('#loading').animate bottom: '-=' + loading_height , 400, 'easeInExpo', ->
-                    $(@).remove()
 
 
     # -------------- setting ----------------
@@ -262,7 +239,6 @@ s.service '$victory', ($http, $rootScope) ->
 
             ajaxApplications = common.ajax
                 url: '/applications'
-                hideLoadingAfterDone: false
             ajaxApplications.then (data) =>
                 result.applications = data.data.items
                 if result.applications.length > 0
@@ -291,7 +267,6 @@ s.service '$victory', ($http, $rootScope) ->
                             hasNext: (args.index*1 + 1) * pageSize < data.data.total
                         result
                 else
-                    common.loading.off()
                     result
         getGroupedDocuments: (args={}) ->
             ###
