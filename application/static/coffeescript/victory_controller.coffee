@@ -10,7 +10,8 @@ c.controller 'NavigationCtrl', ($scope, $victory) ->
 
     # ui.router state change event
     $scope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
-        $victory.common.loading.on()
+        if fromState.name != ""
+            $victory.common.loading.on()
         $scope.select = toState.name
         $('.modal.in').modal 'hide'
         delay 0, ->

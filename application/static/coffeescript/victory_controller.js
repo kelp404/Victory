@@ -16,7 +16,9 @@
       return setTimeout(func, ms);
     };
     $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-      $victory.common.loading.on();
+      if (fromState.name !== "") {
+        $victory.common.loading.on();
+      }
       $scope.select = toState.name;
       $('.modal.in').modal('hide');
       return delay(0, function() {

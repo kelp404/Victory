@@ -96,11 +96,13 @@
         */
 
         on: function() {
-          var _this = this;
-          ngProgress.start();
           return $timeout(function() {
-            return ngProgress.complete();
-          }, 10000);
+            ngProgress.reset();
+            ngProgress.start();
+            return $timeout(function() {
+              return ngProgress.complete();
+            }, 10000);
+          }, 0);
         },
         off: function() {
           return $timeout(function() {
