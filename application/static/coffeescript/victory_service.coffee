@@ -1,6 +1,6 @@
 
-s = angular.module 'victory.service', ['ngProgress']
-s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
+s = angular.module 'victory.service', []
+s.service '$victory', ($http, $rootScope) ->
     # ----- setup root scope -------
     # setup the selected application
     if sessionStorage.selectedApplication
@@ -10,6 +10,11 @@ s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
     # setup user info
     $rootScope.user = victory.user
     # ---------------------
+
+    # ----- setup NProgress ------
+    NProgress.configure
+        showSpinner: false
+    # ------------------------
 
     # ----- const -----------
     # default page size
@@ -73,17 +78,9 @@ s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
             Show/Hide loading effect.
             ###
             on: ->
-                $timeout ->
-                    ngProgress.reset()
-                    ngProgress.start()
-                    $timeout ->
-                        ngProgress.complete()
-                    , 10000
-                , 0
+                NProgress.start()
             off: ->
-                $timeout ->
-                    ngProgress.complete()
-                , 0
+                NProgress.done()
 
 
 

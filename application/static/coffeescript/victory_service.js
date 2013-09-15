@@ -3,14 +3,17 @@
   var s,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  s = angular.module('victory.service', ['ngProgress']);
+  s = angular.module('victory.service', []);
 
-  s.service('$victory', function($http, $rootScope, $timeout, ngProgress) {
+  s.service('$victory', function($http, $rootScope) {
     var application, common, document, pageSize, setting, stupidBrowser, user_agent;
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
     }
     $rootScope.user = victory.user;
+    NProgress.configure({
+      showSpinner: false
+    });
     pageSize = 20;
     user_agent = navigator.userAgent.toLowerCase();
     stupidBrowser = user_agent.indexOf('msie') !== -1;
@@ -96,18 +99,10 @@
         */
 
         on: function() {
-          return $timeout(function() {
-            ngProgress.reset();
-            ngProgress.start();
-            return $timeout(function() {
-              return ngProgress.complete();
-            }, 10000);
-          }, 0);
+          return NProgress.start();
         },
         off: function() {
-          return $timeout(function() {
-            return ngProgress.complete();
-          }, 0);
+          return NProgress.done();
         }
       }
     };

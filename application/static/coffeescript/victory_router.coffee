@@ -1,16 +1,9 @@
 
 r = angular.module 'victory.router', ['victory.controller', 'victory.service', 'victory.directive',
-                                      'ui.router', 'ngProgress']
+                                      'ui.router']
 r.run ($rootScope, $state, $stateParams) ->
     $rootScope.$state = $state
     $rootScope.$stateParams = $stateParams
-
-r.config (ngProgressProvider) ->
-    ###
-    Setup settings of ngProgress.
-    ###
-    ngProgressProvider.setColor('white')
-    ngProgressProvider.setHeight('2px')
 
 r.config ($stateProvider, $urlRouterProvider) ->
     $urlRouterProvider.otherwise '/'

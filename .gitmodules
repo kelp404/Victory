@@ -30,7 +30,7 @@
 	path = submodules/wtforms
 	url = https://github.com/kelp404/wtforms.git
 	ignore = dirty
-[submodule "submodules/ngProgress"]
-	path = submodules/ngProgress
-	url = https://github.com/VictorBjelkholm/ngProgress.git
+[submodule "submodules/nprogress"]
+	path = submodules/nprogress
+	url = https://github.com/rstacruz/nprogress.git
 	ignore = dirty
