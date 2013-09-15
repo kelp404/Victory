@@ -11,6 +11,11 @@ s.service '$victory', ($http, $rootScope) ->
     $rootScope.user = victory.user
     # ---------------------
 
+    # ----- setup NProgress ------
+    NProgress.configure
+        showSpinner: false
+    # ------------------------
+
     # ----- const -----------
     # default page size
     pageSize = 20
@@ -73,9 +78,9 @@ s.service '$victory', ($http, $rootScope) ->
             Show/Hide loading effect.
             ###
             on: ->
-
+                NProgress.start()
             off: ->
-
+                NProgress.done()
 
 
 

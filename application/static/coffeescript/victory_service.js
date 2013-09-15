@@ -11,6 +11,9 @@
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
     }
     $rootScope.user = victory.user;
+    NProgress.configure({
+      showSpinner: false
+    });
     pageSize = 20;
     user_agent = navigator.userAgent.toLowerCase();
     stupidBrowser = user_agent.indexOf('msie') !== -1;
@@ -95,8 +98,12 @@
         Show/Hide loading effect.
         */
 
-        on: function() {},
-        off: function() {}
+        on: function() {
+          return NProgress.start();
+        },
+        off: function() {
+          return NProgress.done();
+        }
       }
     };
     setting = {
