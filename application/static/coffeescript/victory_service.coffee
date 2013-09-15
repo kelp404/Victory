@@ -1,6 +1,6 @@
 
-s = angular.module 'victory.service', ['ngProgress']
-s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
+s = angular.module 'victory.service', []
+s.service '$victory', ($http, $rootScope) ->
     # ----- setup root scope -------
     # setup the selected application
     if sessionStorage.selectedApplication
@@ -73,17 +73,9 @@ s.service '$victory', ($http, $rootScope, $timeout, ngProgress) ->
             Show/Hide loading effect.
             ###
             on: ->
-                $timeout ->
-                    ngProgress.reset()
-                    ngProgress.start()
-                    $timeout ->
-                        ngProgress.complete()
-                    , 10000
-                , 0
+
             off: ->
-                $timeout ->
-                    ngProgress.complete()
-                , 0
+
 
 
 

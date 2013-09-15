@@ -3,9 +3,9 @@
   var s,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  s = angular.module('victory.service', ['ngProgress']);
+  s = angular.module('victory.service', []);
 
-  s.service('$victory', function($http, $rootScope, $timeout, ngProgress) {
+  s.service('$victory', function($http, $rootScope) {
     var application, common, document, pageSize, setting, stupidBrowser, user_agent;
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
@@ -95,20 +95,8 @@
         Show/Hide loading effect.
         */
 
-        on: function() {
-          return $timeout(function() {
-            ngProgress.reset();
-            ngProgress.start();
-            return $timeout(function() {
-              return ngProgress.complete();
-            }, 10000);
-          }, 0);
-        },
-        off: function() {
-          return $timeout(function() {
-            return ngProgress.complete();
-          }, 0);
-        }
+        on: function() {},
+        off: function() {}
       }
     };
     setting = {
