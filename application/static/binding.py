@@ -11,9 +11,9 @@ import os
 
 # binding javascript
 js_files = ['./javascript/' + f for f in os.listdir('./javascript/') if f.endswith(".min.js") and not f.endswith("site.min.js")]
-js_files.extend(['./coffeescript/' + f for f in os.listdir('./coffeescript/') if f.endswith(".min.js")])
+js_files.extend(['./coffeescript/' + f for f in os.listdir('./coffeescript/') if f.endswith(".js")])
 
-f = open('./javascript/site.min.js', 'w')
+f = open('./javascript/site.js', 'w')
 for source in js_files:
     f.write(open(source).read())
     f.write(';\n')
