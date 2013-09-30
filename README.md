@@ -114,14 +114,14 @@ http://docs.victory.apiary.io/
 
 
 ##Development
-###[CoffeeScript](http://www.opensource.org/licenses/mit-license.php)
+###[CoffeeScript](http://coffeescript.org)
 ```bash
 # install node.js with brew
 $ brew install node
 ```
 ```bash
 # install CoffeeScript
-$ git clon https://github.com/jashkenas/coffee-script.git
+$ git clone https://github.com/jashkenas/coffee-script.git
 $ cd coffee-script
 $ sudo bin/cake install
 ```
