@@ -30,3 +30,7 @@
 	path = submodules/nprogress
 	url = https://github.com/rstacruz/nprogress.git
 	ignore = dirty
+[submodule "submodules/wtforms"]
+	path = submodules/wtforms
+	url = https://github.com/wtforms/wtforms.git
+	ignore = dirty
