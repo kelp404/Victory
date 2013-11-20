@@ -19,8 +19,6 @@ skip_files:
 - ^_images/.*
 - ^submodules/bs4/.*
 - ^submodules/requests/.*
-- ^submodules/compass/.*
-- ^submodules/bootstrap-sass/.*
 - ^application/static/binding.py
 - ^(.*/)?.*\.coffee
 - ^(.*/)?.*\.scss
