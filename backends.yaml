@@ -1,5 +1,5 @@
 backends:
 - name: backend-dynamic
   options: dynamic
-  start: cron_jobs.app
+  start: application.cron_jobs.app
   class: B1

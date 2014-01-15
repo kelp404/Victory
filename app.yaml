@@ -19,11 +19,9 @@ skip_files:
 - ^_images/.*
 - ^submodules/bs4/.*
 - ^submodules/requests/.*
-- ^application/static/binding.py
 - ^(.*/)?.*\.coffee
 - ^(.*/)?.*\.scss
 - ^(.*/)?.*\.sass
-- ^(.*/)?.*\.rb
 
 handlers:
 # icon
@@ -57,7 +55,7 @@ handlers:
 
 # cron jobs
 - url: /cron_jobs/.*
-  script: cron_jobs.app
+  script: application.cron_jobs.app
   login: admin
 
 - url: /.*
