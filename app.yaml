@@ -48,6 +48,8 @@ handlers:
   static_dir: application/static/img
 - url: /font/
   static_dir: application/static/font
+- url: /dist/
+  static_dir: application/static/dist
 
 # angular template
 - url: /views/

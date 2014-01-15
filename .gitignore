@@ -1,15 +1,3 @@
-# xcode noise
-build
-*.pbxuser
-*.perspectivev3
-*.mode1v3
-*.xcuserstate
-xcuserdata
-
-# old skool
-.svn
-.cvs
-
 # Python
 *.pyc
 
@@ -21,3 +9,6 @@ xcuserdata
 
 # compass
 .sass-cache
+
+# node modules
+node_modules

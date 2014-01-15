@@ -1,8 +1,6 @@
-#Victory
+#Victory [![devDependency Status](https://david-dm.org/kelp404/Victory/dev-status.png?branch=master)](https://david-dm.org/kelp404/Victory#info=devDependencies&view=table)
 
-Kelp https://twitter.com/kelp404  
-[MIT License][mit]  
-[MIT]: http://www.opensource.org/licenses/mit-license.php
+[MIT License](http://www.opensource.org/licenses/mit-license.php)
 
 
 Victory is an error reporting server. It runs on Google App Engine.
@@ -10,7 +8,7 @@ You could download this project and then deploy to GAE with free plan.
 Your app could send error information to Victory with RESTful API.
 
 
-<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot00.png'/>
+![screenshot](/_images/screenshot00.png)
 
 
 
@@ -44,7 +42,7 @@ $.ajax({
     })
 })
 ```
-<img src='https://raw.github.com/kelp404/Victory/master/_images/screenshot02.png'/>
+![screenshot](/_images/screenshot02.png)
 
 
 ##Clone
@@ -114,59 +112,14 @@ http://docs.victory.apiary.io/
 
 
 ##Development
-###[CoffeeScript](http://coffeescript.org)
 ```bash
-# install node.js with brew
-$ brew install node
+# install node modules
+$ npm install
 ```
 ```bash
-# install CoffeeScript
-$ git clone https://github.com/jashkenas/coffee-script.git
-$ cd coffee-script
-$ sudo bin/cake install
+# run the file watcher to compile CoffeeScript
+$ grunt dev
 ```
-
-**[File Watchers][File Watchers]:**  
-
-Watcher Settings  |  value 
-:---------:|:---------:
-Program | /usr/local/bin/coffee
-Arguments | --compile $FileName$
-Output paths | $FileNameWithoutExtension$.js
----
-
-
-
-###[Compass](https://github.com/chriseppstein/compass)
-```bash
-# install compass with gem
-$ gem install compass
-```
-
-**[File Watchers][File Watchers]:**  
-
-Watcher Settings  |  value 
-:---------:|:---------:
-Program | /Users/Kelp/.rvm/gems/ruby-1.9.3-p448/bin/compass
-Arguments | compile
-Environment variables | GEM_PATH:<br/>/Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global
-Output paths | $FileNameWithoutExtension$.css
-
-```bash
-# You could find compass path by `which`.
-$ which compass
->> /Users/Kelp/.rvm/gems/ruby-1.9.3-p448/bin/compass
-```
-```bash
-# You could get gem_path by `echo $GEM_PATH`.
-$ echo $GEM_PATH
->> /Users/Kelp/.rvm/gems/ruby-1.9.3-p448:/Users/Kelp/.rvm/gems/ruby-1.9.3-p448@global
-```
----
-
-[File Watchers]: http://www.jetbrains.com/pycharm/webhelp/file-watchers.html
-
-
 
 ###[Closure Compiler](https://code.google.com/p/closure-compiler/)
 You could download compiler form [Google Code](https://code.google.com/p/closure-compiler/wiki/BinaryDownloads?tm=2).  
@@ -180,15 +133,6 @@ Parameters | -jar /Volumes/Data/tools/closure-compiler/compiler.jar --compilatio
 Working directory | $FileDir$
 ---
 
-
-
-
-###Binding JavaScript, CSS
-```bash
-$ cd application/static
-$ python binding.py
-```
----
 
 
 

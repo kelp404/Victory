@@ -11,21 +11,17 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
     {% if compressed %}
-        <link rel="stylesheet" type="text/css" href="/css/site.min.css"/>
-        <script type="text/javascript" src="/javascript/site.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/dist/site.min.css"/>
+        <script type="text/javascript" src="/dist/site.min.js"></script>
     {% else %}
-        <link rel="stylesheet" type="text/css" href="/css/alert_view.css"/>
-        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/lib/alert_view.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/lib/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="/css/main.css"/>
         <script type="text/javascript" src="/javascript/angular-ui-router.min.js"></script>
         <script type="text/javascript" src="/javascript/base.min.js"></script>
         <script type="text/javascript" src="/javascript/bootstrap.min.js"></script>
         <script type="text/javascript" src="/javascript/nprogress.min.js"></script>
-        <script type="text/javascript" src="/coffeescript/victory.js"></script>
-        <script type="text/javascript" src="/coffeescript/directive.js"></script>
-        <script type="text/javascript" src="/coffeescript/controller.js"></script>
-        <script type="text/javascript" src="/coffeescript/router.js"></script>
-        <script type="text/javascript" src="/coffeescript/service.js"></script>
+        <script type="text/javascript" src="/javascript/victory.js"></script>
     {% endif %}
     <script type="text/javascript">
         {% if user %}
