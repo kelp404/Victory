@@ -20,8 +20,16 @@ module.exports = (grunt) ->
                 src: ['./application/static/css/lib/*.css', './application/static/css/main.css']
                 dest: './application/static/dist/site.min.css'
             js:
-                src: ['./application/static/javascript/*.min.js', './application/static/javascript/victory.js']
+                src: ['./application/static/javascript/*.min.js']
                 dest: './application/static/dist/site.min.js'
+
+        uglify:
+            options:
+                mangle: no
+                compress: no
+            data:
+                files:
+                    './application/static/javascript/victory.min.js': './application/static/javascript/victory.js'
 
         watch:
             compass:
@@ -31,7 +39,7 @@ module.exports = (grunt) ->
                     spawn: no
             coffee:
                 files: ['./application/static/coffeescript/*.coffee']
-                tasks: ['coffee', 'concat:js']
+                tasks: ['coffee', 'uglify', 'concat:js']
                 options:
                     spawn: no
 
@@ -47,3 +55,4 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-coffee'
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-concat'
+    grunt.loadNpmTasks 'grunt-contrib-uglify'

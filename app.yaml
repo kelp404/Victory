@@ -17,6 +17,7 @@ skip_files:
 - ^\.git/.*
 - ^\.idea/.*
 - ^_images/.*
+- ^node_modules/.*
 - ^submodules/bs4/.*
 - ^submodules/requests/.*
 - ^(.*/)?.*\.coffee

@@ -1,11 +1,9 @@
 
-c = angular.module 'victory.controller', ['victory.service']
-c.controller 'NavigationCtrl', ($scope, $victory) ->
-    ###
-    Navigation Controller
+a = angular.module 'victory.controller', ['victory.service']
+navigationController =  ($scope, $injector) ->
+    # providers
+    $victory = $injector.get '$victory'
 
-    :scope select: selected ui-router node name
-    ###
     delay = (ms, func) -> setTimeout func, ms
 
     # ui.router state change event
@@ -23,9 +21,13 @@ c.controller 'NavigationCtrl', ($scope, $victory) ->
     $scope.$on '$stateChangeError', (event, toState, toParams, fromState, fromParams, error) ->
         $victory.common.loading.off()
 
+navigationController.$inject = ['$scope', '$injector']
+a.controller 'NavigationCtrl', navigationController
+
+
 
 # ----------- controllers for ui.router ----------------
-c.controller 'IndexCtrl', ($scope, $victory) ->
+indexController =  ($scope) ->
     ###
     /
     ###
@@ -34,25 +36,39 @@ c.controller 'IndexCtrl', ($scope, $victory) ->
     else
         location.href = '#/login'
 
-c.controller 'LoginCtrl', ($scope) ->
+indexController.$inject = ['$scope']
+a.controller 'IndexCtrl', indexController
+
+
+loginController = ($scope) ->
     ###
     /login
     ###
     $scope.loginUrl = victory.loginUrl
 
+loginController.$inject = ['$scope']
+a.controller 'LoginCtrl', loginController
+
+
 # ----------- settings ------------------
-c.controller 'SettingsMenuCtrl', ($scope, $state) ->
+settingsMenuController = ($scope, $state) ->
     ###
     The controller of the settings menu
     ###
     $scope.active = $state.current.name
 
-c.controller 'SettingsCtrl', ->
+settingsMenuController.$inject = ['$scope', '$state']
+a.controller 'SettingsMenuCtrl', settingsMenuController
+
+
+a.controller 'SettingsCtrl', ->
     ###
     /settings
     ###
     location.href = '#/settings/applications'
-c.controller 'SettingsApplicationsCtrl', ($scope, $victory, applications) ->
+
+
+settingsApplicationsController = ($scope, $victory, applications) ->
     ###
     /settings/applications
 
@@ -140,7 +156,11 @@ c.controller 'SettingsApplicationsCtrl', ($scope, $victory, applications) ->
                 application = (x for x in $scope.items when x.id == applicationId)[0]
                 application.members = (x for x in application.members when x.id != memberId)
 
-c.controller 'SettingsUsersCtrl', ($scope, $victory, users) ->
+settingsApplicationsController.$inject = ['$scope', '$victory', 'applications']
+a.controller 'SettingsApplicationsCtrl', settingsApplicationsController
+
+
+settingsUsersController = ($scope, $victory, users) ->
     ###
     /settings/users
     ###
@@ -171,7 +191,11 @@ c.controller 'SettingsUsersCtrl', ($scope, $victory, users) ->
             success: ->
                 $scope.items = (x for x in $scope.items when x.id != id)
 
-c.controller 'SettingsProfileCtrl', ($scope, $victory, profile) ->
+settingsUsersController.$inject = ['$scope', '$victory', 'users']
+a.controller 'SettingsUsersCtrl', settingsUsersController
+
+
+settingsProfileController = ($scope, $victory, profile) ->
     ###
     /settings/profile
     ###
@@ -190,8 +214,13 @@ c.controller 'SettingsProfileCtrl', ($scope, $victory, profile) ->
             success: ->
                 $scope.getProfile()
 
+settingsProfileController.$inject = ['$scope', '$victory', 'profile']
+a.controller 'SettingsProfileCtrl', settingsProfileController
+
+
+
 # ----------- documents ----------------
-c.controller 'GroupedDocumentsCtrl', ($scope, $stateParams, documentMode, groupedDocumentsAndApplications) ->
+groupedDocumentsController = ($scope, $stateParams, documentMode, groupedDocumentsAndApplications) ->
     ###
     :scope documentMode: <crashes/exceptions/logs>
     :scope keyword: search keywords
@@ -236,7 +265,11 @@ c.controller 'GroupedDocumentsCtrl', ($scope, $stateParams, documentMode, groupe
         else
             return "modal"
 
-c.controller 'DocumentsCtrl', ($scope, $victory, documentMode, documents) ->
+groupedDocumentsController.$inject = ['$scope', '$stateParams', 'documentMode', 'groupedDocumentsAndApplications']
+a.controller 'GroupedDocumentsCtrl', groupedDocumentsController
+
+
+documentsController = ($scope, $victory, documentMode, documents) ->
     ###
     /applications/<applicationId>/<documentMode>/<groupTag>
     ###
@@ -258,7 +291,11 @@ c.controller 'DocumentsCtrl', ($scope, $victory, documentMode, documents) ->
             return "URL: #{document.url}"
         ""
 
-c.controller 'CrashDocumentCtrl', ($scope, $victory, documentMode, crash) ->
+documentsController.$inject = ['$scope', '$victory', 'documentMode', 'documents']
+a.controller 'DocumentsCtrl', documentsController
+
+
+crashDocumentController = ($scope, $victory, documentMode, crash) ->
     ###
     /applications/<applicationId>/<documentMode>/<groupTag>
     ###
@@ -267,3 +304,7 @@ c.controller 'CrashDocumentCtrl', ($scope, $victory, documentMode, crash) ->
     $victory.application.getApplications
         success: (data) ->
             $scope.applications = data.items
+
+crashDocumentController.$inject = ['$scope', '$victory', 'documentMode', 'crash']
+a.controller 'CrashDocumentCtrl', crashDocumentController
+

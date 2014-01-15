@@ -1,6 +1,9 @@
 
-s = angular.module 'victory.service', []
-s.service '$victory', ($http, $rootScope) ->
+a = angular.module 'victory.service', []
+service = ($injector) ->
+    $http = $injector.get '$http'
+    $rootScope = $injector.get '$rootScope'
+
     # ----- setup root scope -------
     # setup the selected application
     if sessionStorage.selectedApplication
@@ -321,3 +324,5 @@ s.service '$victory', ($http, $rootScope) ->
     setting: setting
     application: application
     document: document
+
+a.service '$victory', ['$injector', service]

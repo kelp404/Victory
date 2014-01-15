@@ -1,16 +1,11 @@
 (function() {
-  var c;
+  var a, crashDocumentController, documentsController, groupedDocumentsController, indexController, loginController, navigationController, settingsApplicationsController, settingsMenuController, settingsProfileController, settingsUsersController;
 
-  c = angular.module('victory.controller', ['victory.service']);
+  a = angular.module('victory.controller', ['victory.service']);
 
-  c.controller('NavigationCtrl', function($scope, $victory) {
-    /*
-    Navigation Controller
-    
-    :scope select: selected ui-router node name
-    */
-
-    var delay;
+  navigationController = function($scope, $injector) {
+    var $victory, delay;
+    $victory = $injector.get('$victory');
     delay = function(ms, func) {
       return setTimeout(func, ms);
     };
@@ -30,9 +25,13 @@
     return $scope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
       return $victory.common.loading.off();
     });
-  });
+  };
 
-  c.controller('IndexCtrl', function($scope, $victory) {
+  navigationController.$inject = ['$scope', '$injector'];
+
+  a.controller('NavigationCtrl', navigationController);
+
+  indexController = function($scope) {
     /*
     /
     */
@@ -42,25 +41,37 @@
     } else {
       return location.href = '#/login';
     }
-  });
+  };
 
-  c.controller('LoginCtrl', function($scope) {
+  indexController.$inject = ['$scope'];
+
+  a.controller('IndexCtrl', indexController);
+
+  loginController = function($scope) {
     /*
     /login
     */
 
     return $scope.loginUrl = victory.loginUrl;
-  });
+  };
 
-  c.controller('SettingsMenuCtrl', function($scope, $state) {
+  loginController.$inject = ['$scope'];
+
+  a.controller('LoginCtrl', loginController);
+
+  settingsMenuController = function($scope, $state) {
     /*
     The controller of the settings menu
     */
 
     return $scope.active = $state.current.name;
-  });
+  };
 
-  c.controller('SettingsCtrl', function() {
+  settingsMenuController.$inject = ['$scope', '$state'];
+
+  a.controller('SettingsMenuCtrl', settingsMenuController);
+
+  a.controller('SettingsCtrl', function() {
     /*
     /settings
     */
@@ -68,7 +79,7 @@
     return location.href = '#/settings/applications';
   });
 
-  c.controller('SettingsApplicationsCtrl', function($scope, $victory, applications) {
+  settingsApplicationsController = function($scope, $victory, applications) {
     /*
     /settings/applications
     
@@ -226,9 +237,13 @@
         }
       });
     };
-  });
+  };
 
-  c.controller('SettingsUsersCtrl', function($scope, $victory, users) {
+  settingsApplicationsController.$inject = ['$scope', '$victory', 'applications'];
+
+  a.controller('SettingsApplicationsCtrl', settingsApplicationsController);
+
+  settingsUsersController = function($scope, $victory, users) {
     /*
     /settings/users
     */
@@ -282,9 +297,13 @@
         }
       });
     };
-  });
+  };
 
-  c.controller('SettingsProfileCtrl', function($scope, $victory, profile) {
+  settingsUsersController.$inject = ['$scope', '$victory', 'users'];
+
+  a.controller('SettingsUsersCtrl', settingsUsersController);
+
+  settingsProfileController = function($scope, $victory, profile) {
     /*
     /settings/profile
     */
@@ -310,9 +329,13 @@
         }
       });
     };
-  });
+  };
 
-  c.controller('GroupedDocumentsCtrl', function($scope, $stateParams, documentMode, groupedDocumentsAndApplications) {
+  settingsProfileController.$inject = ['$scope', '$victory', 'profile'];
+
+  a.controller('SettingsProfileCtrl', settingsProfileController);
+
+  groupedDocumentsController = function($scope, $stateParams, documentMode, groupedDocumentsAndApplications) {
     /*
     :scope documentMode: <crashes/exceptions/logs>
     :scope keyword: search keywords
@@ -369,9 +392,13 @@
         return "modal";
       }
     };
-  });
+  };
 
-  c.controller('DocumentsCtrl', function($scope, $victory, documentMode, documents) {
+  groupedDocumentsController.$inject = ['$scope', '$stateParams', 'documentMode', 'groupedDocumentsAndApplications'];
+
+  a.controller('GroupedDocumentsCtrl', groupedDocumentsController);
+
+  documentsController = function($scope, $victory, documentMode, documents) {
     /*
     /applications/<applicationId>/<documentMode>/<groupTag>
     */
@@ -397,9 +424,13 @@
       }
       return "";
     };
-  });
+  };
 
-  c.controller('CrashDocumentCtrl', function($scope, $victory, documentMode, crash) {
+  documentsController.$inject = ['$scope', '$victory', 'documentMode', 'documents'];
+
+  a.controller('DocumentsCtrl', documentsController);
+
+  crashDocumentController = function($scope, $victory, documentMode, crash) {
     /*
     /applications/<applicationId>/<documentMode>/<groupTag>
     */
@@ -411,16 +442,20 @@
         return $scope.applications = data.items;
       }
     });
-  });
+  };
+
+  crashDocumentController.$inject = ['$scope', '$victory', 'documentMode', 'crash'];
+
+  a.controller('CrashDocumentCtrl', crashDocumentController);
 
 }).call(this);
 
 (function() {
-  var v;
+  var a;
 
-  v = angular.module('victory.directive', []);
+  a = angular.module('victory.directive', []);
 
-  v.directive('vTooltip', function() {
+  a.directive('vTooltip', function() {
     /*
     Show the bootstrap tool tip.
     */
@@ -433,7 +468,7 @@
     };
   });
 
-  v.directive('vFocus', function() {
+  a.directive('vFocus', function() {
     /*
     Focus this element.
     */
@@ -443,7 +478,7 @@
     };
   });
 
-  v.directive('vModal', function() {
+  a.directive('vModal', function() {
     /*
     Find the first input text box then focus it on the bootstrap modal window.
     */
@@ -455,7 +490,7 @@
     };
   });
 
-  v.directive('vEnter', function() {
+  a.directive('vEnter', function() {
     /*
     Eval the AngularJS expression when pressed `Enter`.
     */
@@ -472,7 +507,7 @@
     };
   });
 
-  v.directive('vNavigation', function() {
+  a.directive('vNavigation', function() {
     /*
     Setup the navigation effect.
     */
@@ -515,16 +550,22 @@
 }).call(this);
 
 (function() {
-  var r;
+  var a, config, run;
 
-  r = angular.module('victory.router', ['victory.controller', 'victory.service', 'victory.directive', 'ui.router']);
+  a = angular.module('victory.router', ['victory.controller', 'victory.service', 'victory.directive', 'ui.router']);
 
-  r.run(function($rootScope, $state, $stateParams) {
+  run = function($injector) {
+    var $rootScope, $state, $stateParams;
+    $rootScope = $injector.get('$rootScope');
+    $state = $injector.get('$state');
+    $stateParams = $injector.get('$stateParams');
     $rootScope.$state = $state;
     return $rootScope.$stateParams = $stateParams;
-  });
+  };
 
-  r.config(function($stateProvider, $urlRouterProvider) {
+  a.run(['$injector', run]);
+
+  config = function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/');
     $stateProvider.state('index', {
       url: '/',
@@ -556,9 +597,11 @@
         title: function() {
           return 'Applications - Settings - ';
         },
-        applications: function($victory) {
-          return $victory.setting.getApplications();
-        }
+        applications: [
+          '$victory', function($victory) {
+            return $victory.setting.getApplications();
+          }
+        ]
       },
       views: {
         viewContent: {
@@ -577,9 +620,11 @@
         title: function() {
           return 'Users - Settings - ';
         },
-        users: function($victory) {
-          return $victory.setting.getUsers();
-        }
+        users: [
+          '$victory', function($victory) {
+            return $victory.setting.getUsers();
+          }
+        ]
       },
       views: {
         viewContent: {
@@ -598,9 +643,11 @@
         title: function() {
           return 'Profile - Settings - ';
         },
-        profile: function($victory) {
-          return $victory.setting.getProfile();
-        }
+        profile: [
+          '$victory', function($victory) {
+            return $victory.setting.getProfile();
+          }
+        ]
       },
       views: {
         viewContent: {
@@ -622,11 +669,13 @@
         documentMode: function() {
           return 'crashes';
         },
-        groupedDocumentsAndApplications: function($victory) {
-          return $victory.document.getGroupedDocumentsAndApplications({
-            documentMode: 'crashes'
-          });
-        }
+        groupedDocumentsAndApplications: [
+          '$victory', function($victory) {
+            return $victory.document.getGroupedDocumentsAndApplications({
+              documentMode: 'crashes'
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
@@ -640,14 +689,16 @@
         documentMode: function() {
           return 'crashes';
         },
-        groupedDocumentsAndApplications: function($victory, $stateParams) {
-          return $victory.document.getGroupedDocumentsAndApplications({
-            documentMode: 'crashes',
-            applicationId: $stateParams.applicationId,
-            keyword: $stateParams.keyword,
-            index: $stateParams.index
-          });
-        }
+        groupedDocumentsAndApplications: [
+          '$victory', '$stateParams', function($victory, $stateParams) {
+            return $victory.document.getGroupedDocumentsAndApplications({
+              documentMode: 'crashes',
+              applicationId: $stateParams.applicationId,
+              keyword: $stateParams.keyword,
+              index: $stateParams.index
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
@@ -661,12 +712,14 @@
         documentMode: function() {
           return 'crashes';
         },
-        crash: function($victory, $stateParams) {
-          return $victory.document.getCrashDocument({
-            applicationId: $stateParams.applicationId,
-            groupTag: $stateParams.groupTag
-          });
-        }
+        crash: [
+          '$victory', '$stateParams', function($victory, $stateParams) {
+            return $victory.document.getCrashDocument({
+              applicationId: $stateParams.applicationId,
+              groupTag: $stateParams.groupTag
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/crash.html',
       controller: 'CrashDocumentCtrl'
@@ -680,11 +733,13 @@
         documentMode: function() {
           return 'exceptions';
         },
-        groupedDocumentsAndApplications: function($victory) {
-          return $victory.document.getGroupedDocumentsAndApplications({
-            documentMode: 'exceptions'
-          });
-        }
+        groupedDocumentsAndApplications: [
+          '$victory', function($victory) {
+            return $victory.document.getGroupedDocumentsAndApplications({
+              documentMode: 'exceptions'
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
@@ -698,14 +753,16 @@
         documentMode: function() {
           return 'exceptions';
         },
-        groupedDocumentsAndApplications: function($victory, $stateParams) {
-          return $victory.document.getGroupedDocumentsAndApplications({
-            documentMode: 'exceptions',
-            applicationId: $stateParams.applicationId,
-            keyword: $stateParams.keyword,
-            index: $stateParams.index
-          });
-        }
+        groupedDocumentsAndApplications: [
+          '$victory', '$stateParams', function($victory, $stateParams) {
+            return $victory.document.getGroupedDocumentsAndApplications({
+              documentMode: 'exceptions',
+              applicationId: $stateParams.applicationId,
+              keyword: $stateParams.keyword,
+              index: $stateParams.index
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
@@ -719,13 +776,15 @@
         documentMode: function() {
           return 'exceptions';
         },
-        documents: function($victory, $stateParams) {
-          return $victory.document.getDocuments({
-            documentMode: 'exceptions',
-            applicationId: $stateParams.applicationId,
-            groupTag: $stateParams.groupTag
-          });
-        }
+        documents: [
+          '$victory', '$stateParams', function($victory, $stateParams) {
+            return $victory.document.getDocuments({
+              documentMode: 'exceptions',
+              applicationId: $stateParams.applicationId,
+              groupTag: $stateParams.groupTag
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/list.html',
       controller: 'DocumentsCtrl'
@@ -739,11 +798,13 @@
         documentMode: function() {
           return 'logs';
         },
-        groupedDocumentsAndApplications: function($victory) {
-          return $victory.document.getGroupedDocumentsAndApplications({
-            documentMode: 'logs'
-          });
-        }
+        groupedDocumentsAndApplications: [
+          '$victory', function($victory) {
+            return $victory.document.getGroupedDocumentsAndApplications({
+              documentMode: 'logs'
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
@@ -757,14 +818,16 @@
         documentMode: function() {
           return 'logs';
         },
-        groupedDocumentsAndApplications: function($victory, $stateParams) {
-          return $victory.document.getGroupedDocumentsAndApplications({
-            documentMode: 'logs',
-            applicationId: $stateParams.applicationId,
-            keyword: $stateParams.keyword,
-            index: $stateParams.index
-          });
-        }
+        groupedDocumentsAndApplications: [
+          '$victory', '$stateParams', function($victory, $stateParams) {
+            return $victory.document.getGroupedDocumentsAndApplications({
+              documentMode: 'logs',
+              applicationId: $stateParams.applicationId,
+              keyword: $stateParams.keyword,
+              index: $stateParams.index
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/grouped.html',
       controller: 'GroupedDocumentsCtrl'
@@ -778,29 +841,35 @@
         documentMode: function() {
           return 'logs';
         },
-        documents: function($victory, $stateParams) {
-          return $victory.document.getDocuments({
-            documentMode: 'logs',
-            applicationId: $stateParams.applicationId,
-            groupTag: $stateParams.groupTag
-          });
-        }
+        documents: [
+          '$victory', '$stateParams', function($victory, $stateParams) {
+            return $victory.document.getDocuments({
+              documentMode: 'logs',
+              applicationId: $stateParams.applicationId,
+              groupTag: $stateParams.groupTag
+            });
+          }
+        ]
       },
       templateUrl: '/views/documents/list.html',
       controller: 'DocumentsCtrl'
     });
-  });
+  };
+
+  a.config(['$stateProvider', '$urlRouterProvider', config]);
 
 }).call(this);
 
 (function() {
-  var s,
+  var a, service,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  s = angular.module('victory.service', []);
+  a = angular.module('victory.service', []);
 
-  s.service('$victory', function($http, $rootScope) {
-    var application, common, document, pageSize, setting, stupidBrowser, user_agent;
+  service = function($injector) {
+    var $http, $rootScope, application, common, document, pageSize, setting, stupidBrowser, user_agent;
+    $http = $injector.get('$http');
+    $rootScope = $injector.get('$rootScope');
     if (sessionStorage.selectedApplication) {
       $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
     }
@@ -1305,7 +1374,9 @@
       application: application,
       document: document
     };
-  });
+  };
+
+  a.service('$victory', ['$injector', service]);
 
 }).call(this);
 
