@@ -945,7 +945,7 @@
               $rootScope.selectedApplication = result.applications[0];
               sessionStorage.selectedApplication = JSON.stringify($rootScope.selectedApplication);
             }
-            ajaxDocuments = _this.getGroupedDocuments({
+            ajaxDocuments = _this.document.getGroupedDocuments({
               applicationId: $rootScope.selectedApplication.id,
               documentMode: args.documentMode,
               keyword: args.keyword,
@@ -1068,12 +1068,9 @@
       }
     };
     this.get = function($injector) {
-      var user_agent;
       this.setupProviders($injector);
       this.setup();
-      user_agent = navigator.userAgent.toLowerCase();
       return {
-        stupidBrowser: user_agent.indexOf('msie') !== -1,
         common: this.common,
         setting: this.setting,
         application: this.application,

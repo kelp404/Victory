@@ -267,7 +267,7 @@ a.provider '$victory', ->
                         sessionStorage.selectedApplication = JSON.stringify $rootScope.selectedApplication
 
                     # load grouped documents by application id
-                    ajaxDocuments = @getGroupedDocuments
+                    ajaxDocuments = @document.getGroupedDocuments
                         applicationId: $rootScope.selectedApplication.id
                         documentMode: args.documentMode
                         keyword: args.keyword
@@ -335,10 +335,6 @@ a.provider '$victory', ->
         @setupProviders $injector
         @setup()
 
-        # is stupid browser?
-        user_agent = navigator.userAgent.toLowerCase()
-
-        stupidBrowser: user_agent.indexOf('msie') != -1
         common: @common
         setting: @setting
         application: @application
