@@ -43,10 +43,15 @@ module.exports = (grunt) ->
                 options:
                     spawn: no
 
+        karma:
+            victory:
+                configFile: './tests/frontend/karma.config.coffee'
+
     # -----------------------------------
     # register task
     # -----------------------------------
     grunt.registerTask 'dev', ['watch']
+    grunt.registerTask 'test', ['karma']
 
     # -----------------------------------
     # Plugins
@@ -56,3 +61,4 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-concat'
     grunt.loadNpmTasks 'grunt-contrib-uglify'
+    grunt.loadNpmTasks 'grunt-karma'
