@@ -1,5 +1,5 @@
 
-a = angular.module 'victory.controller', ['victory.service']
+a = angular.module 'victory.controller', ['victory.provider']
 navigationController =  ($scope, $injector) ->
     # providers
     $victory = $injector.get '$victory'

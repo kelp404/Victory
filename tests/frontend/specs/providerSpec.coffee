@@ -1,14 +1,14 @@
-describe 'victory.service', ->
+describe 'victory.provider', ->
     fakeModule = null
     victoryProvider = null
 
-    beforeEach module('victory.service')
+    beforeEach module('victory')
     beforeEach ->
         # mock NProgress
         window.NProgress =
             configure: ->
-                
-        fakeModule = angular.module 'fakeModule', ['victory.service']
+
+        fakeModule = angular.module 'fakeModule', ['victory.provider']
         fakeModule.config ($victoryProvider) ->
             victoryProvider = $victoryProvider
     beforeEach module('fakeModule')

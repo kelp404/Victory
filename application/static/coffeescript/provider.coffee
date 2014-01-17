@@ -1,36 +1,48 @@
-
-a = angular.module 'victory.service', []
-service = ($injector) ->
-    $http = $injector.get '$http'
-    $rootScope = $injector.get '$rootScope'
-
-    # ----- setup root scope -------
-    # setup the selected application
-    if sessionStorage.selectedApplication
-        # application {id, name, description, app_key, create_time, is_owner}
-        $rootScope.selectedApplication = JSON.parse sessionStorage.selectedApplication
-
-    # setup user info
-    $rootScope.user = victory.user
-    # ---------------------
-
-    # ----- setup NProgress ------
-    NProgress.configure
-        showSpinner: false
-    # ------------------------
-
-    # ----- const -----------
+a = angular.module 'victory.provider', []
+a.provider '$victory', ->
+    # -------------------------------------------
+    # const
+    # -------------------------------------------
     # default page size
     pageSize = 20
-    # ---------------------
 
-    # ---------------- $victory ----------------
-    # is stupid browser?
-    user_agent = navigator.userAgent.toLowerCase()
-    stupidBrowser = user_agent.indexOf('msie') != -1
 
-    # ---------------- common function ----------------
-    common =
+
+    # -------------------------------------------
+    # providers
+    # -------------------------------------------
+    $injector = null
+    $http = null
+    $rootScope = null
+
+
+
+    # -------------------------------------------
+    # private methods
+    # -------------------------------------------
+    @setupProviders = (injector) ->
+        $injector = injector
+        $http = $injector.get '$http'
+        $rootScope = $injector.get '$rootScope'
+
+    @setup = ->
+        NProgress.configure
+            showSpinner: no
+
+        # setup the selected application
+        if sessionStorage.selectedApplication
+            # application {id, name, description, app_key, create_time, is_owner}
+            $rootScope.selectedApplication = JSON.parse sessionStorage.selectedApplication
+
+        # setup user info
+        $rootScope.user = victory.user
+
+
+
+    # -------------------------------------------
+    # public methods
+    # -------------------------------------------
+    @common =
         ajax: (args={}) ->
             ###
             victory ajax function
@@ -86,124 +98,122 @@ service = ($injector) ->
                 NProgress.done()
 
 
-
-    # -------------- setting ----------------
-    setting =
+    @setting =
         # -------------- application ----------------
-        getApplications: (args={}) ->
+        getApplications: (args={}) =>
             ###
             Get applications of the settings.
             :param args: {success()}
             ###
-            ajax = common.ajax
+            ajax = @common.ajax
                 url: '/settings/applications'
                 success: args.success
             ajax.then (data) ->
                 # for resolve
                 data.data.items
-        addApplication: (args={}) ->
+        addApplication: (args={}) =>
             ###
             Add the application.
             :param args: {data:{name, description}, error(), success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'post'
                 url: '/settings/applications'
                 data: args.data
                 error: args.error
                 success: args.success
-        updateApplication: (args={}) ->
+        updateApplication: (args={}) =>
             ###
             Update the application.
             :param args: {id, data:{name, description}, error(), success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'put'
                 url: "/settings/applications/#{args.id}"
                 data: args.data
                 error: args.error
                 success: args.success
-        deleteApplication: (args={}) ->
+        deleteApplication: (args={}) =>
             ###
             Delete the application by id.
             :param args: {id, success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'delete'
                 url: "/settings/applications/#{args.id}"
                 success: args.success
-        inviteUser: (args={}) ->
+        inviteUser: (args={}) =>
             ###
             Invite the user into the application.
             :param args: {applicationId, email, success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'post'
                 url: "/settings/applications/#{args.applicationId}/members"
                 data:
                     email: args.email
                 success: args.success
-        deleteMember: (args={}) ->
+        deleteMember: (args={}) =>
             ###
             Delete the member from the application.
             :param args: {applicationId, memberId, success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'delete'
                 url: "/settings/applications/#{args.applicationId}/members/#{args.memberId}"
                 success: args.success
 
         # -------------- user ----------------
-        getUsers: (args={}) ->
+        getUsers: (args={}) =>
             ###
             Get users of the settings.
             :param args: {success()}
             ###
-            ajax = common.ajax
+            ajax = @common.ajax
                 url: '/settings/users'
                 success: args.success
             ajax.then (data) ->
                 # for resolve
                 data.data.items
-        addUser: (args={}) ->
+        addUser: (args={}) =>
             ###
             Add an user.
             :param args: {email, success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'post'
                 url: '/settings/users'
                 data:
                     email: args.email
                 success: args.success
-        deleteUser: (args={}) ->
+        deleteUser: (args={}) =>
             ###
             Delete the user by id.
             :param args: {id, success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'delete'
                 url: "/settings/users/#{args.id}"
                 success: args.success
 
         # -------------- profile ----------------
-        getProfile: (args={}) ->
+        getProfile: (args={}) =>
             ###
             Get the profile.
             :param args: {success()}
             ###
-            ajax = common.ajax
+            ajax = @common.ajax
                 url: '/settings/profile'
                 success: args.success
             ajax.then (data) ->
                 # for resolve
                 data.data
-        updateProfile: (args={}) ->
+        updateProfile: (args={}) =>
             ###
             Update the profile.
             :param args: {name, error(), success()}
             ###
-            common.ajax
+            @common.ajax
                 method: 'put'
                 url: '/settings/profile'
                 data:
@@ -212,21 +222,20 @@ service = ($injector) ->
                 success: args.success
 
 
-    # -------------- application ----------------
-    application =
-        getApplications: (args={}) ->
+    @application =
+        getApplications: (args={}) =>
             ###
             Get applications.
             :param args: {success()}
             ###
-            common.ajax
+            @common.ajax
                 url: "/applications"
                 success: args.success
 
 
     # -------------- document ----------------
-    document =
-        getGroupedDocumentsAndApplications: (args={}) ->
+    @document =
+        getGroupedDocumentsAndApplications: (args={}) =>
             ###
             Get grouped documents and applications for GroupedDocumentsCtrl.
             :param args: {documentMode, applicationId, keyword, index}
@@ -243,7 +252,7 @@ service = ($injector) ->
                 groupedDocuments: null
                 page: index: 0
 
-            ajaxApplications = common.ajax
+            ajaxApplications = @common.ajax
                 url: '/applications'
             ajaxApplications.then (data) =>
                 result.applications = data.data.items
@@ -270,36 +279,36 @@ service = ($injector) ->
                             index: args.index
                             max: (data.data.total - 1) / pageSize
                             hasPrevious: args.index > 0
-                            hasNext: (args.index*1 + 1) * pageSize < data.data.total
+                            hasNext: (parseInt(args.index) + 1) * pageSize < data.data.total
                         result
                 else
                     result
-        getGroupedDocuments: (args={}) ->
+        getGroupedDocuments: (args={}) =>
             ###
             Get grouped documents
             :param args: {applicationId, documentMode, keyword, index success()}
             ###
             args.keyword ?= ''
             args.index ?= 0
-            common.ajax
+            @common.ajax
                 url: "/applications/#{$rootScope.selectedApplication.id}/#{args.documentMode}/grouped?q=#{args.keyword}&index=#{args.index}"
                 success: args.success
-        getDocuments: (args={}) ->
+        getDocuments: (args={}) =>
             ###
             Get documents by the grouped tag.
             :param args: {applicationId, documentMode, groupTag, success()}
             ###
-            ajax = common.ajax
+            ajax = @common.ajax
                 url: "/applications/#{args.applicationId}/#{args.documentMode}/#{args.groupTag}"
                 success: args.success
             ajax.then (data) ->
                 data.data.items
-        getCrashDocument: (args={}) ->
+        getCrashDocument: (args={}) =>
             ###
             Get the crash document by the grouped tag.
             :param args: {applicationId, groupTag, success()}
             ###
-            ajax = common.ajax
+            ajax = @common.ajax
                 url: "/applications/#{args.applicationId}/crashes/#{args.groupTag}"
                 success: args.success
             ajax.then (data) ->
@@ -318,11 +327,22 @@ service = ($injector) ->
                 crash
 
 
-    # -------------- $victory ----------------
-    stupidBrowser: stupidBrowser
-    common: common
-    setting: setting
-    application: application
-    document: document
 
-a.service '$victory', ['$injector', service]
+    # -------------------------------------------
+    # $get
+    # -------------------------------------------
+    @get = ($injector) ->
+        @setupProviders $injector
+        @setup()
+
+        # is stupid browser?
+        user_agent = navigator.userAgent.toLowerCase()
+
+        stupidBrowser: user_agent.indexOf('msie') != -1
+        common: @common
+        setting: @setting
+        application: @application
+        document: @document
+    @get.$inject = ['$injector']
+    @$get = @get
+    return

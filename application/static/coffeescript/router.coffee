@@ -1,5 +1,5 @@
 
-a = angular.module 'victory.router', ['victory.controller', 'victory.service', 'victory.directive',
+a = angular.module 'victory.router', ['victory.controller', 'victory.provider', 'victory.directive',
                                       'ui.router']
 run = ($injector) ->
     $rootScope = $injector.get '$rootScope'
