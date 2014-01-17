@@ -550,6 +550,11 @@
 }).call(this);
 
 (function() {
+  angular.module('victory', ['victory.router']);
+
+}).call(this);
+
+(function() {
   var a, config, run;
 
   a = angular.module('victory.router', ['victory.controller', 'victory.service', 'victory.directive', 'ui.router']);

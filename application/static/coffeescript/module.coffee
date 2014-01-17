@@ -1,0 +1,1 @@
+angular.module 'victory', ['victory.router']
