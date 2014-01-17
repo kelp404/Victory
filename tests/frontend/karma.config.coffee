@@ -7,8 +7,8 @@ module.exports = (config) ->
 
         # list of files / patterns to load in the browser
         files: [
-            'tests/frontend/lib/angularjs/angular.1.1.5.min.js'
-            'tests/frontend/lib/angularjs/angular-mocks.1.1.5.js'
+            'tests/frontend/lib/angularjs/angular.1.2.9.min.js'
+            'tests/frontend/lib/angularjs/angular-mocks.1.2.9.js'
             'tests/frontend/lib/jquery/jquery-2.0.3.min.js'
             'tests/frontend/lib/ui-router/release/angular-ui-router.min.js'
             'tests/frontend/lib/nprogress/nprogress.js'
