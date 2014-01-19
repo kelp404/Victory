@@ -6,23 +6,13 @@ indexController =  ($scope) ->
     ###
     /
     ###
-    if $scope.user.isLogin
+    if $scope.victory.user.isLogin
         location.href = '#/crashes/grouped'
     else
         location.href = '#/login'
 
 indexController.$inject = ['$scope']
 a.controller 'IndexCtrl', indexController
-
-
-loginController = ($scope) ->
-    ###
-    /login
-    ###
-    $scope.loginUrl = victory.loginUrl
-
-loginController.$inject = ['$scope']
-a.controller 'LoginCtrl', loginController
 
 
 # ----------- settings ------------------
@@ -170,15 +160,21 @@ settingsUsersController.$inject = ['$scope', '$victory', 'users']
 a.controller 'SettingsUsersCtrl', settingsUsersController
 
 
-settingsProfileController = ($scope, $victory, profile) ->
+settingsProfileController = ($scope, $injector, profile) ->
     ###
     /settings/profile
     ###
+    # providers
+    $victory = $injector.get '$victory'
+    $rootScope = $injector.get '$rootScope'
+
+    # scope
     $scope.profile = profile
 
     $scope.getProfile = ->
         $victory.setting.getProfile
             success: (data) ->
+                $rootScope.victory.user.name = data.name
                 $scope.profile = data
     $scope.updateProfile = ->
         $victory.setting.updateProfile
@@ -189,7 +185,7 @@ settingsProfileController = ($scope, $victory, profile) ->
             success: ->
                 $scope.getProfile()
 
-settingsProfileController.$inject = ['$scope', '$victory', 'profile']
+settingsProfileController.$inject = ['$scope', '$injector', 'profile']
 a.controller 'SettingsProfileCtrl', settingsProfileController
 
 

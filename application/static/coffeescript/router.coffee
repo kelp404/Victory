@@ -51,7 +51,6 @@ config = ($injector) ->
         views:
             viewContent:
                 templateUrl: '/views/login.html'
-                controller: 'LoginCtrl'
 
 
     # ----------------------------------------

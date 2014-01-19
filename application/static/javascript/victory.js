@@ -1,5 +1,5 @@
 (function() {
-  var a, crashDocumentController, documentsController, groupedDocumentsController, indexController, loginController, settingsApplicationsController, settingsMenuController, settingsProfileController, settingsUsersController;
+  var a, crashDocumentController, documentsController, groupedDocumentsController, indexController, settingsApplicationsController, settingsMenuController, settingsProfileController, settingsUsersController;
 
   a = angular.module('victory.controller', ['victory.provider']);
 
@@ -8,7 +8,7 @@
     /
     */
 
-    if ($scope.user.isLogin) {
+    if ($scope.victory.user.isLogin) {
       return location.href = '#/crashes/grouped';
     } else {
       return location.href = '#/login';
@@ -18,18 +18,6 @@
   indexController.$inject = ['$scope'];
 
   a.controller('IndexCtrl', indexController);
-
-  loginController = function($scope) {
-    /*
-    /login
-    */
-
-    return $scope.loginUrl = victory.loginUrl;
-  };
-
-  loginController.$inject = ['$scope'];
-
-  a.controller('LoginCtrl', loginController);
 
   settingsMenuController = function($scope, $state) {
     /*
@@ -275,15 +263,19 @@
 
   a.controller('SettingsUsersCtrl', settingsUsersController);
 
-  settingsProfileController = function($scope, $victory, profile) {
+  settingsProfileController = function($scope, $injector, profile) {
     /*
     /settings/profile
     */
 
+    var $rootScope, $victory;
+    $victory = $injector.get('$victory');
+    $rootScope = $injector.get('$rootScope');
     $scope.profile = profile;
     $scope.getProfile = function() {
       return $victory.setting.getProfile({
         success: function(data) {
+          $rootScope.victory.user.name = data.name;
           return $scope.profile = data;
         }
       });
@@ -303,7 +295,7 @@
     };
   };
 
-  settingsProfileController.$inject = ['$scope', '$victory', 'profile'];
+  settingsProfileController.$inject = ['$scope', '$injector', 'profile'];
 
   a.controller('SettingsProfileCtrl', settingsProfileController);
 
@@ -589,7 +581,7 @@
       if (sessionStorage.selectedApplication) {
         $rootScope.selectedApplication = JSON.parse(sessionStorage.selectedApplication);
       }
-      return $rootScope.user = victory.user;
+      return $rootScope.victory = window.victory;
     };
     this.common = {
       ajax: function(args) {
@@ -1128,8 +1120,7 @@
       },
       views: {
         viewContent: {
-          templateUrl: '/views/login.html',
-          controller: 'LoginCtrl'
+          templateUrl: '/views/login.html'
         }
       }
     });
@@ -1408,14 +1399,13 @@
 }).call(this);
 
 (function() {
-  var victory;
-
-  victory = {
+  window.victory = {
     userLevel: {
       root: 0,
       normal: 1
     },
     loginUrl: '',
+    logoutUrl: '',
     user: {
       userId: 0,
       level: 1,
@@ -1427,7 +1417,5 @@
       }
     }
   };
-
-  window.victory = victory;
 
 }).call(this);

@@ -34,8 +34,8 @@ a.provider '$victory', ->
             # application {id, name, description, app_key, create_time, is_owner}
             $rootScope.selectedApplication = JSON.parse sessionStorage.selectedApplication
 
-        # setup user info
-        $rootScope.user = victory.user
+        # load window.victory
+        $rootScope.victory = window.victory
 
 
 

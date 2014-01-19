@@ -30,6 +30,7 @@
             victory.user.name = {{ user.name|tojson|safe }};
             victory.user.email = {{ user.email|tojson|safe }};
             victory.user.level = {{ user.level }};
+            victory.logoutUrl = {{ logout_url|tojson|safe }};
         {% else %}
             victory.loginUrl = {{ login_url|tojson|safe }};
         {% endif %}
@@ -75,10 +76,12 @@
         <div class="cs_navigation_inner">
             <div class="cs_logo"><a href="/">Victory</a></div>
             {% if user %}
+                {% raw %}
                 <div class="cs_profile">
-                    <p v-tooltip title="{{ user.email }}" data-placement="bottom">{{ user.name }}</p>
-                    <p><a href="{{ logout_url }}#">Sign out</a></p>
+                    <p ng-bind="victory.user.name" v-tooltip="victory.user.email" data-placement="bottom"></p>
+                    <p><a href="{{ victory.logoutUrl }}#">Sign out</a></p>
                 </div>
+                {% endraw %}
             {% endif %}
             <ul>
                 {% if user %}
