@@ -1,51 +1,76 @@
-
 a = angular.module 'victory.directive', []
 
+
+# ----------------------------------------
+# v-tooltip
+# ----------------------------------------
 a.directive 'vTooltip', ->
     ###
     Show the bootstrap tool tip.
     ###
-    (scope, element, attrs) ->
-        if attrs.vTooltip
-            $(element).attr 'title', scope.$eval(attrs.vTooltip)
-        $(element).tooltip()
+    restrict: 'A'
+    link: (scope, element, attrs) ->
+        attrs.$observe 'vTooltip', (value) ->
+            if value
+                $(element).attr 'title', scope.$eval(value)
+            $(element).tooltip()
 
+
+# ----------------------------------------
+# v-focus
+# ----------------------------------------
 a.directive 'vFocus', ->
     ###
     Focus this element.
     ###
-    (scope, element, attrs) ->
+    restrict: 'A'
+    link: (scope, element) ->
         $(element).select()
 
+
+# ----------------------------------------
+# v-modal
+# ----------------------------------------
 a.directive 'vModal', ->
     ###
     Find the first input text box then focus it on the bootstrap modal window.
     ###
-    (scope, element, attrs) ->
+    restrict: 'A'
+    link: (scope, element) ->
         $(element).on 'shown', ->
             $(@).find('input:first').select()
 
+
+# ----------------------------------------
+# v-enter
+# ----------------------------------------
 a.directive 'vEnter', ->
     ###
     Eval the AngularJS expression when pressed `Enter`.
     ###
-    (scope, element, attrs) ->
-        element.bind "keydown keypress", (event) ->
-            if event.which == 13
+    restrict: 'A'
+    link: (scope, element, attrs) ->
+        element.bind "keydown keypress", (e) ->
+            if e.which is 13
+                e.preventDefault()
                 scope.$apply ->
                     scope.$eval attrs.vEnter
-                event.preventDefault()
 
+
+# ----------------------------------------
+# v-navigation
+# ----------------------------------------
 a.directive 'vNavigation', ->
     ###
     Setup the navigation effect.
     ###
-    (scope, element, attrs) ->
+    restrict: 'A'
+    link: (scope, element) ->
         if $(element).find('li.select').length > 0
             $selected = $(element).find('li.select')
         else
             match = location.href.match /\w\/([/#\w]*)/
-            index = if match[1] == '' then 0 else $(element).find('li a[href*="' + match[1] + '"]').parent().index()
+            index = if match[1] is '' then 0 else $(element).find("li a[href*='#{match[1]}']").parent().index()
             $selected = $(element).find('li').eq(index)
 
         $(element).find('li:first').parent().prepend $('<li class="cs_top"></li>')

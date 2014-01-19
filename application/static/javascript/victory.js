@@ -456,101 +456,118 @@
   a = angular.module('victory.directive', []);
 
   a.directive('vTooltip', function() {
-    /*
-    Show the bootstrap tool tip.
-    */
+    return {
+      /*
+      Show the bootstrap tool tip.
+      */
 
-    return function(scope, element, attrs) {
-      if (attrs.vTooltip) {
-        $(element).attr('title', scope.$eval(attrs.vTooltip));
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        return attrs.$observe('vTooltip', function(value) {
+          if (value) {
+            $(element).attr('title', scope.$eval(value));
+          }
+          return $(element).tooltip();
+        });
       }
-      return $(element).tooltip();
     };
   });
 
   a.directive('vFocus', function() {
-    /*
-    Focus this element.
-    */
+    return {
+      /*
+      Focus this element.
+      */
 
-    return function(scope, element, attrs) {
-      return $(element).select();
+      restrict: 'A',
+      link: function(scope, element) {
+        return $(element).select();
+      }
     };
   });
 
   a.directive('vModal', function() {
-    /*
-    Find the first input text box then focus it on the bootstrap modal window.
-    */
+    return {
+      /*
+      Find the first input text box then focus it on the bootstrap modal window.
+      */
 
-    return function(scope, element, attrs) {
-      return $(element).on('shown', function() {
-        return $(this).find('input:first').select();
-      });
+      restrict: 'A',
+      link: function(scope, element) {
+        return $(element).on('shown', function() {
+          return $(this).find('input:first').select();
+        });
+      }
     };
   });
 
   a.directive('vEnter', function() {
-    /*
-    Eval the AngularJS expression when pressed `Enter`.
-    */
+    return {
+      /*
+      Eval the AngularJS expression when pressed `Enter`.
+      */
 
-    return function(scope, element, attrs) {
-      return element.bind("keydown keypress", function(event) {
-        if (event.which === 13) {
-          scope.$apply(function() {
-            return scope.$eval(attrs.vEnter);
-          });
-          return event.preventDefault();
-        }
-      });
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        return element.bind("keydown keypress", function(e) {
+          if (e.which === 13) {
+            e.preventDefault();
+            return scope.$apply(function() {
+              return scope.$eval(attrs.vEnter);
+            });
+          }
+        });
+      }
     };
   });
 
   a.directive('vNavigation', function() {
-    /*
-    Setup the navigation effect.
-    */
+    return {
+      /*
+      Setup the navigation effect.
+      */
 
-    return function(scope, element, attrs) {
-      var $selected, index, match, noop;
-      if ($(element).find('li.select').length > 0) {
-        $selected = $(element).find('li.select');
-      } else {
-        match = location.href.match(/\w\/([/#\w]*)/);
-        index = match[1] === '' ? 0 : $(element).find('li a[href*="' + match[1] + '"]').parent().index();
-        $selected = $(element).find('li').eq(index);
+      restrict: 'A',
+      link: function(scope, element) {
+        var $selected, index, match, noop;
+        if ($(element).find('li.select').length > 0) {
+          $selected = $(element).find('li.select');
+        } else {
+          match = location.href.match(/\w\/([/#\w]*)/);
+          index = match[1] === '' ? 0 : $(element).find("li a[href*='" + match[1] + "']").parent().index();
+          $selected = $(element).find('li').eq(index);
+        }
+        $(element).find('li:first').parent().prepend($('<li class="cs_top"></li>'));
+        $(element).find('li.cs_top').css({
+          width: $selected.css('width'),
+          left: $selected.position().left,
+          top: $selected.position().top
+        });
+        noop = function() {};
+        $(element).find('li[class!=cs_top]').hover(function() {
+          return $(element).find('li.cs_top').each(function() {
+            return $(this).dequeue();
+          }).animate({
+            width: this.offsetWidth,
+            left: this.offsetLeft
+          }, 420, "easeInOutCubic");
+        }, noop());
+        $(element).hover(noop(), function() {
+          return $(element).find('li.cs_top').each(function() {
+            return $(this).dequeue();
+          }).animate({
+            width: $(element).find('li.select').css('width'),
+            left: $(element).find('li.select').position().left
+          }, 420, "easeInOutCubic");
+        });
       }
-      $(element).find('li:first').parent().prepend($('<li class="cs_top"></li>'));
-      $(element).find('li.cs_top').css({
-        width: $selected.css('width'),
-        left: $selected.position().left,
-        top: $selected.position().top
-      });
-      noop = function() {};
-      $(element).find('li[class!=cs_top]').hover(function() {
-        return $(element).find('li.cs_top').each(function() {
-          return $(this).dequeue();
-        }).animate({
-          width: this.offsetWidth,
-          left: this.offsetLeft
-        }, 420, "easeInOutCubic");
-      }, noop());
-      $(element).hover(noop(), function() {
-        return $(element).find('li.cs_top').each(function() {
-          return $(this).dequeue();
-        }).animate({
-          width: $(element).find('li.select').css('width'),
-          left: $(element).find('li.select').position().left
-        }, 420, "easeInOutCubic");
-      });
     };
   });
 
 }).call(this);
 
 (function() {
-  angular.module('victory', ['victory.router']);
+  angular.module('victory', ['victory.router', 'victory.directive']);
 
 }).call(this);
 
@@ -1086,7 +1103,7 @@
 (function() {
   var a, config, run;
 
-  a = angular.module('victory.router', ['victory.controller', 'victory.provider', 'victory.directive', 'ui.router']);
+  a = angular.module('victory.router', ['victory.controller', 'victory.provider', 'ui.router']);
 
   run = function($injector) {
     var $rootScope, $state, $stateParams;
@@ -1099,7 +1116,10 @@
 
   a.run(['$injector', run]);
 
-  config = function($stateProvider, $urlRouterProvider) {
+  config = function($injector) {
+    var $stateProvider, $urlRouterProvider;
+    $stateProvider = $injector.get('$stateProvider');
+    $urlRouterProvider = $injector.get('$urlRouterProvider');
     $urlRouterProvider.otherwise('/');
     $stateProvider.state('index', {
       url: '/',
@@ -1390,7 +1410,7 @@
     });
   };
 
-  a.config(['$stateProvider', '$urlRouterProvider', config]);
+  a.config(['$injector', config]);
 
 }).call(this);
 

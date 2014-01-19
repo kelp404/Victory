@@ -1,6 +1,9 @@
 
-a = angular.module 'victory.router', ['victory.controller', 'victory.provider', 'victory.directive',
-                                      'ui.router']
+a = angular.module 'victory.router', ['victory.controller', 'victory.provider', 'ui.router']
+
+# ----------------------------------------
+# run
+# ----------------------------------------
 run = ($injector) ->
     $rootScope = $injector.get '$rootScope'
     $state = $injector.get '$state'
@@ -12,14 +15,36 @@ run = ($injector) ->
 a.run ['$injector', run]
 
 
-config = ($stateProvider, $urlRouterProvider) ->
+
+# ----------------------------------------
+# config
+# ----------------------------------------
+config = ($injector) ->
+    # ----------------------------------------
+    # providers
+    # ----------------------------------------
+    $stateProvider = $injector.get '$stateProvider'
+    $urlRouterProvider = $injector.get '$urlRouterProvider'
+
+
+    # ----------------------------------------
+    # redirect to '/' on 404
+    # ----------------------------------------
     $urlRouterProvider.otherwise '/'
 
+
+    # ----------------------------------------
+    # /
+    # ----------------------------------------
     $stateProvider.state 'index',
         url: '/'
         templateUrl: '/views/empty.html'
         controller: 'IndexCtrl'
 
+
+    # ----------------------------------------
+    # /login
+    # ----------------------------------------
     $stateProvider.state 'login',
         url: '/login'
         resolve: title: -> 'Sign In - '
@@ -28,7 +53,10 @@ config = ($stateProvider, $urlRouterProvider) ->
                 templateUrl: '/views/login.html'
                 controller: 'LoginCtrl'
 
-    # ----------- settings ----------------
+
+    # ----------------------------------------
+    # /settings
+    # ----------------------------------------
     $stateProvider.state 'settings',
         url: '/settings'
         templateUrl: '/views/empty.html'
@@ -76,7 +104,12 @@ config = ($stateProvider, $urlRouterProvider) ->
                 templateUrl: '/views/menu/settings.html'
                 controller: 'SettingsMenuCtrl'
 
-    # ---------- documents ----------------
+
+    # ----------------------------------------
+    # /crashes
+    # /exceptions
+    # /logs
+    # ----------------------------------------
     $stateProvider.state 'grouped-crashes',
         url: '/crashes/grouped'
         resolve:
@@ -195,4 +228,4 @@ config = ($stateProvider, $urlRouterProvider) ->
         templateUrl: '/views/documents/list.html'
         controller: 'DocumentsCtrl'
 
-a.config ['$stateProvider', '$urlRouterProvider', config]
+a.config ['$injector', config]

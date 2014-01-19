@@ -1,1 +1,1 @@
-angular.module 'victory', ['victory.router']
+angular.module 'victory', ['victory.router', 'victory.directive']
