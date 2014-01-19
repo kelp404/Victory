@@ -24,8 +24,8 @@ def start_handler():
 
 @app.before_request
 def before_request():
-    if not app.debug and request.scheme == 'http':
-        # redirect to https
+    if not app.debug and request.url_rule.endpoint.find('api_') != 0 and request.scheme == 'http':
+        # redirect to https on production and not api
         return redirect('https' + request.url[4:])
 
     g.view_model = {
