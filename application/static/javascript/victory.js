@@ -1,35 +1,7 @@
 (function() {
-  var a, crashDocumentController, documentsController, groupedDocumentsController, indexController, loginController, navigationController, settingsApplicationsController, settingsMenuController, settingsProfileController, settingsUsersController;
+  var a, crashDocumentController, documentsController, groupedDocumentsController, indexController, loginController, settingsApplicationsController, settingsMenuController, settingsProfileController, settingsUsersController;
 
   a = angular.module('victory.controller', ['victory.provider']);
-
-  navigationController = function($scope, $injector) {
-    var $victory, delay;
-    $victory = $injector.get('$victory');
-    delay = function(ms, func) {
-      return setTimeout(func, ms);
-    };
-    $scope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-      if (fromState.name !== "") {
-        $victory.common.loading.on();
-      }
-      $scope.select = toState.name;
-      $('.modal.in').modal('hide');
-      return delay(0, function() {
-        return $('#js_navigation li.select').mouseover();
-      });
-    });
-    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
-      return $victory.common.loading.off();
-    });
-    return $scope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-      return $victory.common.loading.off();
-    });
-  };
-
-  navigationController.$inject = ['$scope', '$injector'];
-
-  a.controller('NavigationCtrl', navigationController);
 
   indexController = function($scope) {
     /*
@@ -451,7 +423,7 @@
 }).call(this);
 
 (function() {
-  var a;
+  var a, vNavigation;
 
   a = angular.module('victory.directive', []);
 
@@ -521,7 +493,7 @@
     };
   });
 
-  a.directive('vNavigation', function() {
+  vNavigation = function($injector) {
     return {
       /*
       Setup the navigation effect.
@@ -529,7 +501,24 @@
 
       restrict: 'A',
       link: function(scope, element) {
-        var $selected, index, match, noop;
+        var $selected, $victory, index, match, noop;
+        $victory = $injector.get('$victory');
+        scope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
+          if (fromState.name !== "") {
+            $victory.common.loading.on();
+          }
+          scope.select = toState.name;
+          $('.modal.in').modal('hide');
+          return setTimeout(function() {
+            return $('#js_navigation li.select').mouseover();
+          }, 0);
+        });
+        scope.$on('$stateChangeSuccess', function() {
+          return $victory.common.loading.off();
+        });
+        scope.$on('$stateChangeError', function() {
+          return $victory.common.loading.off();
+        });
         if ($(element).find('li.select').length > 0) {
           $selected = $(element).find('li.select');
         } else {
@@ -562,7 +551,11 @@
         });
       }
     };
-  });
+  };
+
+  vNavigation.$inject = ['$injector'];
+
+  a.directive('vNavigation', vNavigation);
 
 }).call(this);
 

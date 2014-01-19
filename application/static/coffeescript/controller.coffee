@@ -1,30 +1,5 @@
 
 a = angular.module 'victory.controller', ['victory.provider']
-navigationController =  ($scope, $injector) ->
-    # providers
-    $victory = $injector.get '$victory'
-
-    delay = (ms, func) -> setTimeout func, ms
-
-    # ui.router state change event
-    $scope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
-        if fromState.name != ""
-            $victory.common.loading.on()
-        $scope.select = toState.name
-        $('.modal.in').modal 'hide'
-        delay 0, ->
-            $('#js_navigation li.select').mouseover()
-
-    $scope.$on '$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) ->
-        $victory.common.loading.off()
-
-    $scope.$on '$stateChangeError', (event, toState, toParams, fromState, fromParams, error) ->
-        $victory.common.loading.off()
-
-navigationController.$inject = ['$scope', '$injector']
-a.controller 'NavigationCtrl', navigationController
-
-
 
 # ----------- controllers for ui.router ----------------
 indexController =  ($scope) ->

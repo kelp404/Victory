@@ -60,12 +60,44 @@ a.directive 'vEnter', ->
 # ----------------------------------------
 # v-navigation
 # ----------------------------------------
-a.directive 'vNavigation', ->
+vNavigation = ($injector) ->
     ###
     Setup the navigation effect.
     ###
     restrict: 'A'
     link: (scope, element) ->
+        # ----------------------------------------
+        # providers
+        # ----------------------------------------
+        $victory = $injector.get '$victory'
+
+
+        # ----------------------------------------
+        # scope
+        # ----------------------------------------
+        # ui.router state change event
+        scope.$on '$stateChangeStart', (event, toState, toParams, fromState) ->
+            # (event, toState, toParams, fromState, fromParams) ->
+            if fromState.name != ""
+                $victory.common.loading.on()
+            scope.select = toState.name
+            $('.modal.in').modal 'hide'
+            setTimeout ->
+                $('#js_navigation li.select').mouseover()
+            , 0
+
+        scope.$on '$stateChangeSuccess', ->
+            # (event, toState, toParams, fromState, fromParams) ->
+            $victory.common.loading.off()
+
+        scope.$on '$stateChangeError', ->
+            # (event, toState, toParams, fromState, fromParams, error) ->
+            $victory.common.loading.off()
+
+
+        # ----------------------------------------
+        # navigation effect
+        # ----------------------------------------
         if $(element).find('li.select').length > 0
             $selected = $(element).find('li.select')
         else
@@ -93,3 +125,5 @@ a.directive 'vNavigation', ->
                 left: $(element).find('li.select').position().left
                 , 420, "easeInOutCubic")
         return
+vNavigation.$inject = ['$injector']
+a.directive 'vNavigation', vNavigation
