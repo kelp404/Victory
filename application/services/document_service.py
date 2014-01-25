@@ -1,6 +1,7 @@
 
 # python
-import os, re, datetime, hashlib
+import os, re, hashlib
+from datetime import datetime
 
 # flask
 from flask import request
@@ -235,8 +236,8 @@ class DocumentService(BaseService):
             model.email = user.get('email')
             model.access_token = user.get('access_token')
             # set create_time
-            try: model.create_time = datetime.datetime.strptime(document['report']['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
-            except: model.create_time = datetime.datetime.now()
+            try: model.create_time = datetime.strptime(document['report']['timestamp'], '%Y-%m-%dT%H:%M:%SZ')
+            except: model.create_time = datetime.now()
             # set app uuid
             model.app_uuid = document['system'].get('app_uuid')
             # set version
@@ -250,17 +251,17 @@ class DocumentService(BaseService):
             except: pass
         else:
             DictMapping.inject(model, document)
-            model.create_time = datetime.datetime.now()
+            model.create_time = datetime.now()
             if model.parameters:
                 # remove password=\w*&
                 model.parameters = re.sub(r'password=([^&])*&', '', model.parameters, flags=re.IGNORECASE)
             # set create_time
             if document.get('create_time') is not None:
-                try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
+                try: model.create_time = datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%S')
                 except:
-                    try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M')
+                    try: model.create_time = datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M')
                     except:
-                        try: model.create_time = datetime.datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%SZ')
+                        try: model.create_time = datetime.strptime(document['create_time'], '%Y-%m-%dT%H:%M:%SZ')
                         except: pass
 
         model.app_id = application.key().id()
